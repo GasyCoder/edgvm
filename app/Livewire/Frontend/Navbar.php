@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Livewire\Frontend;
+
+use Livewire\Component;
+
+class Navbar extends Component
+{
+    public $isScrolled = false;
+
+    public function render()
+    {
+        return view('livewire.frontend.navbar');
+    }
+}
