@@ -5,13 +5,24 @@ use App\Livewire\Frontend\AboutPage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Frontend\ContactPage;
+use App\Livewire\Admin\Media\MediaIndex;
+use App\Livewire\Admin\Slides\SlideEdit;
 use App\Http\Controllers\AdminController;
+use App\Livewire\Admin\Media\MediaUpload;
+use App\Livewire\Admin\Slides\SlideIndex;
 use App\Livewire\Frontend\ActualitesPage;
 use App\Livewire\Frontend\DoctorantsPage;
+
+// Composants Admin Livewire
 use App\Livewire\Frontend\ProgrammesPage;
+use App\Livewire\Admin\Sliders\SliderEdit;
+use App\Livewire\Admin\Slides\SlideCreate;
+use App\Livewire\Admin\Sliders\SliderIndex;
+use App\Livewire\Admin\Sliders\SliderCreate;
 use App\Http\Controllers\DoctorantController;
 use App\Http\Controllers\EncadrantController;
 use App\Http\Controllers\SecretaireController;
+use App\Http\Controllers\Admin\MediaController;
 
 // Frontend Routes
 Route::get('/', HomePage::class)->name('home');
@@ -47,6 +58,24 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // Admin
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+        
+        // Gestion des Sliders
+        Route::get('/sliders', SliderIndex::class)->name('sliders.index');
+        Route::get('/sliders/create', SliderCreate::class)->name('sliders.create');
+        Route::get('/sliders/{slider}/edit', SliderEdit::class)->name('sliders.edit');
+        
+        // Gestion des Slides
+        Route::get('/sliders/{slider}/slides', SlideIndex::class)->name('slides.index');
+        Route::get('/sliders/{slider}/slides/create', SlideCreate::class)->name('slides.create');
+        Route::get('/slides/{slide}/edit', SlideEdit::class)->name('slides.edit');
+        
+        // Gestion de la Médiathèque
+        // Route::get('/media', MediaIndex::class)->name('media.index');
+        // Route::get('/media/upload', MediaUpload::class)->name('media.upload');
+
+        Route::get('/media', MediaIndex::class)->name('media.index'); // ← LIVEWIRE
+        Route::get('/media/upload', [MediaController::class, 'create'])->name('media.upload'); // ← CONTROLLER
+        Route::post('/media', [MediaController::class, 'store'])->name('media.store'); // ← CONTROLLER
     });
 
     // Secrétaire

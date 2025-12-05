@@ -14,11 +14,13 @@
     function slider() {
         return {
             currentSlide: 0,
-            slides: [0, 1, 2],
+            slides: @json(range(0, $slider ? $slider->slides->count() - 1 : 0)),
             interval: null,
             
             init() {
-                this.startAutoplay();
+                if (this.slides.length > 1) {
+                    this.startAutoplay();
+                }
             },
             
             nextSlide() {

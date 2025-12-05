@@ -11,13 +11,18 @@ class Slide extends Model
 
     protected $fillable = [
         'slider_id',
-        'titre',
+        'titre_ligne1',
+        'titre_highlight',
+        'titre_ligne2',
         'description',
         'image_id',
         'lien_cta',
         'texte_cta',
         'ordre',
         'visible',
+        'badge_texte',
+        'badge_icon',
+        'couleur_fond',
     ];
 
     protected $casts = [
@@ -32,12 +37,26 @@ class Slide extends Model
 
     public function image()
     {
-        return $this->belongsTo(Media::class);
+        return $this->belongsTo(Media::class, 'image_id');
     }
 
     // Scopes
     public function scopeVisible($query)
     {
         return $query->where('visible', true);
+    }
+
+    // Accessor pour le titre complet (si besoin)
+    public function getTitreCompletAttribute()
+    {
+        $titre = '';
+        if ($this->titre_ligne1) {
+            $titre .= $this->titre_ligne1 . ' ';
+        }
+        $titre .= $this->titre_highlight;
+        if ($this->titre_ligne2) {
+            $titre .= ' ' . $this->titre_ligne2;
+        }
+        return $titre;
     }
 }
