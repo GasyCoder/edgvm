@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('titre');
             $table->longText('contenu');
             $table->foreignId('auteur_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->foreignId('image_id')->nullable()->constrained('media')->onDelete('set null');
             $table->date('date_publication')->nullable();
             $table->boolean('visible')->default(true);

@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Slider;
 use App\Models\Specialite;
 use App\Models\Actualite;
+use App\Models\Partenaire;
 
 class HomePage extends Component
 {
@@ -31,9 +32,21 @@ class HomePage extends Component
         ];
         
         $specialites = Specialite::take(3)->get();
-        $actualites = Actualite::where('visible', true)->orderBy('date_publication', 'desc')->take(3)->get();
         
-        return view('livewire.frontend.home-page', compact('slider', 'specialites', 'actualites', 'stats'))
+        // Actualités publiées avec relations (3 dernières)
+        $actualites = Actualite::with(['category', 'image', 'tags'])
+            ->published() // ← Utilise le scope pour filtrer visibles + date publication
+            ->orderBy('est_important', 'desc') // ← Importantes en premier
+            ->orderBy('date_publication', 'desc')
+            ->limit(3)
+            ->get();
+        
+        // Partenaires actifs (si vous en avez)
+        $partenaires = Partenaire::where('visible', true)
+            ->orderBy('ordre')
+            ->get();
+        
+        return view('livewire.frontend.home-page', compact('slider', 'specialites', 'actualites', 'stats', 'partenaires'))
             ->layout('layouts.frontend');
     }
 }
