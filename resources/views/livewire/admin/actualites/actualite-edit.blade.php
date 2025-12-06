@@ -10,12 +10,17 @@
         </ol>
     </nav>
 
-    <h1 class="text-2xl font-bold mb-6">Modifier l'actualité</h1>
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">Modifier l'actualité</h1>
+        <div class="text-sm text-gray-500">
+            <span class="font-semibold">Vues :</span> {{ $actualite->vues_formatted }}
+        </div>
+    </div>
 
     <form wire:submit="save">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            <!-- Colonne principale (identique à create) -->
+            <!-- Colonne principale -->
             <div class="lg:col-span-2 space-y-6">
                 
                 <!-- Titre -->
@@ -32,68 +37,109 @@
                     @enderror
                 </div>
 
-                <!-- Contenu avec éditeur -->
+                <!-- Contenu avec TinyMCE -->
                 <div class="bg-white rounded-lg shadow p-6">
                     <label class="block mb-2 font-semibold text-gray-700">
                         Contenu <span class="text-red-500">*</span>
                     </label>
                     
-                    <div class="border border-gray-300 rounded-lg overflow-hidden">
-                        <!-- Toolbar -->
-                        <div class="bg-gray-50 border-b border-gray-300 p-2 flex gap-2 flex-wrap">
-                            <button type="button" onclick="document.execCommand('bold', false, null)" 
-                                    class="p-2 hover:bg-gray-200 rounded" title="Gras">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M11 5H7v10h4a5 5 0 000-10zm-1 8H9V7h1a3 3 0 010 6z"/>
-                                </svg>
-                            </button>
-                            <button type="button" onclick="document.execCommand('italic', false, null)"
-                                    class="p-2 hover:bg-gray-200 rounded" title="Italique">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M12 4v2h-2l-2 8h2v2H6v-2h2l2-8H8V4h4z"/>
-                                </svg>
-                            </button>
-                            <button type="button" onclick="document.execCommand('insertUnorderedList', false, null)"
-                                    class="p-2 hover:bg-gray-200 rounded" title="Liste à puces">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/>
-                                </svg>
-                            </button>
-                            <button type="button" onclick="document.execCommand('insertOrderedList', false, null)"
-                                    class="p-2 hover:bg-gray-200 rounded" title="Liste numérotée">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M3 4h14v2H3V4zm0 5h14v2H3V9zm0 5h14v2H3v-2z"/>
-                                </svg>
-                            </button>
-                        </div>
-                        
-                        <div contenteditable="true"
-                             wire:ignore
-                             x-data="{ 
-                                 content: @entangle('contenu'),
-                                 init() {
-                                     this.$el.innerHTML = this.content;
-                                     this.$el.addEventListener('input', () => {
-                                         this.content = this.$el.innerHTML;
-                                     });
-                                 }
-                             }"
-                             class="min-h-[300px] p-4 focus:outline-none prose max-w-none">
-                        </div>
+                    <div wire:ignore>
+                        <textarea id="tinymce-editor" class="w-full"></textarea>
                     </div>
                     
                     @error('contenu')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
+
+                <!-- Galerie d'images -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold text-gray-700">📸 Galerie d'images</h3>
+                        <button type="button" 
+                                wire:click="openMediaSelector('gallery')"
+                                class="px-4 py-2 bg-ed-primary text-white rounded-lg hover:bg-ed-secondary text-sm font-bold">
+                            ➕ Ajouter des images
+                        </button>
+                    </div>
+
+                    @if(!empty($galerieImages))
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        @foreach($galerieImagesData as $media)
+                        <div class="relative group">
+                            <img src="{{ $media->url }}" class="w-full h-32 object-cover rounded-lg">
+                            <button type="button" 
+                                    wire:click="removeGalerieImage({{ $media->id }})"
+                                    class="absolute top-2 right-2 p-1.5 bg-red-600 text-white rounded-full hover:bg-red-700 opacity-0 group-hover:opacity-100 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                        @endforeach
+                    </div>
+                    @else
+                    <p class="text-sm text-gray-500 text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+                        Aucune image dans la galerie. Cliquez sur "Ajouter des images" pour en ajouter.
+                    </p>
+                    @endif
+                </div>
             </div>
 
-            <!-- Sidebar (identique à create mais avec bouton "Mettre à jour") -->
+            <!-- Sidebar -->
             <div class="space-y-6">
                 
+                <!-- Catégorie -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <label class="block mb-2 font-semibold text-gray-700">
+                        Catégorie <span class="text-red-500">*</span>
+                    </label>
+                    <select wire:model="category_id" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary">
+                        <option value="">-- Sélectionner --</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->nom }}</option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                    
+                    <a href="{{ route('admin.categories.index') }}" target="_blank"
+                       class="mt-2 inline-block text-xs text-ed-primary hover:text-ed-secondary">
+                        ➕ Gérer les catégories
+                    </a>
+                </div>
+
+                <!-- Tags -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <label class="block mb-2 font-semibold text-gray-700">
+                        Tags <span class="text-gray-500 text-sm font-normal">(optionnel)</span>
+                    </label>
+                    
+                    <div class="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                        @forelse($tags as $tag)
+                            <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                <input type="checkbox" 
+                                       wire:model="selectedTags" 
+                                       value="{{ $tag->id }}"
+                                       class="rounded text-ed-primary focus:ring-ed-primary">
+                                <span class="text-sm">{{ $tag->nom }}</span>
+                            </label>
+                        @empty
+                            <p class="text-sm text-gray-500 text-center py-4">Aucun tag disponible</p>
+                        @endforelse
+                    </div>
+                    
+                    <a href="{{ route('admin.tags.index') }}" target="_blank"
+                       class="mt-2 inline-block text-xs text-ed-primary hover:text-ed-secondary">
+                        ➕ Gérer les tags
+                    </a>
+                </div>
+
                 <!-- Image à la une -->
                 <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="font-semibold text-gray-700 mb-4">Image à la une</h3>
+                    <h3 class="font-semibold text-gray-700 mb-4">🖼️ Image principale</h3>
                     
                     @if($selectedImage)
                         <div class="relative">
@@ -108,7 +154,7 @@
                         </div>
                     @else
                         <button type="button" 
-                                wire:click="$set('showMediaSelector', true)"
+                                wire:click="openMediaSelector('featured')"
                                 class="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-ed-primary transition text-gray-600 hover:text-ed-primary">
                             <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -132,22 +178,50 @@
                         <input type="checkbox" 
                                wire:model="visible"
                                class="w-5 h-5 text-ed-primary rounded focus:ring-2 focus:ring-ed-primary">
-                        <span class="font-semibold text-gray-700">Visible</span>
+                        <span class="font-semibold text-gray-700">Publier</span>
                     </label>
+                    <p class="text-xs text-gray-500 mt-2">L'actualité sera visible sur le site public</p>
                 </div>
 
-                <!-- Informations -->
-                <div class="bg-white rounded-lg shadow p-6 text-sm text-gray-600">
-                    <p><strong>Créé le :</strong> {{ $actualite->created_at->format('d/m/Y à H:i') }}</p>
-                    <p class="mt-2"><strong>Modifié le :</strong> {{ $actualite->updated_at->format('d/m/Y à H:i') }}</p>
-                    <p class="mt-2"><strong>Auteur :</strong> {{ $actualite->auteur?->name ?? 'Non défini' }}</p>
+                <!-- Actualité importante -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" 
+                            wire:model="est_important"
+                            class="w-5 h-5 text-red-600 rounded focus:ring-2 focus:ring-red-600">
+                        <span class="font-semibold text-gray-700">🔥 Actualité importante</span>
+                    </label>
+                    <p class="text-xs text-gray-500 mt-2">Marquer comme vedette</p>
                 </div>
 
-                <!-- Boutons -->
+                <!-- Statistiques -->
+                @if($actualite->notification_envoyee_le)
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div class="flex items-center gap-2 text-green-800 text-sm">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <div>
+                            <p class="font-semibold">Newsletter envoyée</p>
+                            <p class="text-xs">{{ $actualite->notification_envoyee_le->format('d/m/Y à H:i') }}</p>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Boutons avec Loading -->
                 <div class="bg-white rounded-lg shadow p-6 space-y-3">
                     <button type="submit" 
-                            class="w-full px-6 py-3 bg-ed-primary text-white rounded-lg hover:bg-ed-secondary font-bold">
-                        💾 Mettre à jour
+                            wire:loading.attr="disabled"
+                            class="w-full px-6 py-3 bg-ed-primary text-white rounded-lg hover:bg-ed-secondary font-bold disabled:opacity-50 disabled:cursor-not-allowed transition">
+                        <span wire:loading.remove wire:target="save">✅ Mettre à jour</span>
+                        <span wire:loading wire:target="save" class="flex items-center justify-center gap-2">
+                            <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Mise à jour...</span>
+                        </span>
                     </button>
                     <a href="{{ route('admin.actualites.index') }}"
                        class="block w-full px-6 py-3 border border-gray-300 rounded-lg text-center hover:bg-gray-50">
@@ -158,7 +232,35 @@
         </div>
     </form>
 
-    <!-- Modal sélection d'image (identique à create) -->
+    <!-- Overlay de chargement - CORRIGÉ -->
+    <div wire:loading wire:target="save" 
+        class="fixed inset-0 z-[9999]" 
+        style="left: 0 !important; right: 0 !important; top: 0 !important; bottom: 0 !important;">
+        
+        <!-- Background sombre -->
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        
+        <!-- Contenu centré -->
+        <div class="relative z-10 min-h-screen flex items-center justify-center px-4">
+            <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
+                <div class="text-center">
+                    <!-- Spinner animé -->
+                    <div class="mx-auto mb-6 w-16 h-16 border-4 border-ed-primary border-t-transparent rounded-full animate-spin"></div>
+                    
+                    <!-- Message principal -->
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">
+                        Mise à jour en cours...
+                    </h3>
+                    
+                    <p class="mt-4 text-xs text-gray-500">
+                        Veuillez patienter, ne fermez pas cette page...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal sélection d'image -->
     @if($showMediaSelector)
     <div class="fixed inset-0 z-50 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20">
@@ -166,7 +268,9 @@
             
             <div class="relative bg-white rounded-lg max-w-4xl w-full p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-bold">Sélectionner une image</h3>
+                    <h3 class="text-lg font-bold">
+                        {{ $mediaSelectorType === 'featured' ? 'Sélectionner l\'image principale' : 'Ajouter des images à la galerie' }}
+                    </h3>
                     <button wire:click="$set('showMediaSelector', false)" class="text-gray-400 hover:text-gray-600">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -202,4 +306,46 @@
         </div>
     </div>
     @endif
+
+    @push('scripts')
+    <script>
+        document.addEventListener('livewire:navigated', function () {
+            initTinyMCE();
+        });
+
+        function initTinyMCE() {
+            if (typeof tinymce !== 'undefined') {
+                tinymce.remove();
+                
+                tinymce.init({
+                    selector: '#tinymce-editor',
+                    height: 500,
+                    menubar: false,
+                    plugins: [
+                        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                        'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                    ],
+                    toolbar: 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | link image | code | help',
+                    content_style: 'body { font-family: Arial, sans-serif; font-size: 14px; }',
+                    setup: function (editor) {
+                        editor.on('init', function () {
+                            editor.setContent(@this.contenu);
+                        });
+                        editor.on('change', function () {
+                            @this.set('contenu', editor.getContent());
+                        });
+                    }
+                });
+            }
+        }
+
+        // Init au chargement
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initTinyMCE);
+        } else {
+            initTinyMCE();
+        }
+    </script>
+    @endpush
 </div>

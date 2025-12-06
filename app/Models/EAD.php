@@ -15,9 +15,18 @@ class EAD extends Model
         'description',
         'responsable_id',
         'domaine',
+        'slug',
     ];
 
-    // Relations
+    /**
+     * Configure le route model binding pour utiliser le slug
+     */
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+    // Relations - SPÉCIFIER LA CLÉ ÉTRANGÈRE
     public function responsable()
     {
         return $this->belongsTo(Encadrant::class, 'responsable_id');
@@ -25,11 +34,28 @@ class EAD extends Model
 
     public function specialites()
     {
-        return $this->hasMany(Specialite::class);
+        return $this->hasMany(Specialite::class, 'ead_id');
     }
 
     public function theses()
     {
-        return $this->hasMany(These::class);
+        return $this->hasMany(These::class, 'ead_id');
+    }
+
+    // Scopes
+    public function scopeActive($query)
+    {
+        return $query->has('specialites');
+    }
+
+    // Accessors
+    public function getDoctoratsCountAttribute()
+    {
+        return $this->theses()->enCours()->count();
+    }
+
+    public function getThesesSoutenuesCountAttribute()
+    {
+        return $this->theses()->soutendue()->count();
     }
 }

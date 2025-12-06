@@ -24,7 +24,25 @@ class ActualiteDetailPage extends Component
         $this->actualite = $actualite;
         
         // Incrémenter les vues ← AJOUTÉ
-        $this->actualite->incrementVues();
+        $this->incrementUniqueView();
+    }
+
+    /**
+     * Incrémente les vues une seule fois par session navigateur
+     */
+    private function incrementUniqueView(): void
+    {
+        // Clé unique pour cette actu dans la session
+        $key = 'actualite_viewed_' . $this->actualite->id;
+
+        // Si pas encore vue dans cette session → on incrémente
+        if (!session()->has($key)) {
+            // Utilise ton helper de modèle
+            $this->actualite->incrementVues();
+
+            // On mémorise dans la session que cette actu a été vue
+            session()->put($key, true);
+        }
     }
 
     public function subscribe()
@@ -53,7 +71,8 @@ class ActualiteDetailPage extends Component
 
     public function render()
     {
-        $this->actualite->load(['category', 'image', 'tags', 'auteur']);
+        // Charger les relations + galerie ← AJOUTÉ
+        $this->actualite->load(['category', 'image', 'tags', 'auteur', 'galerie']);
 
         $similaires = Actualite::with(['category', 'image'])
             ->published()

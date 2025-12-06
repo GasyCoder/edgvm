@@ -23,7 +23,6 @@ class Actualite extends Model
         'vues', 
     ];
 
-
     protected $casts = [
         'date_publication' => 'date',
         'visible' => 'boolean',
@@ -66,6 +65,15 @@ class Actualite extends Model
         return $this->belongsTo(Media::class, 'image_id');
     }
 
+    // ← AJOUTÉ : Relation galerie d'images
+    public function galerie()
+    {
+        return $this->belongsToMany(Media::class, 'actualite_media')
+                    ->withPivot('ordre')
+                    ->withTimestamps()
+                    ->orderBy('ordre');
+    }
+
     public function tags() 
     {
         return $this->belongsToMany(Tag::class);
@@ -100,7 +108,6 @@ class Actualite extends Model
         });
     }
 
-    // Scope pour actualités importantes
     public function scopeImportant($query)
     {
         return $query->where('est_important', true);

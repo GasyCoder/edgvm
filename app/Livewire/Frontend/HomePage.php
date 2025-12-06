@@ -4,7 +4,7 @@ namespace App\Livewire\Frontend;
 
 use Livewire\Component;
 use App\Models\Slider;
-use App\Models\Specialite;
+use App\Models\EAD;
 use App\Models\Actualite;
 use App\Models\Partenaire;
 
@@ -31,12 +31,18 @@ class HomePage extends Component
             'hdr_soutenues' => 2,
         ];
         
-        $specialites = Specialite::take(3)->get();
+        // Équipes d'Accueil Doctorales (3 premières avec leurs relations)
+        $eads = EAD::with(['responsable.user', 'specialites'])
+            ->withCount(['specialites', 'theses'])
+            ->active()
+            ->take(4)
+            ->get();
         
         // Actualités publiées avec relations (3 dernières)
         $actualites = Actualite::with(['category', 'image', 'tags'])
-            ->published() // ← Utilise le scope pour filtrer visibles + date publication
-            ->orderBy('est_important', 'desc') // ← Importantes en premier
+            ->latest()
+            ->published() 
+            ->orderBy('est_important', 'desc') 
             ->orderBy('date_publication', 'desc')
             ->limit(3)
             ->get();
@@ -46,7 +52,7 @@ class HomePage extends Component
             ->orderBy('ordre')
             ->get();
         
-        return view('livewire.frontend.home-page', compact('slider', 'specialites', 'actualites', 'stats', 'partenaires'))
+        return view('livewire.frontend.home-page', compact('slider', 'eads', 'actualites', 'stats', 'partenaires'))
             ->layout('layouts.frontend');
     }
 }

@@ -29,20 +29,20 @@ class These extends Model
         'date_prevue_fin' => 'date',
     ];
 
-    // Relations
+    // Relations - AVEC CLÉS ÉTRANGÈRES EXPLICITES
     public function doctorant()
     {
-        return $this->belongsTo(Doctorant::class);
+        return $this->belongsTo(Doctorant::class, 'doctorant_id');
     }
 
     public function specialite()
     {
-        return $this->belongsTo(Specialite::class);
+        return $this->belongsTo(Specialite::class, 'specialite_id');
     }
 
     public function ead()
     {
-        return $this->belongsTo(EAD::class);
+        return $this->belongsTo(EAD::class, 'ead_id'); // ← IMPORTANT : Spécifier 'ead_id'
     }
 
     public function fichier()
@@ -59,12 +59,12 @@ class These extends Model
 
     public function soutenance()
     {
-        return $this->hasOne(Soutenance::class);
+        return $this->hasOne(Soutenance::class, 'these_id'); // ← Explicite aussi
     }
 
     public function publications()
     {
-        return $this->hasMany(Publication::class);
+        return $this->hasMany(Publication::class, 'these_id'); // ← Explicite aussi
     }
 
     // Scopes
@@ -76,5 +76,11 @@ class These extends Model
     public function scopeSoutendue($query)
     {
         return $query->where('statut', 'soutendue');
+    }
+
+    // Scope pour thèses sans date de soutenance (si vous utilisez aussi ce champ)
+    public function scopeNonSoutendue($query)
+    {
+        return $query->whereIn('statut', ['en_cours', 'preparation', 'redaction']);
     }
 }

@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('eads', function (Blueprint $table) {
             $table->id();
             $table->string('nom');
+            $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->foreignId('responsable_id')->nullable()->constrained('encadrants')->onDelete('set null');
             $table->string('domaine')->nullable();

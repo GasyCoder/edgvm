@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('specialites', function (Blueprint $table) {
             $table->id();
             $table->string('nom');
+            $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->foreignId('ead_id')->constrained('eads')->onDelete('cascade');
             $table->timestamps();

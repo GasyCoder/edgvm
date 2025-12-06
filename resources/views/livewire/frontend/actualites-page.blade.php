@@ -1,21 +1,47 @@
 <div>
     <!-- Hero Section -->
-    <section class="relative bg-gradient-to-br from-ed-primary via-ed-secondary to-ed-primary py-20 overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-10 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-            <div class="absolute bottom-10 left-10 w-64 h-64 bg-ed-yellow rounded-full blur-3xl"></div>
+    <section class="relative bg-gradient-to-br from-ed-primary via-ed-secondary to-ed-primary
+                    pt-24 pb-10 sm:pt-28 sm:pb-10 overflow-hidden">
+        {{-- Décors doux --}}
+        <div class="absolute inset-0 opacity-15 pointer-events-none">
+            <div class="absolute -top-10 right-0 w-40 h-40 sm:w-56 sm:h-56 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 -left-10 w-32 h-32 sm:w-44 sm:h-44 bg-ed-yellow rounded-full blur-3xl"></div>
         </div>
+
+        {{-- Légère transition vers le contenu en dessous --}}
+        <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
         
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 mt-12">
-            <div class="text-center text-white">
-                <h1 class="text-4xl md:text-6xl font-black mb-4">📰 Actualités</h1>
-                <p class="text-xl text-white/90 max-w-2xl mx-auto">
-                    Restez informé des dernières nouvelles de l'EDGVM
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col items-center text-center text-white gap-4">
+                {{-- Petit badge / sur-titre --}}
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur">
+                    <span class="w-2 h-2 rounded-full bg-ed-yellow"></span>
+                    <span class="text-xs font-semibold uppercase tracking-[0.16em]">
+                        Espace actualités EDGVM
+                    </span>
+                </div>
+
+                {{-- Titre principal --}}
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight">
+                    📰 Actualités
+                </h1>
+
+                {{-- Sous-titre --}}
+                <p class="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl">
+                    Restez informé des dernières nouvelles, évènements et annonces de l’École Doctorale EDGVM.
                 </p>
+
+                {{-- Fil d’Ariane / petit lien retour (optionnel) --}}
+                <div class="flex items-center gap-2 text-sm text-white/80 mt-1">
+                    <a href="{{ route('home') }}" class="hover:text-ed-yellow transition-colors">
+                        Accueil
+                    </a>
+                    <span class="opacity-60">/</span>
+                    <span class="font-semibold">Actualités</span>
+                </div>
             </div>
         </div>
     </section>
-
     <!-- Barre de filtres actifs + toggle vue -->
     <section class="bg-gray-50 py-4 border-b sticky top-0 z-40 backdrop-blur-lg bg-gray-50/95">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -82,44 +108,6 @@
                 
                 <!-- Sidebar (identique) -->
                 <aside class="lg:col-span-1 space-y-6">
-                   <!-- Articles les plus lus -->
-                    {{-- @if($plusLus->isNotEmpty())
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200">
-                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <span>📊</span> Les plus lus
-                        </h3>
-                        <div class="space-y-4">
-                            @foreach($plusLus as $index => $actu)
-                            <a href="{{ route('actualites.show', $actu) }}" 
-                            class="block group">
-                                <div class="flex gap-3">
-                                    <!-- Numéro -->
-                                    <div class="flex-shrink-0 w-8 h-8 bg-ed-primary text-white rounded-full flex items-center justify-center font-bold text-sm">
-                                        {{ $index + 1 }}
-                                    </div>
-                                    
-                                    <div class="flex-1 min-w-0">
-                                        <h4 class="text-sm font-bold text-gray-900 group-hover:text-ed-primary line-clamp-2 mb-1">
-                                            {{ $actu->titre }}
-                                        </h4>
-                                        <div class="flex items-center gap-3 text-xs text-gray-500">
-                                            <span class="flex items-center gap-1">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                </svg>
-                                                {{ $actu->vues_formatted }}
-                                            </span>
-                                            <span>{{ $actu->date_publication->format('d M') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                            @endforeach
-                        </div>
-                    </div>
-                    @endif --}}
-                    
                     <!-- Recherche -->
                     <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">🔍 Rechercher</h3>
@@ -128,7 +116,6 @@
                                placeholder="Mot-clé..."
                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent">
                     </div>
-
                     <!-- Catégories -->
                     <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">📁 Catégories</h3>
@@ -152,7 +139,6 @@
                             @endforeach
                         </ul>
                     </div>
-
                     <!-- Tags -->
                     <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">#️⃣ Tags</h3>
@@ -169,10 +155,8 @@
                         </div>
                     </div>
                 </aside>
-
                 <!-- Liste des actualités -->
                 <main class="lg:col-span-3">
-                    
                     @if($actualites->isEmpty())
                     <div class="text-center py-20">
                         <svg class="mx-auto h-24 w-24 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -187,7 +171,6 @@
                         @endif
                     </div>
                     @else
-                    
                     <!-- VUE GRILLE -->
                     @if($view === 'grid')
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -241,14 +224,15 @@
                             
                             <!-- Contenu -->
                             <div class="p-5">
-                                <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-ed-primary transition-colors line-clamp-2 min-h-[3.5rem]">
-                                    {{ Str::limit(strip_tags($actualite->titre), 40) }}
+                                <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2 min-h-[3.5rem]">
+                                    <a href="{{ route('actualites.show', $actualite) }}"
+                                    class="block group-hover:text-ed-primary transition-colors">
+                                        {{ Str::limit(strip_tags($actualite->titre), 40) }}
+                                    </a>
                                 </h3>
-                                
                                 <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
                                     {{ Str::limit(strip_tags($actualite->contenu), 100) }}
                                 </p>
-                                
                                 <!-- Meta info -->
                                 <div class="flex items-center justify-between mb-4 text-xs text-gray-500">
                                     <span class="flex items-center gap-1">
@@ -335,10 +319,12 @@
                                 <!-- Contenu -->
                                 <div class="flex-1 p-6 md:p-8">
                                     <div class="flex items-start justify-between gap-4 mb-4">
-                                        <h3 class="text-2xl font-bold text-gray-900 group-hover:text-ed-primary transition-colors line-clamp-2">
-                                            {{ $actualite->titre }}
+                                        <h3 class="text-2xl font-bold text-gray-900 line-clamp-2">
+                                            <a href="{{ route('actualites.show', $actualite) }}"
+                                            class="block group-hover:text-ed-primary transition-colors">
+                                                {{ $actualite->titre }}
+                                            </a>
                                         </h3>
-                                        
                                         <!-- Temps de lecture -->
                                         <div class="flex-shrink-0 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-full flex items-center gap-1">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

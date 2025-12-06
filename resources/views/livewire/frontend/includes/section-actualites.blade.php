@@ -11,7 +11,7 @@
                     <div class="w-2 h-2 bg-ed-primary rounded-full"></div>
                     <span class="text-ed-primary font-semibold text-sm">Dernières nouvelles</span>
                 </div>
-                <h2 class="text-4xl md:text-5xl font-black text-gray-900">Actualités</h2>
+                <h2 class="text-3xl md:text-4xl font-black text-gray-900">Actualités</h2>
             </div>
             <a href="{{ route('actualites') }}" class="hidden md:inline-flex items-center gap-2 text-ed-primary font-bold hover:text-ed-secondary transition-colors group">
                 <span>Voir plus</span>

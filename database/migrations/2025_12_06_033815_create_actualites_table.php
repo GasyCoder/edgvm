@@ -17,6 +17,10 @@ return new class extends Migration
             $table->foreignId('image_id')->nullable()->constrained('media')->onDelete('set null');
             $table->date('date_publication')->nullable();
             $table->boolean('visible')->default(true);
+            $table->boolean('est_important')->default(false);
+            $table->boolean('notifier_abonnes')->default(false);
+            $table->timestamp('notification_envoyee_le')->nullable();
+            $table->unsignedBigInteger('vues')->default(0);
             $table->timestamps();
         });
     }

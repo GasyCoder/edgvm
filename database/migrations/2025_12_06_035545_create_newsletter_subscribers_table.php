@@ -14,7 +14,8 @@ return new class extends Migration
             $table->string('nom')->nullable();
             $table->enum('type', ['doctorant', 'encadrant', 'autre'])->default('autre');
             $table->boolean('actif')->default(true);
-            $table->string('token')->unique(); // Pour se désabonner
+            $table->timestamp('desabonne_le')->nullable();
+            $table->string('token')->unique(); 
             $table->timestamp('abonne_le')->useCurrent();
             $table->timestamps();
             

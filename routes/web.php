@@ -1,19 +1,24 @@
 <?php
 
+use App\Livewire\Frontend\EadsPage;
 use App\Livewire\Frontend\HomePage;
+use App\Livewire\Admin\Eads\EadEdit;
 use App\Livewire\Frontend\AboutPage;
 use Illuminate\Support\Facades\Auth;
+use App\Livewire\Admin\Eads\EadIndex;
 use App\Livewire\Admin\Tags\TagIndex;
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Admin\Eads\EadCreate;
 use App\Livewire\Frontend\ContactPage;
 use App\Livewire\Admin\Media\MediaIndex;
 use App\Livewire\Admin\Slides\SlideEdit;
+
+// Composants Admin Livewire
+use App\Livewire\Frontend\EadDetailPage;
 use App\Http\Controllers\AdminController;
 use App\Livewire\Admin\Media\MediaUpload;
 use App\Livewire\Admin\Slides\SlideIndex;
 use App\Livewire\Frontend\ActualitesPage;
-
-// Composants Admin Livewire
 use App\Livewire\Frontend\DoctorantsPage;
 use App\Livewire\Frontend\ProgrammesPage;
 use App\Livewire\Admin\Sliders\SliderEdit;
@@ -25,12 +30,16 @@ use App\Http\Controllers\EncadrantController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\SecretaireController;
 use App\Livewire\Frontend\ActualiteDetailPage;
+use App\Livewire\Frontend\ProgrammeDetailPage;
 use App\Http\Controllers\Admin\MediaController;
 use App\Livewire\Admin\Actualites\ActualiteEdit;
 use App\Livewire\Admin\Categories\CategoryIndex;
 use App\Livewire\Admin\Actualites\ActualiteIndex;
 use App\Livewire\Admin\Actualites\ActualiteCreate;
 use App\Livewire\Admin\Newsletter\SubscriberIndex;
+use App\Livewire\Admin\Specialites\SpecialiteEdit;
+use App\Livewire\Admin\Specialites\SpecialiteIndex;
+use App\Livewire\Admin\Specialites\SpecialiteCreate;
 
 // Frontend Routes
 Route::get('/', HomePage::class)->name('home');
@@ -39,8 +48,13 @@ Route::get('/organisation', AboutPage::class)->name('organisation');
 Route::get('/conseil', AboutPage::class)->name('conseil');
 Route::get('/comite-suivi', AboutPage::class)->name('comite-suivi');
 Route::get('/reglement', AboutPage::class)->name('reglement');
+// Programmes (Spécialités)
 Route::get('/programmes', ProgrammesPage::class)->name('programmes');
-Route::get('/programmes/{id}', ProgrammesPage::class)->name('programmes.show');
+Route::get('/programmes/{specialite}', ProgrammeDetailPage::class)->name('programmes.show');
+// EAD
+Route::get('/ead', EadsPage::class)->name('ead');
+Route::get('/ead/{ead}', EadDetailPage::class)->name('ead.show');
+
 Route::get('/doctorants', DoctorantsPage::class)->name('doctorants');
 Route::get('/fiche-numerique', DoctorantsPage::class)->name('fiche-numerique');
 Route::get('/theses-soutenues', DoctorantsPage::class)->name('theses-soutenues');
@@ -97,6 +111,21 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/actualites/{actualite}/edit', ActualiteEdit::class)->name('actualites.edit');
 
         Route::get('/newsletter/subscribers', SubscriberIndex::class)->name('newsletter.subscribers');
+
+
+        // Spécialités
+        Route::prefix('specialites')->name('specialites.')->group(function () {
+            Route::get('/', SpecialiteIndex::class)->name('index');
+            Route::get('/create', SpecialiteCreate::class)->name('create');
+            Route::get('/{specialite}/edit', SpecialiteEdit::class)->name('edit');
+        });
+        
+        // EAD
+        Route::prefix('ead')->name('ead.')->group(function () {
+            Route::get('/', EadIndex::class)->name('index');
+            Route::get('/create', EadCreate::class)->name('create');
+            Route::get('/{ead}/edit', EadEdit::class)->name('edit');
+        });
 
     });
 
