@@ -10,13 +10,31 @@ return new class extends Migration
     {
         Schema::create('doctorants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
+            
+            // Relation optionnelle avec users (1-1)
+            $table->foreignId('user_id')->nullable()->unique()->constrained('users')->onDelete('cascade');
+            
+            // Informations personnelles
+            $table->string('nom');
+            $table->string('prenom');
+            $table->string('email')->unique();
             $table->string('matricule')->unique();
-            $table->string('niveau')->nullable(); // D1, D2, D3
+            $table->date('date_naissance')->nullable();
+            $table->string('lieu_naissance')->nullable();
             $table->string('phone')->nullable();
             $table->string('adresse')->nullable();
-            $table->date('date_inscription')->nullable();
-            $table->enum('statut', ['actif', 'suspendu', 'diplome'])->default('actif');
+            
+            // Informations académiques
+            $table->enum('niveau', ['D1', 'D2', 'D3'])->default('D1');
+            $table->date('date_inscription');
+            $table->enum('statut', ['actif', 'diplome', 'suspendu', 'abandonne'])->default('actif');
+            
+            // Thèse
+            $table->text('sujet_these')->nullable();
+            $table->foreignId('directeur_id')->nullable()->constrained('encadrants')->nullOnDelete();
+            $table->foreignId('codirecteur_id')->nullable()->constrained('encadrants')->nullOnDelete();
+            $table->foreignId('ead_id')->nullable()->constrained('eads')->nullOnDelete();
+            
             $table->timestamps();
         });
     }

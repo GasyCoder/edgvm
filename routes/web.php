@@ -34,12 +34,18 @@ use App\Livewire\Frontend\ProgrammeDetailPage;
 use App\Http\Controllers\Admin\MediaController;
 use App\Livewire\Admin\Actualites\ActualiteEdit;
 use App\Livewire\Admin\Categories\CategoryIndex;
+use App\Livewire\Admin\Doctorants\DoctorantEdit;
+use App\Livewire\Admin\Doctorants\DoctorantShow;
 use App\Livewire\Admin\Actualites\ActualiteIndex;
+use App\Livewire\Admin\Doctorants\DoctorantIndex;
 use App\Livewire\Admin\Actualites\ActualiteCreate;
+use App\Livewire\Admin\Doctorants\DoctorantCreate;
 use App\Livewire\Admin\Newsletter\SubscriberIndex;
 use App\Livewire\Admin\Specialites\SpecialiteEdit;
 use App\Livewire\Admin\Specialites\SpecialiteIndex;
 use App\Livewire\Admin\Specialites\SpecialiteCreate;
+use App\Http\Controllers\Admin\DoctorantExportController;
+use App\Http\Controllers\Admin\DoctorantImportController;
 
 // Frontend Routes
 Route::get('/', HomePage::class)->name('home');
@@ -125,6 +131,19 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             Route::get('/', EadIndex::class)->name('index');
             Route::get('/create', EadCreate::class)->name('create');
             Route::get('/{ead}/edit', EadEdit::class)->name('edit');
+        });
+
+
+        // Doctorants
+        Route::prefix('doctorants')->name('doctorants.')->group(function () {
+            Route::get('/', DoctorantIndex::class)->name('index');
+            Route::get('/create', DoctorantCreate::class)->name('create');
+            Route::get('/{doctorant}', DoctorantShow::class)->name('show');
+            Route::get('/{doctorant}/edit', DoctorantEdit::class)->name('edit');
+
+        // Export/Import
+        Route::get('/export', [DoctorantExportController::class, 'export'])->name('export');
+        Route::post('/import', [DoctorantImportController::class, 'import'])->name('import');
         });
 
     });

@@ -270,7 +270,7 @@
                     <div class="lg:sticky lg:top-24 space-y-6">
                         
                         <!-- Newsletter -->
-                        <div class="bg-gradient-to-br from-ed-primary via-ed-secondary to-purple-600 rounded-2xl shadow-xl overflow-hidden">
+                        <div class="bg-gradient-to-br from-ed-primary via-ed-secondary to-yellow-600 rounded-2xl shadow-xl overflow-hidden">
                             <div class="p-6 text-white">
                                 <div class="text-center mb-4">
                                     <div class="w-14 h-14 bg-white/20 backdrop-blur-lg rounded-xl flex items-center justify-center mx-auto mb-3 border border-white/30">
