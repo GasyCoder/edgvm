@@ -10,18 +10,57 @@ return new class extends Migration
     {
         Schema::create('theses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('doctorant_id')->constrained('doctorants')->onDelete('cascade');
-            $table->string('titre');
-            $table->longText('description')->nullable();
-            $table->foreignId('specialite_id')->constrained('specialites')->onDelete('cascade');
-            $table->foreignId('ead_id')->constrained('eads')->onDelete('cascade');
-            $table->date('date_debut')->nullable();
-            $table->date('date_prevue_fin')->nullable();
-            $table->enum('statut', ['en_cours', 'soutendue', 'abandonnee'])->default('en_cours');
-            $table->foreignId('media_id')->nullable()->constrained('media')->onDelete('set null');
+
+            // Relations
+            $table->foreignId('doctorant_id')
+                ->constrained('doctorants')
+                ->onDelete('cascade');
+
+            $table->foreignId('specialite_id')
+                ->nullable()
+                ->constrained('specialites')
+                ->nullOnDelete();
+
+            $table->foreignId('ead_id')
+                ->nullable()
+                ->constrained('eads')
+                ->nullOnDelete();
+
+            // Fichier PDF de la thèse (table media)
+            $table->foreignId('media_id')
+                ->nullable()
+                ->constrained('media')
+                ->nullOnDelete();
+
+            // Informations principales
+            $table->string('sujet_these');
+            $table->text('description')->nullable();
+
+            // Résumé & mots-clés
             $table->text('resume_these')->nullable();
             $table->string('mots_cles')->nullable();
+
+            // Informations de publication
+            $table->string('universite')->nullable();
+            $table->date('date_debut')->nullable();
+            $table->date('date_prevue_fin')->nullable();
+            $table->date('date_publication')->nullable();
+
+            // Statut de la thèse
+            $table->enum('statut', [
+                'en_cours',
+                'soutenue',
+                'abandonnee',
+                'suspendue',
+                'preparation',
+                'redaction',
+            ])->default('en_cours');
+
             $table->timestamps();
+
+            // Index utiles
+            $table->index('statut');
+            $table->index('date_debut');
         });
     }
 

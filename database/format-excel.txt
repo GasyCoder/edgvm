@@ -1,0 +1,8 @@
+Votre fichier Excel doit avoir ces en-têtes :
+
+| matricule | nom_complet | email | niveau | sujet_de_these | directeur_de_these | co_directeur | ead | date_de_naissance | lieu_de_naissance | telephone | adresse | date_dinscription | statut |
+|-----------|-------------|-------|--------|----------------|-------------------|--------------|-----|-------------------|-------------------|-----------|---------|-------------------|--------|
+
+**Exemple :**
+```
+D2024001 | Jean Dupont | jean.dupont@example.com | D1 | Étude... | Prof. Martin | | EAD Bio | 15/03/1995 | Mahajanga | +261340000001 | Rue... | 01/09/2024 | actif

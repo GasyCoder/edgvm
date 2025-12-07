@@ -2,11 +2,12 @@
 
 namespace App\Livewire\Admin\Doctorants;
 
-use App\Models\Doctorant;
+use App\Models\EAD;
 use App\Models\User;
 use Livewire\Component;
-use Livewire\WithPagination;
+use App\Models\Doctorant;
 use Livewire\Attributes\Url;
+use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
 
 class DoctorantIndex extends Component
@@ -17,10 +18,13 @@ class DoctorantIndex extends Component
     public $search = '';
     
     #[Url]
+    public $niveau = '';
+    
+    #[Url]
     public $statut = '';
 
     #[Url]
-    public $ead_id = '';
+    public $ead_filter = '';
 
     #[Url]
     public $has_account = '';
@@ -38,12 +42,17 @@ class DoctorantIndex extends Component
         $this->resetPage();
     }
 
+    public function updatingNiveau()
+    {
+        $this->resetPage();
+    }
+
     public function updatingStatut()
     {
         $this->resetPage();
     }
 
-    public function updatingEadId()
+    public function updatingEadFilter()
     {
         $this->resetPage();
     }
@@ -52,7 +61,6 @@ class DoctorantIndex extends Component
     {
         $this->resetPage();
     }
-
 
     // Modal Suppression
     public function confirmDelete($id)
@@ -118,19 +126,34 @@ class DoctorantIndex extends Component
             return;
         }
 
-        if ($doctorant->hasUser()) {
+        if ($doctorant->user) {
             session()->flash('error', '❌ Ce doctorant a déjà un compte utilisateur.');
             $this->closeCreateAccountModal();
             return;
         }
 
-        if (User::where('email', $doctorant->email)->exists()) {
+        // Vérifier si l’email existe déjà côté users
+        $emailSource = $doctorant->user?->email; // via accessor éventuel
+        if ($emailSource && User::where('email', $emailSource)->exists()) {
             session()->flash('error', '❌ Cet email est déjà utilisé par un autre compte.');
             return;
         }
 
         try {
-            $doctorant->createUserAccount($this->accountPassword);
+            $email = $emailSource ?: $doctorant->matricule . '@temp.univ.mg';
+
+            // Créer le compte utilisateur
+            $user = User::create([
+                'name'     => $doctorant->name ?? 'Doctorant',
+                'email'    => $email,
+                'password' => Hash::make($this->accountPassword),
+                'role'     => 'doctorant',
+                'active'   => true,
+            ]);
+
+            // Lier le user au doctorant
+            $doctorant->update(['user_id' => $user->id]);
+
             session()->flash('success', '✅ Compte utilisateur créé avec succès !');
             $this->closeCreateAccountModal();
         } catch (\Exception $e) {
@@ -140,38 +163,60 @@ class DoctorantIndex extends Component
 
     public function render()
     {
-        $query = Doctorant::with(['user', 'directeur.user', 'ead', 'theses']);
+        $doctorants = Doctorant::with([
+                'user',
+                // on charge les thèses + EAD + encadrants pour l’affichage éventuel
+                'theses.ead',
+                'theses.encadrants.user',
+            ])
+            ->when($this->search, function ($query) {
+                $search = $this->search;
 
-        if ($this->search) {
-            $query->where(function($q) {
-                $q->where('nom', 'like', '%' . $this->search . '%')
-                  ->orWhere('prenom', 'like', '%' . $this->search . '%')
-                  ->orWhere('email', 'like', '%' . $this->search . '%')
-                  ->orWhere('matricule', 'like', '%' . $this->search . '%')
-                  ->orWhere('sujet_these', 'like', '%' . $this->search . '%');
-            });
-        }
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', '%' . $search . '%')
+                                  ->orWhere('email', 'like', '%' . $search . '%');
+                    })
+                    ->orWhere('matricule', 'like', '%' . $search . '%')
+                    ->orWhereHas('theses', function ($tq) use ($search) {
+                        $tq->where('sujet_these', 'like', '%' . $search . '%');
+                    });
+                });
+            })
+            ->when($this->niveau, function ($query) {
+                $query->where('niveau', $this->niveau);
+            })
+            ->when($this->statut, function ($query) {
+                $query->where('statut', $this->statut);
+            })
+            ->when($this->ead_filter, function ($query) {
+                $query->whereHas('theses', function ($tq) {
+                    $tq->where('ead_id', $this->ead_filter);
+                });
+            })
+            ->when($this->has_account, function ($query) {
+                if ($this->has_account === 'yes') {
+                    $query->whereNotNull('user_id');
+                } elseif ($this->has_account === 'no') {
+                    $query->whereNull('user_id');
+                }
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
-        if ($this->statut) {
-            $query->where('statut', $this->statut);
-        }
+        $eads = EAD::orderBy('nom')->get();
 
-        if ($this->ead_id) {
-            $query->where('ead_id', $this->ead_id);
-        }
-
-        if ($this->has_account === 'yes') {
-            $query->withUser();
-        } elseif ($this->has_account === 'no') {
-            $query->withoutUser();
-        }
-
-        $doctorants = $query->orderBy('created_at', 'desc')->paginate(15);
-        $eads = \App\Models\EAD::orderBy('nom')->get();
+        // 🔹 Stats simples sur les doctorants
+        $totalDoctorants        = Doctorant::count();
+        $doctorantsActifs       = Doctorant::where('statut', 'actif')->count();
+        $doctorantsSansCompte   = Doctorant::whereNull('user_id')->count();
 
         return view('livewire.admin.doctorants.doctorant-index', [
-            'doctorants' => $doctorants,
-            'eads' => $eads,
-        ])->layout('layouts.app');
+            'doctorants'            => $doctorants,
+            'eads'                  => $eads,
+            'totalDoctorants'       => $totalDoctorants,
+            'doctorantsActifs'      => $doctorantsActifs,
+            'doctorantsSansCompte'  => $doctorantsSansCompte,
+        ]);
     }
 }

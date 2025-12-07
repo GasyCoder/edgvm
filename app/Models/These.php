@@ -10,26 +10,29 @@ class These extends Model
     use HasFactory;
 
     protected $table = 'theses';
+
     protected $fillable = [
         'doctorant_id',
-        'titre',
+        'sujet_these',
         'description',
         'specialite_id',
         'ead_id',
+        'universite_soutenance',
         'date_debut',
         'date_prevue_fin',
+        'date_publication',
         'statut',
-        'media_id',
+        'media_id',        // ✅ lien vers table media
         'resume_these',
         'mots_cles',
     ];
 
     protected $casts = [
-        'date_debut' => 'date',
-        'date_prevue_fin' => 'date',
+        'date_debut'       => 'date',
+        'date_prevue_fin'  => 'date',
+        'date_publication' => 'date',
     ];
 
-    // Relations - AVEC CLÉS ÉTRANGÈRES EXPLICITES
     public function doctorant()
     {
         return $this->belongsTo(Doctorant::class, 'doctorant_id');
@@ -42,7 +45,7 @@ class These extends Model
 
     public function ead()
     {
-        return $this->belongsTo(EAD::class, 'ead_id'); // ← IMPORTANT : Spécifier 'ead_id'
+        return $this->belongsTo(EAD::class, 'ead_id');
     }
 
     public function fichier()
@@ -50,6 +53,7 @@ class These extends Model
         return $this->belongsTo(Media::class, 'media_id');
     }
 
+    // Encadrants via pivot
     public function encadrants()
     {
         return $this->belongsToMany(Encadrant::class, 'these_encadrants')
@@ -57,30 +61,27 @@ class These extends Model
             ->withTimestamps();
     }
 
-    public function soutenance()
+    public function directeur()
     {
-        return $this->hasOne(Soutenance::class, 'these_id'); // ← Explicite aussi
+        return $this->encadrants->firstWhere('pivot.role', 'directeur');
     }
 
-    public function publications()
+    public function codirecteur()
     {
-        return $this->hasMany(Publication::class, 'these_id'); // ← Explicite aussi
+        return $this->encadrants->firstWhere('pivot.role', 'codirecteur');
     }
 
-    // Scopes
-    public function scopeEnCours($query)
+    public function jurys()
     {
-        return $query->where('statut', 'en_cours');
+        return $this->belongsToMany(Jury::class, 'these_jury')
+            ->withPivot(['role', 'ordre'])
+            ->withTimestamps();
     }
 
-    public function scopeSoutendue($query)
+    // ✅ URL pratique du PDF
+    public function getFichierPdfUrlAttribute()
     {
-        return $query->where('statut', 'soutendue');
-    }
-
-    // Scope pour thèses sans date de soutenance (si vous utilisez aussi ce champ)
-    public function scopeNonSoutendue($query)
-    {
-        return $query->whereIn('statut', ['en_cours', 'preparation', 'redaction']);
+        // Media a déjà un accessor "url"
+        return $this->fichier?->url;
     }
 }

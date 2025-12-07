@@ -69,6 +69,8 @@ class UserSeeder extends Seeder
             'niveau' => 'D1',
             'phone' => '+261 34 00 000 02',
             'adresse' => 'Mahajanga',
+            'date_naissance' => '1995-05-15',
+            'lieu_naissance' => 'Antananarivo',
             'date_inscription' => now(),
             'statut' => 'actif',
         ]);

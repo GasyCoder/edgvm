@@ -11,13 +11,7 @@ class DoctorantShow extends Component
 
     public function mount(Doctorant $doctorant)
     {
-        $this->doctorant = $doctorant->load([
-            'directeur.user',
-            'codirecteur.user',
-            'ead',
-            'theses.specialite',
-            'user'
-        ]);
+        $this->doctorant = $doctorant->load(['theses.encadrants']);
     }
 
     public function render()

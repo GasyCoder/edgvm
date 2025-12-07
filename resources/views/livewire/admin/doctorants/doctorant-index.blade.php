@@ -12,7 +12,6 @@
                     Exporter Excel
                 </a>
                 
-                <!-- Importer -->
                 <!-- Importer (sans modal) -->
                 <form action="{{ route('admin.doctorants.import') }}" 
                     method="POST" 
@@ -105,7 +104,7 @@
                     <!-- EAD -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">🏢 EAD</label>
-                        <select wire:model.live="ead_id"
+                        <select wire:model.live="ead_filter"
                                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent">
                             <option value="">Toutes les EAD</option>
                             @foreach($eads as $ead)
@@ -139,14 +138,60 @@
                     </div>
                 </div>
 
-                @if($search || $statut || $ead_id || $has_account)
+                @if($search || $statut || $ead_filter || $has_account)
                 <div class="mt-4">
-                    <button wire:click="$set('search', ''); $set('statut', ''); $set('ead_id', ''); $set('has_account', '')" 
-                            class="text-sm text-red-600 hover:text-red-800 font-semibold">
+                    <button 
+                        wire:click="$set('search', ''); $set('statut', ''); $set('ead_filter', ''); $set('has_account', '')" 
+                        class="text-sm text-red-600 hover:text-red-800 font-semibold">
                         Réinitialiser les filtres
                     </button>
                 </div>
                 @endif
+            </div>
+
+            {{-- Cartes stats simples --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl p-6 text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-indigo-100 text-sm font-medium">Doctorants inscrits</p>
+                            <p class="text-3xl font-bold mt-1">{{ $totalDoctorants }}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M9 20H4v-2a3 3 0 015.356-1.857M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-100 text-sm font-medium">Doctorants actifs</p>
+                            <p class="text-3xl font-bold mt-1">{{ $doctorantsActifs }}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-6 text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-amber-100 text-sm font-medium">Sans compte utilisateur</p>
+                            <p class="text-3xl font-bold mt-1">{{ $doctorantsSansCompte }}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c.5304 0 1.0391-.2107 1.4142-.5858C13.7893 10.0391 14 9.5304 14 9c0-.5304-.2107-1.0391-.5858-1.4142C13.0391 7.2107 12.5304 7 12 7c-.5304 0-1.0391.2107-1.4142.5858C10.2107 7.9609 10 8.4696 10 9c0 .5304.2107 1.0391.5858 1.4142C10.9609 10.7893 11.4696 11 12 11zm0 2c-.7956 0-1.5587.3161-2.1213.8787C9.3161 14.4413 9 15.2044 9 16h6c0-.7956-.3161-1.5587-.8787-2.1213C13.5587 13.3161 12.7956 13 12 13z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Table -->
@@ -163,15 +208,6 @@
                                 </th>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                                     Niveau
-                                </th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                    Directeur
-                                </th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                    EAD
-                                </th>
-                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">
-                                    Compte
                                 </th>
                                 <th class="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">
                                     Statut
@@ -208,35 +244,6 @@
                                     <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-xs font-semibold">
                                         {{ $doctorant->niveau }}
                                     </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    @if($doctorant->directeur && $doctorant->directeur->user)
-                                    <div class="text-sm text-gray-900">{{ $doctorant->directeur->user->name }}</div>
-                                    @else
-                                    <span class="text-gray-400 text-sm">Non défini</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4">
-                                    @if($doctorant->ead)
-                                    <span class="text-sm text-gray-900">{{ Str::limit($doctorant->ead->nom, 30) }}</span>
-                                    @else
-                                    <span class="text-gray-400 text-sm">-</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    @if($doctorant->hasUser())
-                                    <span class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-bold flex items-center justify-center gap-1">
-                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                        </svg>
-                                        Actif
-                                    </span>
-                                    @else
-                                    <button wire:click="openCreateAccountModal({{ $doctorant->id }})"
-                                            class="px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-xs font-bold hover:bg-orange-200 transition">
-                                        Créer compte
-                                    </button>
-                                    @endif
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     @if($doctorant->statut === 'actif')
@@ -284,7 +291,7 @@
                                                 class="inline-flex items-center justify-center w-9 h-9 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition"
                                                 title="Supprimer">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1 1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                             </svg>
                                         </button>
                                     </div>
@@ -311,7 +318,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Modal suppression -->
     @if($confirmingDeletion)

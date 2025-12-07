@@ -17,14 +17,16 @@ class Specialite extends Model
     ];
 
     /**
-     * Configure le route model binding pour utiliser le slug
+     * Route model binding par slug
      */
     public function getRouteKeyName()
     {
         return 'slug';
     }
 
-    // Relations - SPÉCIFIER LA CLÉ ÉTRANGÈRE
+    /**
+     * Relations
+     */
     public function ead()
     {
         return $this->belongsTo(EAD::class, 'ead_id');
@@ -35,18 +37,27 @@ class Specialite extends Model
         return $this->hasMany(Inscription::class, 'specialite_id');
     }
 
+    /**
+     * Thèses liées à cette spécialité via l'EAD
+     * On utilise ead_id côté Specialite et côté These
+     */
     public function theses()
     {
-        return $this->hasMany(These::class, 'specialite_id');
+        // theses.ead_id == specialites.ead_id
+        return $this->hasMany(These::class, 'ead_id', 'ead_id');
     }
 
-    // Scopes
+    /**
+     * Scopes
+     */
     public function scopeActive($query)
     {
         return $query->whereHas('ead');
     }
 
-    // Accessors
+    /**
+     * Accessors : stats sur les thèses
+     */
     public function getThesesEnCoursAttribute()
     {
         return $this->theses()->enCours()->count();

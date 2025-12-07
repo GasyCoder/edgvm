@@ -1,5 +1,6 @@
 <?php
 
+
 use App\Livewire\Frontend\EadsPage;
 use App\Livewire\Frontend\HomePage;
 use App\Livewire\Admin\Eads\EadEdit;
@@ -8,23 +9,31 @@ use Illuminate\Support\Facades\Auth;
 use App\Livewire\Admin\Eads\EadIndex;
 use App\Livewire\Admin\Tags\TagIndex;
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Admin\Eads\EadCreate;
-use App\Livewire\Frontend\ContactPage;
-use App\Livewire\Admin\Media\MediaIndex;
-use App\Livewire\Admin\Slides\SlideEdit;
 
 // Composants Admin Livewire
+use App\Livewire\Admin\Eads\EadCreate;
+use App\Livewire\Admin\Jurys\JuryEdit;
+use App\Livewire\Frontend\ContactPage;
+use App\Livewire\Admin\Jurys\JuryIndex;
+use App\Livewire\Admin\Jurys\JuryCreate;
+use App\Livewire\Admin\Media\MediaIndex;
+use App\Livewire\Admin\Slides\SlideEdit;
+use App\Livewire\Admin\Theses\TheseEdit;
+use App\Livewire\Admin\Theses\TheseShow;
 use App\Livewire\Frontend\EadDetailPage;
 use App\Http\Controllers\AdminController;
 use App\Livewire\Admin\Media\MediaUpload;
 use App\Livewire\Admin\Slides\SlideIndex;
+use App\Livewire\Admin\Theses\TheseIndex;
 use App\Livewire\Frontend\ActualitesPage;
 use App\Livewire\Frontend\DoctorantsPage;
 use App\Livewire\Frontend\ProgrammesPage;
 use App\Livewire\Admin\Sliders\SliderEdit;
 use App\Livewire\Admin\Slides\SlideCreate;
+use App\Livewire\Admin\Theses\TheseCreate;
 use App\Livewire\Admin\Sliders\SliderIndex;
 use App\Livewire\Admin\Sliders\SliderCreate;
+use App\Livewire\Admin\Theses\TheseJuryEdit;
 use App\Http\Controllers\DoctorantController;
 use App\Http\Controllers\EncadrantController;
 use App\Http\Controllers\NewsletterController;
@@ -36,16 +45,24 @@ use App\Livewire\Admin\Actualites\ActualiteEdit;
 use App\Livewire\Admin\Categories\CategoryIndex;
 use App\Livewire\Admin\Doctorants\DoctorantEdit;
 use App\Livewire\Admin\Doctorants\DoctorantShow;
+use App\Livewire\Admin\Encadrants\EncadrantEdit;
+use App\Livewire\Admin\Encadrants\EncadrantShow;
 use App\Livewire\Admin\Actualites\ActualiteIndex;
 use App\Livewire\Admin\Doctorants\DoctorantIndex;
+use App\Livewire\Admin\Encadrants\EncadrantIndex;
 use App\Livewire\Admin\Actualites\ActualiteCreate;
 use App\Livewire\Admin\Doctorants\DoctorantCreate;
+use App\Livewire\Admin\Encadrants\EncadrantCreate;
 use App\Livewire\Admin\Newsletter\SubscriberIndex;
 use App\Livewire\Admin\Specialites\SpecialiteEdit;
 use App\Livewire\Admin\Specialites\SpecialiteIndex;
 use App\Livewire\Admin\Specialites\SpecialiteCreate;
+use App\Http\Controllers\Admin\TheseExportController;
+use App\Http\Controllers\Admin\TheseImportController;
 use App\Http\Controllers\Admin\DoctorantExportController;
 use App\Http\Controllers\Admin\DoctorantImportController;
+use App\Http\Controllers\Admin\EncadrantExportController;
+use App\Http\Controllers\Admin\EncadrantImportController;
 
 // Frontend Routes
 Route::get('/', HomePage::class)->name('home');
@@ -138,14 +155,53 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::prefix('doctorants')->name('doctorants.')->group(function () {
             Route::get('/', DoctorantIndex::class)->name('index');
             Route::get('/create', DoctorantCreate::class)->name('create');
+            
+            // Export/Import AVANT les routes avec {doctorant}
+            Route::get('/export', [DoctorantExportController::class, 'export'])->name('export');
+            Route::post('/import', [DoctorantImportController::class, 'import'])->name('import');
+            
+            // Routes avec paramètres à la fin
             Route::get('/{doctorant}', DoctorantShow::class)->name('show');
             Route::get('/{doctorant}/edit', DoctorantEdit::class)->name('edit');
-
-        // Export/Import
-        Route::get('/export', [DoctorantExportController::class, 'export'])->name('export');
-        Route::post('/import', [DoctorantImportController::class, 'import'])->name('import');
         });
 
+        // Encadrants
+        Route::prefix('encadrants')->name('encadrants.')->group(function () {
+            Route::get('/', EncadrantIndex::class)->name('index');
+            Route::get('/create', EncadrantCreate::class)->name('create');
+            
+            // ⚠️ IMPORTANT : Routes spécifiques AVANT les routes avec paramètres
+            Route::get('/export', [EncadrantExportController::class, 'export'])->name('export');
+            Route::post('/import', [EncadrantImportController::class, 'import'])->name('import');
+            
+            // Routes avec paramètres dynamiques en DERNIER
+            Route::get('/{encadrant}', EncadrantShow::class)->name('show');
+            Route::get('/{encadrant}/edit', EncadrantEdit::class)->name('edit');
+        });
+
+        // Thèses
+        Route::prefix('theses')->name('theses.')->group(function () {
+            Route::get('/', TheseIndex::class)->name('index');
+            Route::get('/create', TheseCreate::class)->name('create');
+
+            // Routes spécifiques AVANT paramètres dynamiques
+            Route::get('/export', [TheseExportController::class, 'export'])->name('export');
+            Route::post('/import', [TheseImportController::class, 'import'])->name('import');
+
+            // 🔹 Gestion du jury d'une thèse
+            Route::get('/{these}/jury', TheseJuryEdit::class)->name('jury.edit');
+
+            // Routes avec paramètres
+            Route::get('/{these}', TheseShow::class)->name('show');
+            Route::get('/{these}/edit', TheseEdit::class)->name('edit');
+        });
+
+        // Jurys
+        Route::prefix('jurys')->name('jurys.')->group(function () {
+            Route::get('/', JuryIndex::class)->name('index');    
+            Route::get('/create', JuryCreate::class)->name('create'); 
+            Route::get('/{jury}/edit', JuryEdit::class)->name('edit'); 
+        });
     });
 
     // Secrétaire

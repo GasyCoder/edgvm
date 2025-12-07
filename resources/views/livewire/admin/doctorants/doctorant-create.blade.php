@@ -16,66 +16,85 @@
             <form wire:submit.prevent="save">
                 <div class="bg-white rounded-xl shadow-lg p-8 space-y-8">
                     
-                    <!-- Section Identité -->
+                    {{-- Section Identité & Compte Utilisateur --}}
                     <div class="border-b border-gray-200 pb-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-ed-primary" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                             </svg>
-                            Identité
+                            Identité & Compte Utilisateur
                         </h3>
                         
-                            <!-- Nom -->
-                        <div class="md:col-span-3 pb-6">
-                            <label for="name" class="block text-sm font-bold text-gray-700 mb-2">
-                                Nom complet <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" 
-                                    id="name"
-                                    wire:model="name"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('name') border-red-500 @enderror">
-                            @error('name')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Matricule -->
+                            {{-- Nom complet --}}
+                            <div class="md:col-span-2">
+                                <label for="name" class="block text-sm font-bold text-gray-700 mb-2">
+                                    Nom complet <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" 
+                                       id="name"
+                                       wire:model="name"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('name') border-red-500 @enderror"
+                                       placeholder="Ex: Jean RAKOTO">
+                                @error('name')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Matricule --}}
                             <div>
                                 <label for="matricule" class="block text-sm font-bold text-gray-700 mb-2">
                                     Matricule <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" 
-                                    id="matricule"
-                                    wire:model="matricule"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('matricule') border-red-500 @enderror"
-                                    placeholder="Ex: DOC2024001">
+                                       id="matricule"
+                                       wire:model="matricule"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('matricule') border-red-500 @enderror"
+                                       placeholder="Ex: DOC2024001">
                                 @error('matricule')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <!-- Email -->
+                            {{-- Email --}}
                             <div>
                                 <label for="email" class="block text-sm font-bold text-gray-700 mb-2">
                                     Email <span class="text-red-500">*</span>
                                 </label>
                                 <input type="email" 
-                                    id="email"
-                                    wire:model="email"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('email') border-red-500 @enderror"
-                                    placeholder="exemple@univ-mahajanga.mg">
+                                       id="email"
+                                       wire:model="email"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('email') border-red-500 @enderror"
+                                       placeholder="exemple@univ-mahajanga.mg">
                                 @error('email')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
-                                <p class="mt-1 text-xs text-gray-500">
-                                    💡 Un compte utilisateur pourra être créé plus tard avec cet email
-                                </p>
+                            </div>
+                        </div>
+
+                        {{-- Info compte auto --}}
+                        <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <p class="text-sm font-semibold text-blue-900">Compte utilisateur automatique</p>
+                                    <p class="text-sm text-blue-700 mt-1">
+                                        Un compte sera créé automatiquement avec le mot de passe par défaut : 
+                                        <code class="px-2 py-1 bg-blue-100 rounded font-mono text-xs">
+                                            doctorant123
+                                        </code>
+                                    </p>
+                                    <p class="text-xs text-blue-600 mt-1">
+                                        Le doctorant pourra le modifier lors de sa première connexion.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Section Informations Personnelles -->
+                    {{-- Section Informations Personnelles --}}
                     <div class="border-b border-gray-200 pb-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-ed-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,7 +104,7 @@
                         </h3>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Date de naissance -->
+                            {{-- Date de naissance --}}
                             <div>
                                 <label for="date_naissance" class="block text-sm font-bold text-gray-700 mb-2">
                                     Date de naissance
@@ -99,7 +118,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Lieu de naissance -->
+                            {{-- Lieu de naissance --}}
                             <div>
                                 <label for="lieu_naissance" class="block text-sm font-bold text-gray-700 mb-2">
                                     Lieu de naissance
@@ -114,7 +133,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Téléphone -->
+                            {{-- Téléphone --}}
                             <div>
                                 <label for="phone" class="block text-sm font-bold text-gray-700 mb-2">
                                     Téléphone
@@ -129,16 +148,17 @@
                                 @enderror
                             </div>
 
-                            <!-- Adresse -->
-                            <div>
+                            {{-- Adresse (textarea) --}}
+                            <div class="md:col-span-2">
                                 <label for="adresse" class="block text-sm font-bold text-gray-700 mb-2">
                                     Adresse
                                 </label>
-                                <input type="text" 
-                                       id="adresse"
-                                       wire:model="adresse"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('adresse') border-red-500 @enderror"
-                                       placeholder="Ex: Mahajanga, Madagascar">
+                                <textarea 
+                                    id="adresse"
+                                    wire:model="adresse"
+                                    rows="3"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('adresse') border-red-500 @enderror"
+                                    placeholder="Ex: Quartier, Ville, Pays"></textarea>
                                 @error('adresse')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -146,7 +166,7 @@
                         </div>
                     </div>
 
-                    <!-- Section Informations Académiques -->
+                    {{-- Section Informations Académiques --}}
                     <div class="border-b border-gray-200 pb-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-ed-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,7 +176,7 @@
                         </h3>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Niveau -->
+                            {{-- Niveau --}}
                             <div>
                                 <label for="niveau" class="block text-sm font-bold text-gray-700 mb-2">
                                     Niveau <span class="text-red-500">*</span>
@@ -173,7 +193,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Date d'inscription -->
+                            {{-- Date d'inscription --}}
                             <div>
                                 <label for="date_inscription" class="block text-sm font-bold text-gray-700 mb-2">
                                     Date d'inscription <span class="text-red-500">*</span>
@@ -187,120 +207,70 @@
                                 @enderror
                             </div>
 
-                            <!-- Statut -->
-                            <div>
-                                <label for="statut" class="block text-sm font-bold text-gray-700 mb-2">
+                            {{-- Statut en buttons --}}
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-bold text-gray-700 mb-2">
                                     Statut <span class="text-red-500">*</span>
                                 </label>
-                                <select id="statut"
-                                        wire:model="statut"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('statut') border-red-500 @enderror">
-                                    <option value="actif">Actif</option>
-                                    <option value="diplome">Diplômé</option>
-                                    <option value="suspendu">Suspendu</option>
-                                    <option value="abandonne">Abandonné</option>
-                                </select>
+
+                                <div class="flex flex-wrap gap-3">
+                                    {{-- Actif --}}
+                                    <button type="button"
+                                            wire:click="$set('statut', 'actif')"
+                                            class="px-3 py-2 rounded-lg border text-sm font-semibold transition
+                                                @if($statut === 'actif')
+                                                    bg-green-100 text-green-700 border-green-500 shadow-sm
+                                                @else
+                                                    bg-white text-gray-700 border-gray-300 hover:bg-gray-50
+                                                @endif">
+                                        Actif
+                                    </button>
+
+                                    {{-- Diplômé --}}
+                                    <button type="button"
+                                            wire:click="$set('statut', 'diplome')"
+                                            class="px-3 py-2 rounded-lg border text-sm font-semibold transition
+                                                @if($statut === 'diplome')
+                                                    bg-blue-100 text-blue-700 border-blue-500 shadow-sm
+                                                @else
+                                                    bg-white text-gray-700 border-gray-300 hover:bg-gray-50
+                                                @endif">
+                                        Diplômé
+                                    </button>
+
+                                    {{-- Suspendu --}}
+                                    <button type="button"
+                                            wire:click="$set('statut', 'suspendu')"
+                                            class="px-3 py-2 rounded-lg border text-sm font-semibold transition
+                                                @if($statut === 'suspendu')
+                                                    bg-orange-100 text-orange-700 border-orange-500 shadow-sm
+                                                @else
+                                                    bg-white text-gray-700 border-gray-300 hover:bg-gray-50
+                                                @endif">
+                                        Suspendu
+                                    </button>
+
+                                    {{-- Abandonné --}}
+                                    <button type="button"
+                                            wire:click="$set('statut', 'abandonne')"
+                                            class="px-3 py-2 rounded-lg border text-sm font-semibold transition
+                                                @if($statut === 'abandonne')
+                                                    bg-red-100 text-red-700 border-red-500 shadow-sm
+                                                @else
+                                                    bg-white text-gray-700 border-gray-300 hover:bg-gray-50
+                                                @endif">
+                                        Abandonné
+                                    </button>
+                                </div>
+
                                 @error('statut')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
-
-                            <!-- EAD -->
-                            <div>
-                                <label for="ead_id" class="block text-sm font-bold text-gray-700 mb-2">
-                                    EAD <span class="text-red-500">*</span>
-                                </label>
-                                <select id="ead_id"
-                                        wire:model="ead_id"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('ead_id') border-red-500 @enderror">
-                                    <option value="">-- Sélectionner une EAD --</option>
-                                    @foreach($eads as $ead)
-                                    <option value="{{ $ead->id }}">{{ $ead->nom }}</option>
-                                    @endforeach
-                                </select>
-                                @error('ead_id')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
                         </div>
                     </div>
 
-                    <!-- Section Thèse -->
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-ed-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                            Informations sur la thèse
-                        </h3>
-                        
-                        <div class="space-y-6">
-                            <!-- Sujet de thèse -->
-                            <div>
-                                <label for="sujet_these" class="block text-sm font-bold text-gray-700 mb-2">
-                                    Sujet de thèse
-                                </label>
-                                <textarea id="sujet_these"
-                                          wire:model="sujet_these"
-                                          rows="3"
-                                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('sujet_these') border-red-500 @enderror"
-                                          placeholder="Ex: Étude de l'impact des changements climatiques sur..."></textarea>
-                                @error('sujet_these')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Directeur de thèse -->
-                                <div>
-                                    <label for="directeur_id" class="block text-sm font-bold text-gray-700 mb-2">
-                                        Directeur de thèse <span class="text-red-500">*</span>
-                                    </label>
-                                    <select id="directeur_id"
-                                            wire:model="directeur_id"
-                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('directeur_id') border-red-500 @enderror">
-                                        <option value="">-- Sélectionner un directeur --</option>
-                                        @foreach($encadrants as $encadrant)
-                                        <option value="{{ $encadrant->id }}">
-                                            {{ $encadrant->user->name }}
-                                            @if($encadrant->grade)
-                                            ({{ $encadrant->grade }})
-                                            @endif
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                    @error('directeur_id')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Co-directeur -->
-                                <div>
-                                    <label for="codirecteur_id" class="block text-sm font-bold text-gray-700 mb-2">
-                                        Co-directeur
-                                    </label>
-                                    <select id="codirecteur_id"
-                                            wire:model="codirecteur_id"
-                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('codirecteur_id') border-red-500 @enderror">
-                                        <option value="">-- Sélectionner un co-directeur --</option>
-                                        @foreach($encadrants as $encadrant)
-                                        <option value="{{ $encadrant->id }}">
-                                            {{ $encadrant->user->name }}
-                                            @if($encadrant->grade)
-                                            ({{ $encadrant->grade }})
-                                            @endif
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                    @error('codirecteur_id')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Boutons -->
+                    {{-- Boutons --}}
                     <div class="flex gap-4 pt-6">
                         <button type="submit"
                                 class="flex-1 px-6 py-3 bg-ed-primary text-white rounded-lg hover:bg-ed-secondary transition font-bold shadow-lg">

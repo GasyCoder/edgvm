@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('these_id')->constrained('theses')->onDelete('cascade');
             $table->foreignId('encadrant_id')->constrained('encadrants')->onDelete('cascade');
-            $table->enum('role', ['directeur', 'co-directeur'])->default('directeur');
+            $table->enum('role', ['directeur', 'codirecteur'])->default('directeur');
             $table->timestamps();
             $table->unique(['these_id', 'encadrant_id']);
         });

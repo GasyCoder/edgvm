@@ -14,7 +14,9 @@ class DoctorantsExport implements FromCollection, WithHeadings, WithMapping, Wit
 {
     public function collection()
     {
-        return Doctorant::with(['directeur.user', 'codirecteur.user', 'ead'])
+        return Doctorant::with([
+                'user',
+            ])
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -23,20 +25,16 @@ class DoctorantsExport implements FromCollection, WithHeadings, WithMapping, Wit
     {
         return [
             'Matricule',
-            'Nom',
-            'Prénom',
+            'Nom complet',
             'Email',
             'Niveau',
-            'Sujet de thèse',
-            'Directeur de thèse',
-            'Co-directeur',
-            'EAD',
             'Date de naissance',
             'Lieu de naissance',
             'Téléphone',
             'Adresse',
             'Date d\'inscription',
             'Statut',
+            'A un compte',
         ];
     }
 
@@ -44,20 +42,18 @@ class DoctorantsExport implements FromCollection, WithHeadings, WithMapping, Wit
     {
         return [
             $doctorant->matricule,
-            $doctorant->nom,
-            $doctorant->prenom,
-            $doctorant->email,
+            $doctorant->user?->name ?? 'Pas de compte',
+            $doctorant->user?->email ?? 'N/A',
             $doctorant->niveau,
-            $doctorant->sujet_these,
-            $doctorant->directeur?->user->name ?? '',
-            $doctorant->codirecteur?->user->name ?? '',
-            $doctorant->ead?->nom ?? '',
             $doctorant->date_naissance?->format('d/m/Y') ?? '',
             $doctorant->lieu_naissance ?? '',
             $doctorant->phone ?? '',
             $doctorant->adresse ?? '',
-            $doctorant->date_inscription->format('d/m/Y'),
+            $doctorant->date_inscription
+                ? $doctorant->date_inscription->format('d/m/Y')
+                : '',
             ucfirst($doctorant->statut),
+            $doctorant->user ? 'Oui' : 'Non',
         ];
     }
 

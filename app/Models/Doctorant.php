@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Doctorant extends Model
 {
@@ -12,13 +11,8 @@ class Doctorant extends Model
 
     protected $fillable = [
         'user_id',
-        'email',
         'matricule',
         'niveau',
-        'sujet_these',
-        'directeur_id',
-        'codirecteur_id',
-        'ead_id',
         'phone',
         'adresse',
         'date_inscription',
@@ -29,113 +23,116 @@ class Doctorant extends Model
 
     protected $casts = [
         'date_inscription' => 'date',
-        'date_naissance' => 'date',
+        'date_naissance'   => 'date',
     ];
 
-    // Relations
+    /**
+     * Relations
+     */
     public function user()
     {
-        return $this->belongsTo(User::class)->withDefault();
-    }
-
-    public function directeur()
-    {
-        return $this->belongsTo(Encadrant::class, 'directeur_id');
-    }
-
-    public function codirecteur()
-    {
-        return $this->belongsTo(Encadrant::class, 'codirecteur_id');
-    }
-
-    public function ead()
-    {
-        return $this->belongsTo(EAD::class, 'ead_id');
-    }
-
-    public function inscriptions()
-    {
-        return $this->hasMany(Inscription::class);
+        return $this->belongsTo(User::class);
     }
 
     public function theses()
     {
-        return $this->hasMany(These::class);
+        return $this->hasMany(These::class, 'doctorant_id');
     }
 
-    // Scopes
-    public function scopeActif($query)
+    /**
+     * Thèse en cours (si tu en as au plus une en_cours)
+     */
+    public function theseActive()
     {
-        return $query->where('statut', 'actif');
+        return $this->hasOne(These::class, 'doctorant_id')
+            ->where('statut', 'en_cours');
     }
 
-    public function scopeDiplome($query)
+    /**
+     * 🔁 EAD via la thèse (hasOneThrough)
+     * Doctorant -> Theses (doctorant_id) -> EAD (ead_id)
+     */
+    public function ead()
     {
-        return $query->where('statut', 'diplome');
+        return $this->hasOneThrough(
+            EAD::class,    // modèle final
+            These::class,  // modèle intermédiaire
+            'doctorant_id',// theses.doctorant_id = doctorants.id
+            'id',          // eads.id = theses.ead_id
+            'id',          // doctorants.id
+            'ead_id'       // theses.ead_id
+        );
     }
 
-    public function scopeSuspendu($query)
-    {
-        return $query->where('statut', 'suspendu');
-    }
+    /**
+     * Accessors pratiques
+     */
 
-    public function scopeWithUser($query)
-    {
-        return $query->whereNotNull('user_id');
-    }
-
-    public function scopeWithoutUser($query)
-    {
-        return $query->whereNull('user_id');
-    }
-
-    public function getAgeAttribute()
-    {
-        if (!$this->date_naissance) {
-            return null;
-        }
-        return $this->date_naissance->age;
-    }
-
-    // Helpers
-    public function hasUser()
-    {
-        return !is_null($this->user_id);
-    }
-
-    public function createUserAccount($password = null)
-    {
-        if ($this->hasUser()) {
-            return $this->user;
-        }
-
-        $user = User::create([
-            'name' => $this->nom_complet,
-            'email' => $this->email,
-            'password' => Hash::make($password ?? 'password123'),
-            'role' => 'doctorant',
-            'active' => true,
-        ]);
-
-        $this->update(['user_id' => $user->id]);
-
-        return $user;
-    }
-
-    // Accessor pour nom complet
-    public function getNomCompletAttribute()
-    {
-        return $this->user ? $this->user->name : 'Pas de compte';
-    }
-
+    // Nom / email via User
     public function getNameAttribute()
     {
-        // Si le doctorant a un compte user, utiliser user->name
-        if ($this->user) {
-            return $this->user->name;
+        return $this->user?->name ?? 'Pas de compte';
+    }
+
+    public function getEmailAttribute()
+    {
+        return $this->user?->email ?? 'N/A';
+    }
+
+    // Sujet de la thèse en cours
+    public function getSujetTheseActuelAttribute()
+    {
+        return $this->theseActive?->sujet_these;
+    }
+
+    // Directeur de la thèse en cours
+    public function getDirecteurActuelAttribute()
+    {
+        $these = $this->theseActive;
+
+        if (! $these) {
+            return null;
         }
-        
-        // Sinon, construire le nom depuis nom et prenom
-        return $this->nom . ' ' . $this->prenom;
+
+        return $these->encadrants
+            ->firstWhere('pivot.role', 'directeur');
+    }
+
+    // Co-directeur de la thèse en cours
+    public function getCodirecteurActuelAttribute()
+    {
+        $these = $this->theseActive;
+
+        if (! $these) {
+            return null;
+        }
+
+        return $these->encadrants
+            ->firstWhere('pivot.role', 'codirecteur');
+    }
+
+    /**
+     * A un compte utilisateur ?
+     */
+    public function hasUser(): bool
+    {
+        return !is_null($this->user_id) && $this->user()->exists();
+    }
+
+    /**
+     * Scopes
+     */
+    public function scopeAvecTheseEnCours($query)
+    {
+        return $query->whereHas('theses', function ($q) {
+            $q->where('statut', 'en_cours');
+        });
+    }
+
+    public function scopeSansTheseEnCours($query)
+    {
+        return $query->whereDoesntHave('theses', function ($q) {
+            $q->where('statut', 'en_cours');
+        });
     }
 }
