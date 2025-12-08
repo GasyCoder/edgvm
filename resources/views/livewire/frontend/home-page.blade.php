@@ -2,7 +2,10 @@
     @include('livewire.frontend.includes.section-hero')
     @include('livewire.frontend.includes.section-stats')
     @include('livewire.frontend.includes.section-about')
-    @include('livewire.frontend.includes.section-messagedirection')
+        @include('livewire.frontend.includes.section-messagedirection', [
+        'messageDirection' => $messageDirection,
+        'stats' => $stats,
+    ])
     @include('livewire.frontend.includes.section-programme')
     @include('livewire.frontend.includes.section-actualites')
     @include('livewire.frontend.includes.section-cta')

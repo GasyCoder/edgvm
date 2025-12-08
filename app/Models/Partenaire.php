@@ -12,7 +12,8 @@ class Partenaire extends Model
     protected $fillable = [
         'nom',
         'description',
-        'logo_id',
+        'logo_id',    // tu peux le garder si tu veux plus tard lier à Media
+        'logo_path',  // nouveau champ pour l’upload direct
         'url',
         'ordre',
         'visible',
@@ -22,7 +23,7 @@ class Partenaire extends Model
         'visible' => 'boolean',
     ];
 
-    // Relations
+    // Relation éventuelle avec Media (si tu veux la garder)
     public function logo()
     {
         return $this->belongsTo(Media::class);
@@ -37,5 +38,19 @@ class Partenaire extends Model
     public function scopeOrdered($query)
     {
         return $query->orderBy('ordre');
+    }
+
+    // Helper pour avoir l’URL du logo (upload direct ou Media)
+    public function getLogoUrlAttribute(): ?string
+    {
+        if ($this->logo_path) {
+            return asset('storage/'.$this->logo_path);
+        }
+
+        if ($this->logo && $this->logo->url) {
+            return $this->logo->url;
+        }
+
+        return null;
     }
 }

@@ -105,7 +105,7 @@
 
         {{-- Bouton pour voir toutes les EAD --}}
         <div class="text-center mt-10">
-            <a href="{{ route('ead') }}"
+            <a href="{{ route('ead.index') }}"
                class="inline-flex items-center px-7 py-3 bg-blue-600 text-white rounded-xl 
                       hover:bg-blue-700 transition-all duration-300 font-semibold shadow-md hover:shadow-lg">
                 <span>Voir toutes les équipes</span>

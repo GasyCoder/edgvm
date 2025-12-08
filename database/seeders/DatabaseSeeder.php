@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             SliderSeeder::class,
             CategorySeeder::class,
             TagSeeder::class,
+            MenuAProposSeeder::class,
+            MessageDirectionSeeder::class
         ]);
 
     }

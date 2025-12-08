@@ -13,7 +13,7 @@
                 </div>
                 <h2 class="text-3xl md:text-4xl font-black text-gray-900">Actualités</h2>
             </div>
-            <a href="{{ route('actualites') }}" class="hidden md:inline-flex items-center gap-2 text-ed-primary font-bold hover:text-ed-secondary transition-colors group">
+            <a href="{{ route('actualites.index') }}" class="hidden md:inline-flex items-center gap-2 text-ed-primary font-bold hover:text-ed-secondary transition-colors group">
                 <span>Voir plus</span>
                 <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
@@ -134,7 +134,7 @@
 
         <!-- Bouton mobile "Voir plus" -->
         <div class="md:hidden text-center mt-8">
-            <a href="{{ route('actualites') }}" 
+            <a href="{{ route('actualites.index') }}" 
                class="inline-flex items-center gap-2 px-6 py-3 bg-ed-primary text-white rounded-full font-bold hover:bg-ed-secondary transition-colors shadow-lg">
                 <span>Voir toutes les actualités</span>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

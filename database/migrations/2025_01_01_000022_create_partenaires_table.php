@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('nom');
             $table->text('description')->nullable();
+            $table->string('logo_path')->nullable();
             $table->foreignId('logo_id')->nullable()->constrained('media')->onDelete('set null');
             $table->string('url')->nullable();
             $table->integer('ordre')->default(0);

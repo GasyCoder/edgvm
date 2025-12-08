@@ -110,6 +110,7 @@ namespace App\Models{
  * @property-read mixed $email
  * @property-read mixed $name
  * @property-read mixed $sujet_these_actuel
+ * @property-read mixed $these_principale
  * @property-read \App\Models\These|null $theseActive
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\These> $theses
  * @property-read int|null $theses_count
@@ -356,6 +357,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, MenuItem> $enfants
  * @property-read int|null $enfants_count
+ * @property-read string $resolved_url
  * @property-read \App\Models\Menu $menu
  * @property-read \App\Models\Page|null $page
  * @property-read MenuItem|null $parent
@@ -376,6 +378,45 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MenuItem whereVisible($value)
  */
 	class MenuItem extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property string $nom
+ * @property string|null $fonction
+ * @property string|null $institution
+ * @property string|null $telephone
+ * @property string|null $email
+ * @property string|null $photo_path
+ * @property string|null $citation
+ * @property string|null $message_intro
+ * @property int $nb_doctorants
+ * @property int $nb_equipes
+ * @property int $nb_theses
+ * @property bool $visible
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereCitation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereFonction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereInstitution($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereMessageIntro($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereNbDoctorants($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereNbEquipes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereNbTheses($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereNom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection wherePhotoPath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereTelephone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MessageDirection whereVisible($value)
+ */
+	class MessageDirection extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -473,12 +514,14 @@ namespace App\Models{
  * @property int $id
  * @property string $nom
  * @property string|null $description
+ * @property string|null $logo_path
  * @property int|null $logo_id
  * @property string|null $url
  * @property int $ordre
  * @property bool $visible
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read string|null $logo_url
  * @property-read \App\Models\Media|null $logo
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Partenaire newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Partenaire newQuery()
@@ -489,6 +532,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Partenaire whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Partenaire whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Partenaire whereLogoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Partenaire whereLogoPath($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Partenaire whereNom($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Partenaire whereOrdre($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Partenaire whereUpdatedAt($value)
@@ -705,6 +749,7 @@ namespace App\Models{
 /**
  * @property int $id
  * @property int $doctorant_id
+ * @property int|null $specialite_id
  * @property string $sujet_these
  * @property string|null $description
  * @property int $ead_id
@@ -724,12 +769,17 @@ namespace App\Models{
  * @property-read int|null $encadrants_count
  * @property-read \App\Models\Media|null $fichier
  * @property-read mixed $fichier_pdf_url
+ * @property-read string $statut_badge_classes
+ * @property-read string $statut_label
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Jury> $jurys
  * @property-read int|null $jurys_count
  * @property-read \App\Models\Specialite|null $specialite
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|These enCours()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|These enPreparation()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|These soutendue()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereDateDebut($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereDatePrevueFin($value)
@@ -741,6 +791,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereMediaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereMotsCles($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereResumeThese($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereSpecialiteId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereStatut($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereSujetThese($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereUniversiteSoutenance($value)

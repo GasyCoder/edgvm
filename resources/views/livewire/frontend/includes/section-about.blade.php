@@ -25,7 +25,7 @@
                         Notre mission est de développer des compétences de haut niveau en recherche scientifique et de contribuer à l'avancement des connaissances.
                     </p>
                     
-                    <a href="{{ route('about') }}" class="group inline-flex items-center px-8 py-4 bg-ed-primary text-white rounded-xl hover:bg-ed-secondary transition-all duration-300 font-bold shadow-lg hover:shadow-xl hover:scale-[1.02]">
+                    <a href="{{ route('pages.show', 'a-propos') }}" class="group inline-flex items-center px-8 py-4 bg-ed-primary text-white rounded-xl hover:bg-ed-secondary transition-all duration-300 font-bold shadow-lg hover:shadow-xl hover:scale-[1.02]">
                         <span>Découvrir l'école</span>
                         <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>

@@ -21,20 +21,24 @@
             
             <nav class="mt-6"
                 x-data="{
-                    openCommunication: {{ request()->routeIs('admin.actualites.*') 
-                    || request()->routeIs('admin.newsletter.*')
-                    || request()->routeIs('admin.categories.*')
-                    || request()->routeIs('admin.tags.*')
-                    || request()->routeIs('admin.sliders.*')
-                    || request()->routeIs('admin.slides.*')
-                    || request()->routeIs('admin.media.*')
-                    ? 'true' : 'false' }}
+                    openCommunication: {{ 
+                        request()->routeIs('admin.actualites.*') 
+                        || request()->routeIs('admin.newsletter.*')
+                        || request()->routeIs('admin.categories.*')
+                        || request()->routeIs('admin.tags.*')
+                        || request()->routeIs('admin.sliders.*')
+                        || request()->routeIs('admin.slides.*')
+                        || request()->routeIs('admin.media.*')
+                        || request()->routeIs('admin.message-directions.*')
+                        || request()->routeIs('admin.partenaires.*')
+                        ? 'true' : 'false' 
+                    }}
                 }">
 
                 {{-- DASHBOARD --}}
                 <a href="{{ route('admin.dashboard') }}" 
-                class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
-                        {{ request()->routeIs('admin.dashboard') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
+                    class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
+                            {{ request()->routeIs('admin.dashboard') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -54,7 +58,9 @@
                                     || request()->routeIs('admin.tags.*')
                                     || request()->routeIs('admin.sliders.*')
                                     || request()->routeIs('admin.slides.*')
-                                    || request()->routeIs('admin.media.*'))
+                                    || request()->routeIs('admin.media.*')
+                                    || request()->routeIs('admin.message-directions.*')
+                                    || request()->routeIs('admin.partenaires.*'))
                                     ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
                         <span class="flex items-center gap-3">
                             {{-- Icône principal : “Communication & contenus” --}}
@@ -63,7 +69,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M8 10h8M8 14h5M5 20l2-4h10a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2h1" />
                             </svg>
-                            <span class="font-semibold text-sm">Communication & contenus</span>
+                            <span class="font-semibold text-sm">Contenus et comm</span>
                         </span>
 
                         <svg class="w-4 h-4 transform transition-transform duration-200"
@@ -73,16 +79,33 @@
                                 d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
+
                     <div x-show="openCommunication"
                         x-collapse
-                        class="mt-1 space-y-1 text-sm pl-10 pr-4"
+                        class="mt-3 space-y-1 text-sm pl-10 pr-4"
                         x-cloak>
+
+                        {{-- Mot de la Directrice --}}
+                        <a href="{{ route('admin.message-directions.index') }}"
+                        class="flex items-center gap-2 px-3 py-2 rounded-md
+                                hover:bg-white/10 transition
+                                {{ request()->routeIs('admin.message-directions.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 12a4 4 0 100-8 4 4 0 000 8z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 20v-1c0-2.667 2.667-4 6-4s6 1.333 6 4v1" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M18 8h2m0 0v3m0-3l-2 2" />
+                            </svg>
+                            <span>Mot de la Directrice</span>
+                        </a>
 
                         {{-- Actualités --}}
                         <a href="{{ route('admin.actualites.index') }}"
-                        class="flex items-center gap-2 px-3 py-2 rounded-md
-                                hover:bg-white/10 transition
-                                {{ request()->routeIs('admin.actualites.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
+                            class="flex items-center gap-2 px-3 py-2 rounded-md
+                                    hover:bg-white/10 transition
+                                    {{ request()->routeIs('admin.actualites.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 {{-- même icône que ton menu Actualités --}}
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -93,9 +116,9 @@
 
                         {{-- Newsletter --}}
                         <a href="{{ route('admin.newsletter.subscribers') }}"
-                        class="flex items-center gap-2 px-3 py-2 rounded-md
-                                hover:bg-white/10 transition
-                                {{ request()->routeIs('admin.newsletter.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
+                            class="flex items-center gap-2 px-3 py-2 rounded-md
+                                    hover:bg-white/10 transition
+                                    {{ request()->routeIs('admin.newsletter.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 {{-- même icône que ton menu Newsletter --}}
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -106,9 +129,9 @@
 
                         {{-- Catégories --}}
                         <a href="{{ route('admin.categories.index') }}"
-                        class="flex items-center gap-2 px-3 py-2 rounded-md
-                                hover:bg-white/10 transition
-                                {{ request()->routeIs('admin.categories.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
+                            class="flex items-center gap-2 px-3 py-2 rounded-md
+                                    hover:bg-white/10 transition
+                                    {{ request()->routeIs('admin.categories.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 {{-- même icône que ton menu Catégories --}}
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -119,9 +142,9 @@
 
                         {{-- Tags --}}
                         <a href="{{ route('admin.tags.index') }}"
-                        class="flex items-center gap-2 px-3 py-2 rounded-md
-                                hover:bg-white/10 transition
-                                {{ request()->routeIs('admin.tags.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
+                            class="flex items-center gap-2 px-3 py-2 rounded-md
+                                    hover:bg-white/10 transition
+                                    {{ request()->routeIs('admin.tags.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 {{-- même icône que ton menu Tags --}}
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -132,9 +155,9 @@
 
                         {{-- Sliders & Slides --}}
                         <a href="{{ route('admin.sliders.index') }}"
-                        class="flex items-center gap-2 px-3 py-2 rounded-md
-                                hover:bg-white/10 transition
-                                {{ request()->routeIs('admin.sliders.*') || request()->routeIs('admin.slides.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
+                            class="flex items-center gap-2 px-3 py-2 rounded-md
+                                    hover:bg-white/10 transition
+                                    {{ request()->routeIs('admin.sliders.*') || request()->routeIs('admin.slides.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 {{-- même icône que ton menu Sliders & Slides --}}
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -145,9 +168,9 @@
 
                         {{-- Médiathèque --}}
                         <a href="{{ route('admin.media.index') }}"
-                        class="flex items-center gap-2 px-3 py-2 rounded-md
-                                hover:bg-white/10 transition
-                                {{ request()->routeIs('admin.media.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
+                            class="flex items-center gap-2 px-3 py-2 rounded-md
+                                    hover:bg-white/10 transition
+                                    {{ request()->routeIs('admin.media.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
                             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 {{-- même icône que ton menu Médiathèque --}}
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -155,14 +178,44 @@
                             </svg>
                             <span>Médiathèque</span>
                         </a>
+                        {{-- Partenaires --}}
+                        <a href="{{ route('admin.partenaires.index') }}"
+                        class="flex items-center gap-3 px-3 py-2 rounded-md
+                                hover:bg-white/10 transition
+                                {{ request()->routeIs('admin.partenaires.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                {{-- Icône style "réseau / partenariat" --}}
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 8a3 3 0 116 0 3 3 0 01-6 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 18a4 4 0 014-4h2a4 4 0 014 4v1H3v-1z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 9a3 3 0 110 6" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 21h-4v-1a4 4 0 014-4h0" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 11l3 1.5M13 9.5L10 8" />
+                            </svg>
+                            <span>Partenaires</span>
+                        </a>
                     </div>
                 </div>
 
+                {{-- Pages --}}
+                <a href="{{ route('admin.pages.index') }}" 
+                    class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
+                            {{ request()->routeIs('admin.pages*') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                    </svg>
+                    Pages
+                </a>
 
                 {{-- EAD --}}
                 <a href="{{ route('admin.ead.index') }}" 
-                class="mt-3 flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
-                        {{ request()->routeIs('admin.ead*') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
+                    class="mt-3 flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
+                            {{ request()->routeIs('admin.ead*') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
@@ -172,8 +225,8 @@
 
                 {{-- Spécialités --}}
                 <a href="{{ route('admin.specialites.index') }}" 
-                class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
-                        {{ request()->routeIs('admin.specialites*') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
+                    class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
+                            {{ request()->routeIs('admin.specialites*') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
@@ -183,8 +236,8 @@
 
                 {{-- Doctorants --}}
                 <a href="{{ route('admin.doctorants.index') }}" 
-                class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
-                        {{ request()->routeIs('admin.doctorants*') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
+                    class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
+                            {{ request()->routeIs('admin.doctorants*') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -194,8 +247,8 @@
 
                 {{-- Encadrants --}}
                 <a href="{{ route('admin.encadrants.index') }}" 
-                class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
-                        {{ request()->routeIs('admin.encadrants*') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
+                    class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
+                            {{ request()->routeIs('admin.encadrants*') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -205,8 +258,8 @@
 
                 {{-- Thèses --}}
                 <a href="{{ route('admin.theses.index') }}" 
-                class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
-                        {{ request()->routeIs('admin.theses*') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
+                    class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
+                            {{ request()->routeIs('admin.theses*') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
@@ -214,13 +267,11 @@
                     Thèses
                 </a>
 
-                {{-- Médiathèque est déjà dans le dropdown donc on ne la remet pas ici --}}
-
                 <div class="border-t border-white/10 my-4"></div>
 
                 {{-- Lien voir le site --}}
                 <a href="{{ route('home') }}" target="_blank"
-                class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition">
+                    class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
@@ -228,7 +279,7 @@
                     Voir le site
                 </a>
 
-                {{-- Bouton Déconnexion rouge (version corrigée) --}}
+                {{-- Bouton Déconnexion rouge --}}
                 <form method="POST" action="{{ route('logout') }}" class="mt-1 px-6">
                     @csrf
                     <button type="submit"
@@ -245,6 +296,7 @@
                     </button>
                 </form>
             </nav>
+
 
         </aside>
 

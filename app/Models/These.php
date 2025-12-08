@@ -22,7 +22,7 @@ class These extends Model
         'date_prevue_fin',
         'date_publication',
         'statut',
-        'media_id',        // ✅ lien vers table media
+        'media_id',
         'resume_these',
         'mots_cles',
     ];
@@ -32,6 +32,8 @@ class These extends Model
         'date_prevue_fin'  => 'date',
         'date_publication' => 'date',
     ];
+
+    // ==================== RELATIONS ====================
 
     public function doctorant()
     {
@@ -53,7 +55,6 @@ class These extends Model
         return $this->belongsTo(Media::class, 'media_id');
     }
 
-    // Encadrants via pivot
     public function encadrants()
     {
         return $this->belongsToMany(Encadrant::class, 'these_encadrants')
@@ -78,10 +79,47 @@ class These extends Model
             ->withTimestamps();
     }
 
-    // ✅ URL pratique du PDF
+    // ==================== SCOPES ====================
+
+    public function scopeEnCours($query)
+    {
+        return $query->where('statut', 'en_cours');
+    }
+
+    public function scopeSoutendue($query)
+    {
+        return $query->where('statut', 'soutenue');
+    }
+
+    public function scopeEnPreparation($query)
+    {
+        return $query->where('statut', 'preparation');
+    }
+
+    // ==================== ACCESSORS ====================
+
     public function getFichierPdfUrlAttribute()
     {
-        // Media a déjà un accessor "url"
         return $this->fichier?->url;
+    }
+
+    public function getStatutLabelAttribute(): string
+    {
+        return match ($this->statut) {
+            'preparation' => 'En préparation',
+            'en_cours'    => 'En cours',
+            'soutenue'    => 'Soutenue',
+            default       => 'Non défini',
+        };
+    }
+
+    public function getStatutBadgeClassesAttribute(): string
+    {
+        return match ($this->statut) {
+            'preparation' => 'bg-amber-50 text-amber-700 border-amber-200',
+            'en_cours'    => 'bg-blue-50 text-blue-700 border-blue-200',
+            'soutenue'    => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+            default       => 'bg-gray-100 text-gray-600 border-gray-200',
+        };
     }
 }

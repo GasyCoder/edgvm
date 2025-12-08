@@ -1,5 +1,5 @@
 @if($slider && $slider->slides->count() > 0)
-<section class="relative h-[75vh] mt-20 overflow-hidden" x-data="slider()">
+<section class="relative h-[73vh] mt-20 overflow-hidden" x-data="slider()">
     <!-- Slides Container -->
     <div class="relative h-full">
         @foreach($slider->slides as $index => $slide)
@@ -80,7 +80,7 @@
                             @endif
                             
                             @if($index === 0)
-                            <a href="{{ route('about') }}" class="px-8 py-4 bg-white/10 backdrop-blur-md text-white border-2 border-white/30 rounded-xl hover:bg-white hover:text-ed-primary transition-all duration-300 font-bold hover:scale-[1.02]">
+                            <a href="{{ route('pages.show', 'a-propos') }}" class="px-8 py-4 bg-white/10 backdrop-blur-md text-white border-2 border-white/30 rounded-xl hover:bg-white hover:text-ed-primary transition-all duration-300 font-bold hover:scale-[1.02]">
                                 Découvrir l'école
                             </a>
                             @endif

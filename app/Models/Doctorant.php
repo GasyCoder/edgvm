@@ -135,4 +135,31 @@ class Doctorant extends Model
             $q->where('statut', 'en_cours');
         });
     }
+
+
+        /**
+     * Attribut "thèse principale" (en_cours > préparation > rédaction > soutenue > le reste)
+     */
+    public function getThesePrincipaleAttribute()
+    {
+        // Si les thèses ne sont pas encore chargées, on les charge
+        if (! $this->relationLoaded('theses')) {
+            $this->load('theses.specialite', 'theses.ead');
+        }
+
+        return $this->theses
+            ->sortBy(function ($these) {
+                return match($these->statut) {
+                    'en_cours'    => 0,
+                    'preparation' => 1,
+                    'redaction'   => 2,
+                    'soutenue'    => 3,
+                    'suspendue'   => 4,
+                    'abandonnee'  => 5,
+                    default       => 99,
+                };
+            })
+            ->first();
+    }
+    
 }

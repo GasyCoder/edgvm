@@ -35,9 +35,9 @@
             <div>
                 <h4 class="text-lg font-bold mb-6">Liens Rapides</h4>
                 <ul class="space-y-3">
-                    <li><a href="{{ route('about') }}" class="text-white/80 hover:text-ed-yellow transition">À propos</a></li>
-                    <li><a href="{{ route('programmes') }}" class="text-white/80 hover:text-ed-yellow transition">Recherches</a></li>
-                    <li><a href="{{ route('actualites') }}" class="text-white/80 hover:text-ed-yellow transition">Actualités</a></li>
+                    <li><a href="{{ route('pages.show', 'a-propos') }}" class="text-white/80 hover:text-ed-yellow transition">À propos</a></li>
+                    <li><a href="{{ route('programmes.index') }}" class="text-white/80 hover:text-ed-yellow transition">Recherches</a></li>
+                    <li><a href="{{ route('actualites.index') }}" class="text-white/80 hover:text-ed-yellow transition">Actualités</a></li>
                     <li><a href="{{ route('contact') }}" class="text-white/80 hover:text-ed-yellow transition">Contact</a></li>
                 </ul>
             </div>

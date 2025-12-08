@@ -20,43 +20,42 @@
                     Accueil
                 </a>
                 
-                <!-- À propos Dropdown -->
-                <div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative">
+                <!-- À propos Dropdown (desktop) -->
+                <div x-data="{ open: false }"
+                     @mouseenter="open = true"
+                     @mouseleave="open = false"
+                     class="relative">
                     <button class="px-4 py-2 text-ed-gray hover:text-ed-primary font-medium transition rounded-lg hover:bg-teal-50 flex items-center gap-1">
                         À propos
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>
-                    <div x-show="open" 
+                    <div x-show="open"
                          x-transition
                          class="absolute left-0 mt-1 w-64 bg-white rounded-lg shadow-xl py-2 z-50">
-                        <a href="{{ route('about') }}" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition">
-                            Présentation
-                        </a>
-                        <a href="{{ route('organisation') }}" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition">
-                            Organisation
-                        </a>
-                        <a href="{{ route('conseil') }}" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition">
-                            Conseil de l'École Doctorale
-                        </a>
-                        <a href="{{ route('comite-suivi') }}" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition">
-                            Comité de suivi de thèse
-                        </a>
-                        <a href="{{ route('reglement') }}" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition">
-                            Règlement intérieur
-                        </a>
+                        @foreach($menuAProposItems as $item)
+                            <a href="{{ $item->resolved_url }}"
+                               class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition">
+                                {{ $item->label }}
+                            </a>
+                        @endforeach
+
+                        @if($menuAProposItems->isEmpty())
+                            <div class="px-4 py-2 text-xs text-gray-400">
+                                Aucune page configurée pour ce menu.
+                            </div>
+                        @endif
                     </div>
                 </div>
 
-                <a href="{{ route('programmes') }}" class="px-4 py-2 text-ed-gray hover:text-ed-primary font-medium transition rounded-lg hover:bg-teal-50">
-                    Recherches
-                </a>
-                
-                <!-- Doctorants Dropdown -->
-                <div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative">
+                <!-- Recherches Dropdown (desktop) -->
+                <div x-data="{ open: false }"
+                     @mouseenter="open = true"
+                     @mouseleave="open = false"
+                     class="relative">
                     <button class="px-4 py-2 text-ed-gray hover:text-ed-primary font-medium transition rounded-lg hover:bg-teal-50 flex items-center gap-1">
-                        Doctorants
+                        Recherches
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
@@ -64,19 +63,22 @@
                     <div x-show="open" 
                          x-transition
                          class="absolute left-0 mt-1 w-64 bg-white rounded-lg shadow-xl py-2 z-50">
-                        <a href="{{ route('doctorants') }}" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition">
+                        <a href="{{ route('doctorants.index') }}" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition">
                             Nos doctorants
                         </a>
-                        <a href="{{ route('fiche-numerique') }}" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition">
-                            Fiche numérique des doctorants
+                        <a href="{{ route('ead.index') }}" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition">
+                            Equipes d'accueil
                         </a>
-                        <a href="{{ route('theses-soutenues') }}" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition">
-                            Thèses soutenues
+                        <a href="{{ route('programmes.index') }}" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition">
+                            Programmes de Recherche
+                        </a>
+                        <a href="{{ route('theses.index') }}" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition">
+                            Banque des thèses
                         </a>
                     </div>
                 </div>
                 
-                <a href="{{ route('actualites') }}" class="px-4 py-2 text-ed-gray hover:text-ed-primary font-medium transition rounded-lg hover:bg-teal-50">
+                <a href="{{ route('actualites.index') }}" class="px-4 py-2 text-ed-gray hover:text-ed-primary font-medium transition rounded-lg hover:bg-teal-50">
                     Actualités
                 </a>
                 <a href="{{ route('contact') }}" class="px-4 py-2 text-ed-gray hover:text-ed-primary font-medium transition rounded-lg hover:bg-teal-50">
@@ -100,8 +102,10 @@
             <!-- Mobile menu button -->
             <button @click="open = !open" class="lg:hidden text-ed-gray hover:text-ed-primary transition">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 6h16M4 12h16M4 18h16"/>
+                    <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"/>
                 </svg>
             </button>
         </div>
@@ -121,59 +125,70 @@
                 Accueil
             </a>
             
-            <!-- À propos Mobile -->
-            <div x-data="{ open: false }">
-                <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg font-medium transition">
+            <!-- À propos Mobile (accordéon) -->
+            <div>
+                <button
+                    @click="openSubmenu = (openSubmenu === 'apropos' ? null : 'apropos')"
+                    class="w-full flex items-center justify-between px-4 py-3 text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg font-medium transition">
                     <span>À propos</span>
-                    <svg class="w-4 h-4 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    <svg class="w-4 h-4 transition-transform"
+                         :class="openSubmenu === 'apropos' && 'rotate-180'"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>
-                <div x-show="open" x-collapse class="ml-4 space-y-1">
-                    <a href="{{ route('about') }}" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition">
-                        Présentation
-                    </a>
-                    <a href="{{ route('organisation') }}" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition">
-                        Organisation
-                    </a>
-                    <a href="{{ route('conseil') }}" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition">
-                        Conseil de l'École Doctorale
-                    </a>
-                    <a href="{{ route('comite-suivi') }}" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition">
-                        Comité de suivi de thèse
-                    </a>
-                    <a href="{{ route('reglement') }}" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition">
-                        Règlement intérieur
-                    </a>
+
+                <div x-show="openSubmenu === 'apropos'"
+                     x-collapse
+                     class="ml-4 space-y-1">
+                    @forelse($menuAProposItems as $item)
+                        <a href="{{ $item->resolved_url }}"
+                           class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition">
+                            {{ $item->label }}
+                        </a>
+                    @empty
+                        <div class="px-4 py-2 text-xs text-gray-400">
+                            Aucune page configurée pour ce menu.
+                        </div>
+                    @endforelse
                 </div>
             </div>
 
-            <a href="{{ route('programmes') }}" class="block px-4 py-3 text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg font-medium transition">
-                Recherches
-            </a>
-            
-            <!-- Doctorants Mobile -->
-            <div x-data="{ open: false }">
-                <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg font-medium transition">
-                    <span>Doctorants</span>
-                    <svg class="w-4 h-4 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            <!-- Recherches Mobile (accordéon) -->
+            <div>
+                <button
+                    @click="openSubmenu = (openSubmenu === 'recherches' ? null : 'recherches')"
+                    class="w-full flex items-center justify-between px-4 py-3 text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg font-medium transition">
+                    <span>Recherches</span>
+                    <svg class="w-4 h-4 transition-transform"
+                         :class="openSubmenu === 'recherches' && 'rotate-180'"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>
-                <div x-show="open" x-collapse class="ml-4 space-y-1">
-                    <a href="{{ route('doctorants') }}" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition">
+                <div x-show="openSubmenu === 'recherches'"
+                     x-collapse
+                     class="ml-4 space-y-1">
+                    <a href="{{ route('doctorants.index') }}" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition">
                         Nos doctorants
                     </a>
-                    <a href="{{ route('fiche-numerique') }}" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition">
-                        Fiche numérique des doctorants
+                    <a href="{{ route('ead.index') }}" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition">
+                        Equipes d'accueil
                     </a>
-                    <a href="{{ route('theses-soutenues') }}" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition">
-                        Thèses soutenues
+                    <a href="{{ route('programmes.index') }}" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition">
+                        Programmes de Recherche
+                    </a>
+                    <a href="{{ route('theses.index') }}" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition">
+                        Banque des thèses
                     </a>
                 </div>
             </div>
             
-            <a href="{{ route('actualites') }}" class="block px-4 py-3 text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg font-medium transition">
+            <a href="{{ route('actualites.index') }}" class="block px-4 py-3 text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg font-medium transition">
                 Actualités
             </a>
             <a href="{{ route('contact') }}" class="block px-4 py-3 text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg font-medium transition">
