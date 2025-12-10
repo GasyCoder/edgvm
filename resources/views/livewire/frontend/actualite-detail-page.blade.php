@@ -1,41 +1,42 @@
 <div>
-<!-- Hero Section - SOBRE ET SIMPLIFIÉ -->
+<!-- Hero Section - Image en arrière-plan CSS -->
 <section class="relative h-[60vh] min-h-[450px] overflow-hidden">
     @if($actualite->image)
-    <img src="{{ $actualite->image->url }}" 
-         alt="{{ $actualite->titre }}" 
-         class="w-full h-full object-cover">
+    <div class="absolute inset-0">
+        <!-- Image en background cover avec léger flou -->
+        <div class="absolute inset-0 bg-center bg-cover" 
+             style="background-image: url('{{ $actualite->image->url }}'); background-position: 50% 35%; filter: brightness(0.75) blur(0.5px);">
+        </div>
+    </div>
     @else
-    <div class="w-full h-full bg-gradient-to-br from-ed-primary via-ed-secondary to-purple-600"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-ed-primary via-ed-secondary to-purple-600"></div>
     @endif
-    
-    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent"></div>
-    
+
+    <!-- Overlay sombre très léger pour le texte -->
+    <div class="absolute inset-0 bg-black/20"></div>
+
     <!-- Contenu Hero -->
-    <div class="absolute inset-0 flex items-end">
+    <div class="absolute inset-0 flex items-center justify-center md:items-end">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 w-full">
-            
-            <!-- Breadcrumb -->
+            <!-- Breadcrumb, Badges, Titre, Meta info -->
             <nav class="mb-4">
                 <ol class="flex items-center gap-2 text-xs text-white/70">
                     <li><a href="{{ route('home') }}" class="hover:text-white transition">Accueil</a></li>
                     <li>›</li>
-                    <li><a href="{{ route('actualites') }}" class="hover:text-white transition">Actualités</a></li>
+                    <li><a href="{{ route('actualites.index') }}" class="hover:text-white transition">Actualités</a></li>
                     @if($actualite->category)
                     <li>›</li>
                     <li class="text-white font-semibold">{{ $actualite->category->nom }}</li>
                     @endif
                 </ol>
             </nav>
-            
-            <!-- Badges -->
+
             <div class="flex flex-wrap gap-2 mb-5">
                 @if($actualite->est_important)
                 <span class="px-3 py-1.5 bg-gradient-to-r from-red-600 to-orange-600 text-white text-xs font-bold rounded-full shadow-lg flex items-center gap-1.5">
                     <span>🔥</span> Important
                 </span>
                 @endif
-                
                 @if($actualite->category)
                 <span class="px-3 py-1.5 text-white text-xs font-bold rounded-full shadow-md backdrop-blur-lg border border-white/30"
                       style="background: linear-gradient(135deg, {{ $actualite->category->couleur }}99, {{ $actualite->category->couleur }}dd);">
@@ -43,44 +44,44 @@
                 </span>
                 @endif
             </div>
-            
-            <!-- Titre -->
+
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight max-w-4xl" 
                 style="text-shadow: 0 2px 15px rgba(0,0,0,0.4);">
                 {{ $actualite->titre }}
             </h1>
-            
-            <!-- Meta info - SIMPLIFIÉ -->
-            <div class="flex flex-wrap items-center gap-3 text-white/90 text-sm">
-                @if($actualite->auteur)
-                <div class="flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                    </svg>
-                    <span class="font-medium">{{ $actualite->auteur->name }}</span>
-                </div>
-                <span class="text-white/40">•</span>
-                @endif
-                
-                <!-- Date avec diffForHumans -->
-                <div class="flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span>{{ $actualite->date_publication->locale('fr')->diffForHumans() }}</span>
-                </div>
-                
-                <span class="text-white/40">•</span>
-                
-                <!-- Vues avec texte -->
-                <div class="flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                    </svg>
-                    <span>{{ $actualite->vues_formatted }} vues</span>
-                </div>
-            </div>
+
+<!-- Meta info bien visible -->
+<div class="flex flex-wrap items-center gap-3 text-white text-sm relative z-10">
+    <div class="flex items-center gap-2 px-2 py-1 bg-black/30 rounded backdrop-blur-sm">
+        @if($actualite->auteur)
+        <div class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+            </svg>
+            <span class="font-medium">{{ $actualite->auteur->name }}</span>
+        </div>
+        <span class="text-white/60">•</span>
+        @endif
+
+        <div class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>{{ $actualite->date_publication->locale('fr')->diffForHumans() }}</span>
+        </div>
+
+        <span class="text-white/60">•</span>
+
+        <div class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            <span>{{ $actualite->vues_formatted }} vues</span>
+        </div>
+    </div>
+</div>
+
         </div>
     </div>
 </section>
@@ -185,7 +186,7 @@
                             <h4 class="text-sm font-bold text-gray-600 uppercase mb-3">Tags</h4>
                             <div class="flex flex-wrap gap-2">
                                 @foreach($actualite->tags as $tag)
-                                <a href="{{ route('actualites') }}?tag={{ $tag->slug }}" 
+                                <a href="{{ route('actualites.index') }}?tag={{ $tag->slug }}" 
                                    class="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-xs font-semibold transition">
                                     #{{ $tag->nom }}
                                 </a>
@@ -361,7 +362,7 @@
                             </div>
                             
                             <div class="p-4">
-                                <a href="{{ route('actualites') }}" 
+                                <a href="{{ route('actualites.index') }}" 
                                    class="block text-center px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg font-semibold transition text-sm">
                                     Toutes les actualités →
                                 </a>

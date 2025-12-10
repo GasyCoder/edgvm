@@ -10,7 +10,7 @@
                 <img src="/images/logo-edgvm.jpg" alt="EDGVM Logo" class="h-14 w-auto">
                 <div>
                     <h1 class="text-xl font-bold text-ed-primary leading-tight">EDGVM</h1>
-                    <p class="text-xs text-ed-gray leading-tight">Génie du Vivant et Modélisation</p>
+                    <p class="text-xs text-ed-gray leading-tight">École Doctorale Génie du Vivant et Modélisation</p>
                 </div>
             </a>
 

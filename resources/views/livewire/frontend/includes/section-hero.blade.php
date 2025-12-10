@@ -1,122 +1,189 @@
 @if($slider && $slider->slides->count() > 0)
-<section class="relative h-[73vh] mt-20 overflow-hidden" x-data="slider()">
-    <!-- Slides Container -->
-    <div class="relative h-full">
+<section 
+    class="relative mt-20 text-white overflow-hidden"
+    x-data="slider()"
+>
+    {{-- Fond dynamique simple par slide (couleur_fond) --}}
+    <div class="absolute inset-0 -z-10">
         @foreach($slider->slides as $index => $slide)
-        <!-- Slide {{ $index + 1 }} -->
-        <div x-show="currentSlide === {{ $index }}" 
-             x-transition:enter="transition ease-out duration-1000"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-1000"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="absolute inset-0 w-full h-full">
-            
-            <!-- Background gradient -->
-            <div class="absolute inset-0 bg-gradient-to-br {{ $slide->couleur_fond }}"></div>
-            
-            <!-- Image de fond -->
-            @if($slide->image)
-            <img src="{{ $slide->image->url }}" 
-                 class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-20" 
-                 alt="{{ $slide->titre_complet }}">
-            @else
-            <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1920&q=80" 
-                 class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-20" 
-                 alt="{{ $slide->titre_complet }}">
-            @endif
-            
-            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-            
-            <div class="relative h-full flex items-center z-10">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                    <div class="max-w-4xl">
-                        <!-- Badge - Plus d'espace en bas -->
+            <div 
+                x-show="currentSlide === {{ $index }}"
+                class="absolute inset-0 bg-gradient-to-br {{ $slide->couleur_fond }}"
+                x-transition:enter="transition-opacity duration-500"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="transition-opacity duration-500"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+            ></div>
+        @endforeach
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center min-h-[360px] lg:min-h-[460px]">
+
+            {{-- Colonne gauche : contenu texte du slide --}}
+            <div class="relative flex flex-col justify-center min-h-[240px] pr-2 sm:pr-4 lg:pr-10">
+                @foreach($slider->slides as $index => $slide)
+                    <div 
+                        x-show="currentSlide === {{ $index }}"
+                        x-transition:enter="transition ease-out duration-700"
+                        x-transition:enter-start="opacity-0 translate-x-full"
+                        x-transition:enter-end="opacity-100 translate-x-0"
+                        x-transition:leave="transition ease-in duration-500"
+                        x-transition:leave-start="opacity-100 translate-x-0"
+                        x-transition:leave-end="opacity-0 -translate-x-full"
+                        class="absolute inset-0 flex flex-col justify-center space-y-4"
+                    >
+                        {{-- Badge simple --}}
                         @if($slide->badge_texte)
-                        <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 mb-8">
-                            @if($slide->badge_icon === 'university')
-                                <div class="w-2 h-2 bg-ed-yellow rounded-full animate-pulse"></div>
-                            @elseif($slide->badge_icon === 'research')
-                                <svg class="w-4 h-4 text-ed-yellow" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
-                                </svg>
-                            @elseif($slide->badge_icon === 'students')
-                                <svg class="w-4 h-4 text-ed-yellow" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
-                                </svg>
-                            @endif
-                            <span class="text-white text-sm font-medium">{{ $slide->badge_texte }}</span>
-                        </div>
+                            <div class="inline-flex items-center gap-2 mb-1">
+                                <span class="w-2 h-2 rounded-full bg-ed-yellow"></span>
+                                <span class="text-xs font-semibold tracking-wide uppercase">
+                                    {{ $slide->badge_texte }}
+                                </span>
+                            </div>
                         @endif
-                        
-                        <!-- Titre - AVEC PLUS D'ESPACE -->
-                        <h1 class="text-3xl md:text-5xl font-black mb-10 mt-4 leading-[1.3] md:leading-[1.4] text-white">
+
+                        {{-- Titre : plus large, pas limité, pas de block --}}
+                        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight md:leading-tight mb-3">
                             @if($slide->titre_ligne1)
-                                {{ $slide->titre_ligne1 }} 
+                                <span>{{ $slide->titre_ligne1 }} </span>
                             @endif
-                            <span class="text-ed-yellow">{{ $slide->titre_highlight }}</span>
+
+                            @if($slide->titre_highlight)
+                                <span class="text-ed-yellow">
+                                    {{ $slide->titre_highlight }}
+                                </span>
+                            @endif
+
                             @if($slide->titre_ligne2)
-                                <br class="hidden md:block"><!-- Responsive break -->
-                                {{ $slide->titre_ligne2 }}
+                                <span> {{ $slide->titre_ligne2 }}</span>
                             @endif
                         </h1>
-                        <!-- Description -->
+
+                        {{-- Description : plus large aussi, pas de max-w --}}
                         @if($slide->description)
-                        <p class="text-xl md:text-2xl mb-10 text-white/90 font-light max-w-2xl">
-                            {{ $slide->description }}
-                        </p>
+                            <p class="text-sm md:text-base text-white/85 leading-relaxed">
+                                {{ $slide->description }}
+                            </p>
                         @endif
-                        
-                        <!-- CTA Buttons -->
-                        <div class="flex flex-wrap gap-4">
+
+                        {{-- CTA --}}
+                        <div class="mt-4 flex flex-wrap gap-3">
                             @if($slide->lien_cta && $slide->texte_cta)
-                            <a href="{{ $slide->lien_cta }}" class="group px-8 py-4 bg-ed-yellow text-gray-900 rounded-xl hover:bg-ed-yellow-dark transition-all duration-300 font-bold shadow-2xl hover:shadow-ed-yellow/50 hover:scale-[1.02] inline-flex items-center">
-                                <span>{{ $slide->texte_cta }}</span>
-                                <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                                </svg>
-                            </a>
+                                <a href="{{ $slide->lien_cta }}"
+                                   class="inline-flex items-center px-6 py-3 rounded-xl 
+                                          bg-ed-yellow text-gray-900 text-sm font-semibold
+                                          shadow-lg hover:bg-amber-400 transition-colors duration-200">
+                                    <span>{{ $slide->texte_cta }}</span>
+                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+                                              d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                </a>
                             @endif
-                            
+
                             @if($index === 0)
-                            <a href="{{ route('pages.show', 'a-propos') }}" class="px-8 py-4 bg-white/10 backdrop-blur-md text-white border-2 border-white/30 rounded-xl hover:bg-white hover:text-ed-primary transition-all duration-300 font-bold hover:scale-[1.02]">
-                                Découvrir l'école
-                            </a>
+                                <a href="{{ route('pages.show', 'a-propos') }}"
+                                   class="inline-flex items-center px-6 py-3 rounded-xl border border-white/30
+                                          text-sm font-semibold text-white/90 hover:bg-white/10 
+                                          hover:text-white transition-colors duration-200">
+                                    <span>Découvrir l’École</span>
+                                </a>
                             @endif
                         </div>
                     </div>
-                </div>
+                @endforeach
             </div>
+
+            {{-- Colonne droite : image du slide, arrondie + shadow + blur + opacity --}}
+            <div class="relative min-h-[260px] sm:min-h-[320px] lg:min-h-[420px] flex items-center justify-center">
+                @foreach($slider->slides as $index => $slide)
+                    <div 
+                        x-show="currentSlide === {{ $index }}"
+                        x-transition:enter="transition ease-out duration-700"
+                        x-transition:enter-start="opacity-0 translate-x-full"
+                        x-transition:enter-end="opacity-100 translate-x-0"
+                        x-transition:leave="transition ease-in duration-500"
+                        x-transition:leave-start="opacity-100 translate-x-0"
+                        x-transition:leave-end="opacity-0 -translate-x-full"
+                        class="absolute inset-0 flex items-center justify-center"
+                    >
+                        <div class="w-full max-w-xl bg-white/5 backdrop-blur-md rounded-3xl border border-white/15 shadow-2xl overflow-hidden">
+                            <div class="aspect-[4/3] md:aspect-[5/3] lg:aspect-[4/3] relative">
+                                @if($slide->image)
+                                    <img src="{{ $slide->image->url }}"
+                                         alt="{{ $slide->titre_complet }}"
+                                         class="w-full h-full object-cover opacity-90">
+                                @else
+                                    <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200&q=80&auto=format&fit=crop"
+                                         alt="{{ $slide->titre_complet }}"
+                                         class="w-full h-full object-cover opacity-90">
+                                @endif
+                                {{-- léger voile pour l’effet soft --}}
+                                <div class="absolute inset-0 bg-black/15 mix-blend-multiply"></div>
+                            </div>
+
+                            {{-- Bandeau d’infos en bas (optionnel) --}}
+                            <div class="px-4 py-3 flex items-center justify-between text-[11px] sm:text-xs text-white/85 bg-black/15">
+                                <span class="inline-flex items-center gap-2">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                                    <span class="uppercase tracking-[0.12em] font-medium">
+                                        École Doctorale EDGVM
+                                    </span>
+                                </span>
+                                <span class="hidden sm:inline">
+                                    Recherche – Innovation – Excellence
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+
+                {{-- Navigation & pagination en bas à droite --}}
+                @if($slider->slides->count() > 1)
+                    <div class="absolute -bottom-6 right-2 sm:right-4 flex items-center gap-3">
+                        <button 
+                            @click="previousSlide()"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/80 
+                                   text-ed-primary shadow-md hover:bg-white transition-all duration-200"
+                            aria-label="Slide précédent"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+                                      d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </button>
+
+                        <button 
+                            @click="nextSlide()"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/80 
+                                   text-ed-primary shadow-md hover:bg-white transition-all duration-200"
+                            aria-label="Slide suivant"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+                                      d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+
+                        <div class="flex gap-1.5">
+                            @foreach($slider->slides as $slideIndex => $slide)
+                                <button 
+                                    @click="goToSlide({{ $slideIndex }})"
+                                    class="h-1.5 rounded-full transition-all duration-200"
+                                    :class="currentSlide === {{ $slideIndex }} 
+                                        ? 'w-4 bg-white' 
+                                        : 'w-2 bg-white/40 hover:bg-white/70'"
+                                ></button>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            </div>
+
         </div>
-        @endforeach
     </div>
-
-    <!-- Navigation moderne -->
-    @if($slider->slides->count() > 1)
-    <button @click="previousSlide()" 
-            class="absolute left-6 md:left-10 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-ed-primary transition-all duration-300 flex items-center justify-center group">
-        <svg class="w-6 h-6 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
-        </svg>
-    </button>
-    
-    <button @click="nextSlide()" 
-            class="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-ed-primary transition-all duration-300 flex items-center justify-center group">
-        <svg class="w-6 h-6 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
-        </svg>
-    </button>
-
-    <!-- Pagination moderne -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-        @foreach($slider->slides as $slideIndex => $slide)
-        <button @click="goToSlide({{ $slideIndex }})"
-                :class="currentSlide === {{ $slideIndex }} ? 'w-10 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'"
-                class="h-2 rounded-full transition-all duration-300">
-        </button>
-        @endforeach
-    </div>
-    @endif
 </section>
 @endif

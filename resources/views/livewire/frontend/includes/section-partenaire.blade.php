@@ -12,7 +12,7 @@
                     <div class="w-2 h-2 bg-ed-primary rounded-full"></div>
                     <span class="text-ed-primary font-semibold text-xs">Nos partenaires</span>
                 </div>
-                <h2 class="text-2xl md:text-3xl font-black text-gray-900 mb-2">
+                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 mb-2">
                     Ils nous font confiance
                 </h2>
                 <p class="text-sm md:text-base text-gray-600 max-w-2xl mx-auto">

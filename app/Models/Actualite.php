@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Actualite extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'titre',
@@ -111,5 +113,22 @@ class Actualite extends Model
     public function scopeImportant($query)
     {
         return $query->where('est_important', true);
+    }
+
+
+    protected static function booted()
+    {
+        static::creating(function ($actualite) {
+            if (empty($actualite->slug) && !empty($actualite->titre)) {
+                $slug = Str::slug($actualite->titre);
+                $count = 0;
+                $base = $slug;
+                while (self::where('slug', $slug)->exists()) {
+                    $count++;
+                    $slug = $base . '-' . $count;
+                }
+                $actualite->slug = $slug;
+            }
+        });
     }
 }

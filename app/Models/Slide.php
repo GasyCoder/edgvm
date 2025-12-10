@@ -23,6 +23,7 @@ class Slide extends Model
         'badge_texte',
         'badge_icon',
         'couleur_fond',
+        'actualite_id',
     ];
 
     protected $casts = [
@@ -33,6 +34,11 @@ class Slide extends Model
     public function slider()
     {
         return $this->belongsTo(Slider::class);
+    }
+
+    public function actualite()
+    {
+        return $this->belongsTo(Actualite::class, 'actualite_id');
     }
 
     public function image()
@@ -58,5 +64,20 @@ class Slide extends Model
             $titre .= ' ' . $this->titre_ligne2;
         }
         return $titre;
+    }
+
+
+    /**
+     * Retourne l'URL finale du CTA :
+     * - si une actualité liée -> /actualites/{slug}
+     * - sinon -> lien_cta (champ libre)
+     */
+    public function getCtaUrlAttribute()
+    {
+        if ($this->actualite && $this->actualite->slug) {
+            return route('actualites.show', ['actualite' => $this->actualite->slug]);
+        }
+
+        return $this->lien_cta;
     }
 }

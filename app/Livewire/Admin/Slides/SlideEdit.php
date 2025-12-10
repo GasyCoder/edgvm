@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Slides;
 
 use App\Models\Media;
 use App\Models\Slide;
+use App\Models\Actualite;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
@@ -31,6 +32,12 @@ class SlideEdit extends Component
     public $badge_icon;
     public $couleur_fond;
 
+    // Pour la recherche / sélection d'actualité (typeahead)
+    public $actualite_id = null;
+    public $searchActualite = '';
+    public $actualiteResults = [];
+    public $actPreview = null; // objet Actualite en cache (pour affichage)
+
     protected $rules = [
         'titre_highlight' => 'required|string|max:255',
         'titre_ligne1' => 'nullable|string|max:255',
@@ -39,6 +46,7 @@ class SlideEdit extends Component
         'image_id' => 'nullable|exists:media,id',
         'new_image' => 'nullable|image|max:5120', // 5MB max
         'lien_cta' => 'nullable|string|max:255',
+        'actualite_id' => 'nullable|exists:actualites,id',
         'texte_cta' => 'nullable|string|max:255',
         'ordre' => 'required|integer|min:1',
         'visible' => 'boolean',
@@ -70,6 +78,16 @@ class SlideEdit extends Component
         $this->badge_texte = $slide->badge_texte;
         $this->badge_icon = $slide->badge_icon;
         $this->couleur_fond = $slide->couleur_fond;
+
+        // Si le slide est déjà lié à une actualité, charger l'aperçu (cache)
+        if ($slide->actualite_id) {
+            $this->actualite_id = $slide->actualite_id;
+            $this->actPreview = Actualite::select('id','titre','slug','date_publication')
+                                         ->find($this->actualite_id);
+            if ($this->actPreview && $this->actPreview->slug) {
+                $this->lien_cta = route('actualites.show', ['actualite' => $this->actPreview->slug]);
+            }
+        }
     }
 
     public function update()
@@ -94,6 +112,14 @@ class SlideEdit extends Component
             $this->image_id = $media->id;
         }
 
+        // Si une actualité est sélectionnée, forcer le lien depuis le slug
+        if ($this->actualite_id) {
+            $a = Actualite::select('id','slug')->find($this->actualite_id);
+            if ($a && $a->slug) {
+                $this->lien_cta = route('actualites.show', ['actualite' => $a->slug]);
+            }
+        }
+
         $this->slide->update([
             'titre_ligne1' => $this->titre_ligne1,
             'titre_highlight' => $this->titre_highlight,
@@ -107,11 +133,64 @@ class SlideEdit extends Component
             'badge_texte' => $this->badge_texte,
             'badge_icon' => $this->badge_icon,
             'couleur_fond' => $this->couleur_fond,
+            'actualite_id' => $this->actualite_id,
         ]);
 
         session()->flash('success', 'Slide mis à jour avec succès !');
 
         return redirect()->route('admin.slides.index', $this->slide->slider);
+    }
+
+    /**
+     * Recherche typeahead: se déclenche quand searchActualite change (wire:model.debounce)
+     */
+    public function updatedSearchActualite($value)
+    {
+        if (empty($value)) {
+            $this->actualiteResults = [];
+            return;
+        }
+
+        $this->actualiteResults = Actualite::visible()
+            ->where('titre', 'like', '%' . $value . '%')
+            ->orderBy('date_publication', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function($a){
+                return [
+                    'id' => $a->id,
+                    'titre' => $a->titre,
+                    'slug' => $a->slug,
+                    'date_publication' => $a->date_publication ? $a->date_publication->format('Y-m-d') : null,
+                ];
+            })->toArray();
+    }
+
+    /**
+     * Lorsque l'admin clique sur un résultat : mettre à jour la selection et l'aperçu (cache)
+     */
+    public function selectActualite($id)
+    {
+        $actualite = Actualite::select('id','titre','slug','date_publication')->find($id);
+        if (! $actualite) return;
+
+        $this->actualite_id = $actualite->id;
+        $this->actPreview = $actualite; // cache
+        $this->lien_cta = route('actualites.show', ['actualite' => $actualite->slug]);
+
+        // clear search UI
+        $this->searchActualite = '';
+        $this->actualiteResults = [];
+    }
+
+    /**
+     * Permet d'annuler la sélection pour saisir un lien manuel
+     */
+    public function clearActualiteSelection()
+    {
+        $this->actualite_id = null;
+        $this->actPreview = null;
+        $this->lien_cta = '';
     }
 
     public function render()
@@ -122,6 +201,7 @@ class SlideEdit extends Component
             'medias' => $medias,
             'title' => 'Modifier le slide',
             'subtitle' => $this->slide->slider->nom
+            // note: actPreview est une propriété publique, accessible directement en Blade
         ]);
     }
 }

@@ -141,21 +141,82 @@
                                    placeholder="Ex: Candidater maintenant">
                         </div>
                         
-                        <div>
-                            <label for="lien_cta" class="block text-sm font-medium text-gray-700 mb-2">
-                                Lien du bouton
-                            </label>
-                            <input type="text" 
-                                   id="lien_cta" 
-                                   wire:model="lien_cta" 
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ed-primary focus:border-transparent @error('lien_cta') border-red-500 @enderror"
-                                   placeholder="https://...">
-                            @error('lien_cta')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Lier à une actualité (recherche)</label>
+
+                                <input
+                                    type="text"
+                                    wire:model.live="searchActualite"
+                                    placeholder="Rechercher un titre d'actualité..."
+                                    class="w-full px-4 py-2 border rounded-lg"
+                                    autocomplete="off"
+                                />
+
+                                {{-- Dropdown résultats --}}
+                                @if(!empty($searchActualite) && count($actualiteResults))
+                                    <ul class="mt-2 max-h-56 overflow-auto bg-white border rounded-md shadow-sm">
+                                        @foreach($actualiteResults as $res)
+                                            <li class="px-3 py-2 hover:bg-gray-50 cursor-pointer flex justify-between items-center"
+                                                wire:click="selectActualite({{ $res['id'] }})">
+                                                <div class="text-sm">
+                                                    <div class="font-medium text-gray-800">{{ $res['titre'] }}</div>
+                                                    @if($res['date_publication']) 
+                                                        <div class="text-xs text-gray-500">{{ $res['date_publication'] }}</div>
+                                                    @endif
+                                                </div>
+                                                <div class="text-xs text-gray-400 ml-2">Sélectionner</div>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @elseif(!empty($searchActualite))
+                                    <div class="mt-2 text-xs text-gray-500">Aucun résultat.</div>
+                                @endif
+                            </div>
+
+                            {{-- Aperçu de la sélection --}}
+                            @if($actualite_id)
+                                <div class="mt-2 p-3 border rounded-md bg-gray-50 flex items-start justify-between">
+                                    <div>
+                                        @if($actPreview)
+                                            <div class="text-sm font-medium text-gray-800">{{ $actPreview->titre }}</div>
+                                            @if($actPreview->date_publication)
+                                                <div class="text-xs text-gray-500">{{ $actPreview->date_publication->format('Y-m-d') }}</div>
+                                            @endif
+                                        @endif
+                                        <div class="text-xs text-gray-600 mt-2">
+                                            Lien généré :
+                                            <a href="{{ $lien_cta }}" target="_blank" class="underline text-ed-primary">{{ $lien_cta }}</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="ml-4">
+                                        <button type="button" wire:click="clearActualiteSelection" class="text-sm px-3 py-1 border rounded-md text-red-500">
+                                            Annuler
+                                        </button>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
+
+                    {{-- Champ lien personnalisé (readonly si actualité sélectionnée) --}}
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Lien du bouton (personnalisé)</label>
+                        <input type="text" id="lien_cta" wire:model="lien_cta"
+                            @if($actualite_id) readonly @endif
+                            class="w-full px-4 py-2 border rounded-lg @if($actualite_id) bg-gray-50 @endif"
+                            placeholder="https://...">
+                        <p class="mt-1 text-xs text-gray-500">
+                            @if($actualite_id)
+                                Le lien est généré automatiquement depuis l'actualité sélectionnée.
+                            @else
+                                Saisissez un lien personnalisé si vous ne liez pas le slide à une actualité.
+                            @endif
+                        </p>
+                    </div>
                 </div>
+
 
                 <!-- Section Image -->
                 <div class="bg-white rounded-lg shadow-md p-6">

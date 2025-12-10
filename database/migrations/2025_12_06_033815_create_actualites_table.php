@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('actualites', function (Blueprint $table) {
             $table->id();
             $table->string('titre');
+            $table->string('slug')->unique()->nullable();
             $table->longText('contenu');
             $table->foreignId('auteur_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->boolean('notifier_abonnes')->default(false);
             $table->timestamp('notification_envoyee_le')->nullable();
             $table->unsignedBigInteger('vues')->default(0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

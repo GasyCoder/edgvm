@@ -31,6 +31,7 @@
                         || request()->routeIs('admin.media.*')
                         || request()->routeIs('admin.message-directions.*')
                         || request()->routeIs('admin.partenaires.*')
+                        || request()->routeIs('admin.evenements.*')
                         ? 'true' : 'false' 
                     }}
                 }">
@@ -60,7 +61,8 @@
                                     || request()->routeIs('admin.slides.*')
                                     || request()->routeIs('admin.media.*')
                                     || request()->routeIs('admin.message-directions.*')
-                                    || request()->routeIs('admin.partenaires.*'))
+                                    || request()->routeIs('admin.partenaires.*')
+                                    || request()->routeIs('admin.evenements.*'))
                                     ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
                         <span class="flex items-center gap-3">
                             {{-- Icône principal : “Communication & contenus” --}}
@@ -112,6 +114,18 @@
                                     d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
                             </svg>
                             <span>Actualités</span>
+                        </a>
+
+                        <a href="{{ route('admin.evenements.index') }}"
+                            class="flex items-center gap-2 px-3 py-2 rounded-md
+                                hover:bg-white/10 transition
+                                {{ request()->routeIs('admin.evenements.*') ? 'bg-white/20 text-ed-yellow font-semibold' : 'text-white/80' }}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <!-- icône calendrier -->
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span>Événements</span>
                         </a>
 
                         {{-- Newsletter --}}

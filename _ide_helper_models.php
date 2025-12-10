@@ -15,6 +15,7 @@ namespace App\Models{
 /**
  * @property int $id
  * @property string $titre
+ * @property string|null $slug
  * @property string $contenu
  * @property int|null $auteur_id
  * @property int|null $category_id
@@ -25,6 +26,7 @@ namespace App\Models{
  * @property bool $notifier_abonnes
  * @property \Illuminate\Support\Carbon|null $notification_envoyee_le
  * @property int $vues
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User|null $auteur
@@ -40,6 +42,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite important()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite ordered()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite published()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite query()
@@ -49,15 +52,19 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereContenu($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereDatePublication($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereEstImportant($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereImageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereNotificationEnvoyeeLe($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereNotifierAbonnes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereTitre($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereVisible($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite whereVues($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Actualite withoutTrashed()
  */
 	class Actualite extends \Eloquent {}
 }
@@ -201,6 +208,52 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Encadrant whereUserId($value)
  */
 	class Encadrant extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property string $titre
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon $date_debut
+ * @property \Illuminate\Support\Carbon|null $heure_debut
+ * @property \Illuminate\Support\Carbon|null $date_fin
+ * @property \Illuminate\Support\Carbon|null $heure_fin
+ * @property string|null $lieu
+ * @property string $type
+ * @property bool $est_important
+ * @property string|null $lien_inscription
+ * @property bool $est_publie
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read string $date_fr
+ * @property-read string|null $heure_debut_aff
+ * @property-read string $jour
+ * @property-read string $mois
+ * @property-read string $periode_aff
+ * @property-read string $type_classe
+ * @property-read string $type_texte
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement futurs()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement passes()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereDateDebut($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereDateFin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereEstImportant($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereEstPublie($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereHeureDebut($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereHeureFin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereLienInscription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereLieu($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereTitre($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereUpdatedAt($value)
+ */
+	class Evenement extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -611,6 +664,9 @@ namespace App\Models{
  * @property string $couleur_fond
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $actualite_id
+ * @property-read \App\Models\Actualite|null $actualite
+ * @property-read mixed $cta_url
  * @property-read mixed $titre_complet
  * @property-read \App\Models\Media $image
  * @property-read \App\Models\Slider $slider
@@ -618,6 +674,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide visible()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide whereActualiteId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide whereBadgeIcon($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide whereBadgeTexte($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide whereCouleurFond($value)

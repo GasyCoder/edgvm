@@ -26,6 +26,7 @@ use App\Http\Controllers\AdminController;
 use App\Livewire\Admin\Slides\SlideIndex;
 use App\Livewire\Admin\Theses\TheseIndex;
 use App\Livewire\Frontend\ActualitesPage;
+use App\Livewire\Frontend\EvenementsPage;
 use App\Livewire\Admin\Sliders\SliderEdit;
 use App\Livewire\Admin\Slides\SlideCreate;
 use App\Livewire\Admin\Theses\TheseCreate;
@@ -38,6 +39,7 @@ use App\Livewire\Frontend\Recherche\EadsPage;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\SecretaireController;
 use App\Livewire\Frontend\ActualiteDetailPage;
+use App\Livewire\Frontend\EvenementDetailPage;
 use App\Livewire\Frontend\Recherche\ThesePage;
 use App\Http\Controllers\Admin\MediaController;
 use App\Livewire\Admin\Actualites\ActualiteEdit;
@@ -46,13 +48,16 @@ use App\Livewire\Admin\Doctorants\DoctorantEdit;
 use App\Livewire\Admin\Doctorants\DoctorantShow;
 use App\Livewire\Admin\Encadrants\EncadrantEdit;
 use App\Livewire\Admin\Encadrants\EncadrantShow;
+use App\Livewire\Admin\Evenements\EvenementEdit;
 use App\Livewire\Frontend\Recherche\TheseDetail;
 use App\Livewire\Admin\Actualites\ActualiteIndex;
 use App\Livewire\Admin\Doctorants\DoctorantIndex;
 use App\Livewire\Admin\Encadrants\EncadrantIndex;
+use App\Livewire\Admin\Evenements\EvenementIndex;
 use App\Livewire\Admin\Actualites\ActualiteCreate;
 use App\Livewire\Admin\Doctorants\DoctorantCreate;
 use App\Livewire\Admin\Encadrants\EncadrantCreate;
+use App\Livewire\Admin\Evenements\EvenementCreate;
 use App\Livewire\Admin\Newsletter\SubscriberIndex;
 use App\Livewire\Admin\Partenaires\PartenaireEdit;
 use App\Livewire\Admin\Specialites\SpecialiteEdit;
@@ -112,12 +117,18 @@ Route::prefix('theses')->name('theses.')->group(function () {
 // Actualités
 Route::prefix('actualites')->name('actualites.')->group(function () {
     Route::get('/', ActualitesPage::class)->name('index');
-    Route::get('/{actualite:id}', ActualiteDetailPage::class)->name('show');
+    Route::get('/{actualite:slug}', ActualiteDetailPage::class)->name('show');
 });
 
 
 // Contact
 Route::get('/contact', ContactPage::class)->name('contact');
+
+Route::get('/evenements', EvenementsPage::class)
+    ->name('evenements.index');
+
+Route::get('/evenements/{evenement}', EvenementDetailPage::class)
+    ->name('evenements.show');
 
 /*
 |--------------------------------------------------------------------------
@@ -275,7 +286,28 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             Route::get('/{partenaire}/edit', PartenaireEdit::class)
                 ->name('edit');
         });
+
+
+        // Gestion des Événements 
+        Route::prefix('evenements')->name('evenements.')->group(function () {
+            // GET  /admin/evenements           -> admin.evenements.index
+            Route::get('/', EvenementIndex::class)
+                ->name('index');
+
+            // GET  /admin/evenements/create    -> admin.evenements.create
+            Route::get('/create', EvenementCreate::class)
+                ->name('create');
+
+            // GET  /admin/evenements/{evenement}/edit -> admin.evenements.edit
+            Route::get('/{evenement}/edit', EvenementEdit::class)
+                ->name('edit');
+        });
+
     });
+
+
+
+
 
     // Secrétaire
     Route::middleware(['role:admin,secrétaire'])->prefix('secretariat')->name('secretaire.')->group(function () {

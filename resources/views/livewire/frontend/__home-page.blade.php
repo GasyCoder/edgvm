@@ -896,6 +896,126 @@
         </div>
     </section>
 @endif
+
+
+{{-- Section Événements à venir --}}
+@if(isset($evenementsFuturs) && $evenementsFuturs->count() > 0)
+<section aria-labelledby="evenements-heading" class="relative py-12">
+    <!-- Background decorations -->
+    <div class="pointer-events-none absolute -left-16 top-0 w-72 h-72 rounded-full blur-3xl bg-gradient-to-br from-purple-400 to-indigo-600 opacity-20"></div>
+    <div class="pointer-events-none absolute right-0 bottom-0 w-96 h-96 rounded-full blur-3xl bg-gradient-to-br from-indigo-500 to-purple-700 opacity-15"></div>
+
+    <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+                <span class="inline-flex items-center justify-center p-2 rounded-full bg-purple-600 text-white">
+                    <!-- Icon calendrier (Heroicons SVG calendrier) -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </span>
+                <div>
+                    <span class="text-xs text-gray-500 uppercase">Prochains événements</span>
+                    <h2 id="evenements-heading" class="text-3xl md:text-4xl font-extrabold text-black">Événements à venir</h2>
+                </div>
+            </div>
+
+            <!-- Desktop button -->
+            <div class="hidden md:block">
+                <a href="{{ route('evenements.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-md shadow-md bg-white/80 backdrop-blur-sm text-sm font-medium border border-gray-200 hover:shadow-lg">
+                    Voir tous les événements
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            @foreach($evenementsFuturs as $evenement)
+            <article class="relative bg-white/60 backdrop-blur-md rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transform hover:-translate-y-2 transition-all duration-300 group">
+                <!-- Header with gradient and date -->
+                <header class="p-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex items-start justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="text-center">
+                            <div class="text-4xl md:text-5xl font-extrabold leading-none">{{ $evenement->jour }}</div>
+                            <div class="text-sm uppercase tracking-wide">{{ $evenement->mois }}</div>
+                        </div>
+                        <div class="ml-3">
+                            <span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold {{ $evenement->type_classe }}">
+                                {{ $evenement->type_texte }}
+                            </span>
+                            @if($evenement->est_important)
+                                <div class="mt-2">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-red-600 text-white text-xs font-semibold">Important</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="text-right text-xs">
+                        <div class="font-medium">{{ $evenement->periode_aff }}</div>
+                        @if($evenement->heure_debut)
+                            <div class="mt-1 flex items-center gap-2 text-sm">
+                                <!-- icone horloge -->
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span>{{ $evenement->heure_debut_aff ?? '' }}</span>
+                            </div>
+                        @endif
+                        @if($evenement->lieu)
+                            <div class="mt-1 flex items-center gap-2 text-sm">
+                                <!-- icone localisation -->
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1 1 0 01-1.414 0L6.343 15.243a8 8 0 1111.314 1.414z"/>
+                                </svg>
+                                <span>{{ Str::limit($evenement->lieu, 30) }}</span>
+                            </div>
+                        @endif
+                    </div>
+                </header>
+
+                <!-- Body -->
+                <div class="p-4">
+                    <h3 class="text-lg md:text-xl font-bold leading-tight mb-2 line-clamp-2">{{ $evenement->titre }}</h3>
+                    <p class="text-sm text-gray-700 mb-4 line-clamp-2">{{ $evenement->description ? Str::limit(strip_tags($evenement->description), 120) : '' }}</p>
+
+                    <div class="flex items-center justify-between">
+                        <a href="{{ route('evenements.show', $evenement) }}" class="inline-flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-md bg-white border border-gray-200 hover:shadow">
+                            En savoir plus
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                            </svg>
+                        </a>
+
+                        @if($evenement->lien_inscription)
+                            <a href="{{ $evenement->lien_inscription }}" target="_blank" class="text-sm underline">S'inscrire</a>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Hover progress bar -->
+                <div class="absolute left-0 bottom-0 w-full h-1 bg-transparent">
+                    <div class="h-1 bg-gradient-to-r from-purple-400 to-indigo-600 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
+                </div>
+            </article>
+            @endforeach
+        </div>
+
+        <!-- Mobile button -->
+        <div class="mt-6 md:hidden text-center">
+            <a href="{{ route('evenements.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-md shadow-md bg-white/90 backdrop-blur-sm text-sm font-medium border border-gray-200 hover:shadow-lg">
+                Voir tous les événements
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</section>
+@endif
+
+
 </div>
 
 @push('scripts')
