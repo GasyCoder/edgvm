@@ -58,7 +58,8 @@ class HomePage extends Component
 
         // ✅ Événements FUTURS uniquement (agenda)
         $evenementsFuturs = Evenement::futurs()
-            ->limit(4)
+            ->latest()
+            ->limit(2)
             ->get();
 
         return view('livewire.frontend.home-page', [

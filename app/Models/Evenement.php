@@ -25,6 +25,9 @@ class Evenement extends Model
         'est_important',
         'lien_inscription',
         'est_publie',
+        'est_archive',
+        'image_id',      // image de couverture
+        'document_id',   // document PDF associé
     ];
 
     protected $casts = [
@@ -34,21 +37,43 @@ class Evenement extends Model
         'heure_fin'     => 'datetime:H:i',
         'est_important' => 'boolean',
         'est_publie'    => 'boolean',
+        'est_archive'   => 'boolean',
+        'image_id'      => 'integer',
+        'document_id'   => 'integer',
     ];
+
+    /* ------------------------
+       Relations
+    -------------------------*/
+
+    public function image()
+    {
+        return $this->belongsTo(Media::class, 'image_id');
+    }
+
+    public function document()
+    {
+        return $this->belongsTo(Media::class, 'document_id');
+    }
+    
 
     /* ------------------------
        Scopes
     -------------------------*/
 
     /**
-     * Événements futurs (date_debut >= aujourd'hui), publiés, triés croissant.
+     * Événements futurs (date_debut >= aujourd'hui), publiés, non archivés.
      */
     public function scopeFuturs(Builder $query): Builder
     {
         $today = Carbon::today()->toDateString();
-        return $query->whereDate('date_debut', '>=', $today)
-                     ->where('est_publie', true)
-                     ->orderBy('date_debut', 'asc');
+
+        return $query
+            ->whereDate('date_debut', '>=', $today)
+            ->where('est_publie', true)
+            ->where('est_archive', false)
+            ->orderBy('date_debut', 'asc')
+            ->orderBy('heure_debut', 'asc');
     }
 
     /**
@@ -57,17 +82,16 @@ class Evenement extends Model
     public function scopePasses(Builder $query): Builder
     {
         $today = Carbon::today()->toDateString();
-        return $query->whereDate('date_debut', '<', $today)
-                     ->orderByDesc('date_debut');
+
+        return $query
+            ->whereDate('date_debut', '<', $today)
+            ->orderByDesc('date_debut');
     }
 
     /* ------------------------
-       Accessors (attributes)
+       Accessors
     -------------------------*/
 
-    /**
-     * Date formatée en français ex: "15 Décembre 2024"
-     */
     public function getDateFrAttribute(): string
     {
         $date = $this->date_debut ? Carbon::parse($this->date_debut) : null;
@@ -75,35 +99,24 @@ class Evenement extends Model
             return '';
         }
         setlocale(LC_TIME, 'fr_FR.UTF-8');
-        return $date->isoFormat('D MMMM YYYY'); // exemple: 15 décembre 2024
+        return $date->isoFormat('D MMMM YYYY');
     }
 
-    /**
-     * Retourne le jour (numérique) pour l'affichage en grand.
-     */
     public function getJourAttribute(): string
     {
         return $this->date_debut ? Carbon::parse($this->date_debut)->format('d') : '';
     }
 
-    /**
-     * Retourne le mois court avec première lettre capitale (ex: "Déc").
-     */
     public function getMoisAttribute(): string
     {
         if (! $this->date_debut) {
             return '';
         }
-        $mois = Carbon::parse($this->date_debut)->locale('fr')->isoFormat('MMM'); // ex: déc.
-        // Capitalize and remove trailing dot
+        $mois = Carbon::parse($this->date_debut)->locale('fr')->isoFormat('MMM');
         $mois = ucfirst(str_replace('.', '', $mois));
         return $mois;
     }
 
-    /**
-     * Classe Tailwind suivant le type d'événement.
-     * (purple pour soutenance, blue pour seminaire, green pour conference, orange pour atelier, gray pour autre)
-     */
     public function getTypeClasseAttribute(): string
     {
         return match ($this->type) {
@@ -115,9 +128,6 @@ class Evenement extends Model
         };
     }
 
-    /**
-     * Texte lisible pour le type.
-     */
     public function getTypeTexteAttribute(): string
     {
         return match ($this->type) {
@@ -129,24 +139,54 @@ class Evenement extends Model
         };
     }
 
-    /**
-     * Retourne l'heure de début formatée 'HH:mm' si disponible.
-     */
     public function getHeureDebutAffAttribute(): ?string
     {
         return $this->heure_debut ? Carbon::parse($this->heure_debut)->format('H:i') : null;
     }
 
-    /**
-     * Retourne l'intervalle date/heure si date_fin présente sinon date_debut seul.
-     */
     public function getPeriodeAffAttribute(): string
     {
         $debut = $this->date_debut ? Carbon::parse($this->date_debut)->isoFormat('D MMM YYYY') : '';
-        $fin = $this->date_fin ? Carbon::parse($this->date_fin)->isoFormat('D MMM YYYY') : null;
+        $fin   = $this->date_fin ? Carbon::parse($this->date_fin)->isoFormat('D MMM YYYY') : null;
+
         if ($fin && $fin !== $debut) {
             return $debut . ' — ' . $fin;
         }
+
         return $debut;
+    }
+
+    /**
+     * Indique si l’événement est terminé.
+     */
+    public function getEstTermineAttribute(): bool
+    {
+        if (! $this->date_debut && ! $this->date_fin) {
+            return false;
+        }
+
+        $date = $this->date_fin ?? $this->date_debut;
+
+        if (! $date instanceof Carbon) {
+            $date = Carbon::parse($date);
+        }
+
+        if ($this->heure_fin) {
+            $time = $this->heure_fin instanceof Carbon
+                ? $this->heure_fin
+                : Carbon::parse($this->heure_fin);
+
+            $dateFin = $date->copy()->setTime($time->hour, $time->minute);
+        } elseif ($this->heure_debut) {
+            $time = $this->heure_debut instanceof Carbon
+                ? $this->heure_debut
+                : Carbon::parse($this->heure_debut);
+
+            $dateFin = $date->copy()->setTime($time->hour, $time->minute);
+        } else {
+            $dateFin = $date->copy()->endOfDay();
+        }
+
+        return $dateFin->lt(now());
     }
 }

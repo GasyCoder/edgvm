@@ -20,7 +20,7 @@
             <div class="text-sm text-gray-500">
                 <span class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1">
                     <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-                    <span>Données indicatives mises à jour régulièrement</span>
+                    <span>Données indicatives à jour</span>
                 </span>
             </div>
         </div>

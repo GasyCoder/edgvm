@@ -190,6 +190,65 @@
                             Vous pourrez modifier la visibilité à tout moment.
                         </p>
                     </div>
+
+                    <hr class="my-6">
+
+                    <div class="space-y-4">
+                        <h3 class="text-sm font-semibold text-gray-800">
+                            Menu de navigation
+                        </h3>
+
+                        {{-- Checkbox : attacher ou non au menu --}}
+                        <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                            <input
+                                type="checkbox"
+                                wire:model="attachToMenu"
+                                class="rounded border-gray-300 text-ed-primary focus:ring-ed-primary"
+                            >
+                            <span>Ajouter cette page à un menu</span>
+                        </label>
+
+                        @if($attachToMenu)
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {{-- Choix du menu --}}
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">
+                                        Menu
+                                    </label>
+                                    <select
+                                        wire:model="menuId"
+                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-ed-primary focus:border-ed-primary"
+                                    >
+                                        <option value="">— Sélectionner un menu —</option>
+                                        @foreach($menus as $menu)
+                                            <option value="{{ $menu->id }}">
+                                                {{ $menu->nom }} ({{ $menu->slug }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('menuId')
+                                        <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                {{-- Libellé dans le menu --}}
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">
+                                        Libellé du lien dans le menu
+                                    </label>
+                                    <input
+                                        type="text"
+                                        wire:model="menuLabel"
+                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-ed-primary focus:border-ed-primary"
+                                        placeholder="Par défaut : titre de la page"
+                                    >
+                                    <p class="text-[11px] text-gray-400 mt-1">
+                                        Si laissé vide, le titre de la page sera utilisé.
+                                    </p>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
                 {{-- Carte Info auteur (optionnel si tu veux l’ajouter plus tard) --}}

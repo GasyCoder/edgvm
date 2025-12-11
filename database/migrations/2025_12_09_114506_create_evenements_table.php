@@ -21,6 +21,15 @@ return new class extends Migration
             $table->boolean('est_important')->default(false);
             $table->string('lien_inscription')->nullable();
             $table->boolean('est_publie')->default(true);
+            $table->boolean('est_archive')->default(false);
+            $table->foreignId('image_id')
+                ->nullable()
+                ->constrained('media')
+                ->nullOnDelete();
+            $table->foreignId('document_id')
+                ->nullable()
+                ->constrained('media')
+                ->nullOnDelete();
             $table->softDeletes();
             $table->timestamps();
         });

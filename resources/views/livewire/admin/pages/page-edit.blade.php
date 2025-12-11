@@ -376,6 +376,77 @@
                 </div>
             </div>
 
+            {{-- Menu de navigation --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
+                <h2 class="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-5 rounded-full bg-gradient-to-b from-emerald-500 to-teal-500"></span>
+                    Menu de navigation
+                </h2>
+
+                <div class="space-y-4">
+                    {{-- Checkbox : afficher ou non dans un menu --}}
+                    <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                        <input
+                            type="checkbox"
+                            wire:model="attachToMenu"
+                            class="rounded border-gray-300 text-ed-primary focus:ring-ed-primary"
+                        >
+                        <span>Afficher cette page dans un menu</span>
+                    </label>
+
+                    @if($attachToMenu)
+                        {{-- Choix du menu --}}
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">
+                                    Menu
+                                </label>
+                                <select
+                                    wire:model="menuId"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm
+                                        focus:ring-ed-primary focus:border-ed-primary"
+                                >
+                                    <option value="">— Sélectionner un menu —</option>
+                                    @foreach($menus as $menu)
+                                        <option value="{{ $menu->id }}">
+                                            {{ $menu->nom }} ({{ $menu->slug }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('menuId')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Libellé dans le menu --}}
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">
+                                    Libellé dans le menu
+                                </label>
+                                <input
+                                    type="text"
+                                    wire:model="menuLabel"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm
+                                        focus:ring-ed-primary focus:border-ed-primary"
+                                    placeholder="Par défaut : titre de la page"
+                                >
+                                <p class="mt-1 text-[11px] text-gray-500">
+                                    Si laissé vide, le titre de la page sera utilisé.
+                                </p>
+                            </div>
+
+                            @if($menuItemId)
+                                <p class="text-[11px] text-emerald-600 flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Cette page est déjà liée à un élément de menu.
+                                </p>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+
             {{-- Infos / aide rédaction --}}
             <div class="bg-blue-50 border border-blue-200 rounded-2xl p-5">
                 <h3 class="text-sm font-semibold text-blue-900 mb-2">

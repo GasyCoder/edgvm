@@ -224,15 +224,22 @@ namespace App\Models{
  * @property bool $est_important
  * @property string|null $lien_inscription
  * @property bool $est_publie
+ * @property bool $est_archive
+ * @property int|null $image_id
+ * @property int|null $document_id
+ * @property string|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Media|null $document
  * @property-read string $date_fr
+ * @property-read bool $est_termine
  * @property-read string|null $heure_debut_aff
  * @property-read string $jour
  * @property-read string $mois
  * @property-read string $periode_aff
  * @property-read string $type_classe
  * @property-read string $type_texte
+ * @property-read \App\Models\Media|null $image
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement futurs()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement newQuery()
@@ -241,12 +248,16 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereDateDebut($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereDateFin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereDocumentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereEstArchive($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereEstImportant($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereEstPublie($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereHeureDebut($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereHeureFin($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereImageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereLienInscription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereLieu($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Evenement whereTitre($value)
@@ -477,13 +488,15 @@ namespace App\Models{
  * @property int $id
  * @property string $email
  * @property string|null $nom
- * @property string $type
+ * @property string|null $type
  * @property bool $actif
  * @property \Illuminate\Support\Carbon|null $desabonne_le
  * @property string $token
  * @property \Illuminate\Support\Carbon $abonne_le
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|NewsletterSubscriber actif()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|NewsletterSubscriber byType($type)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|NewsletterSubscriber newModelQuery()
@@ -515,6 +528,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User|null $auteur
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MenuItem> $menuItems
+ * @property-read int|null $menu_items_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PageSection> $sections
  * @property-read int|null $sections_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Page newModelQuery()

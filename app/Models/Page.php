@@ -33,6 +33,12 @@ class Page extends Model
         return $this->hasMany(PageSection::class)->orderBy('ordre');
     }
 
+    // 🔹 Nouvel ajout : toutes les entrées de menus qui pointent vers cette page
+    public function menuItems()
+    {
+        return $this->hasMany(MenuItem::class);
+    }
+
     // Scopes
     public function scopeVisible($query)
     {

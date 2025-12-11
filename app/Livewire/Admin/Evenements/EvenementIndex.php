@@ -49,6 +49,58 @@ class EvenementIndex extends Component
         $this->resetPage();
     }
 
+    public function archiver(int $id): void
+    {
+        $evenement = Evenement::findOrFail($id);
+
+        if (! $evenement->est_termine) {
+            session()->flash('error', "Cet événement n'est pas encore terminé. Vous pourrez l'archiver une fois terminé.");
+            return;
+        }
+
+        $evenement->update([
+            'est_archive' => true,
+            'est_publie'  => false,
+        ]);
+
+        session()->flash('success', 'Événement archivé avec succès.');
+        $this->resetPage();
+    }
+
+    public function restaurer(int $id): void
+    {
+        $evenement = Evenement::findOrFail($id);
+
+        $evenement->update([
+            'est_archive' => false,
+        ]);
+
+        session()->flash('success', 'Événement restauré depuis les archives.');
+        $this->resetPage();
+    }
+
+    public function togglePublication(int $id): void
+    {
+        $evenement = Evenement::findOrFail($id);
+
+        // Sécurité : on ne publie pas un événement archivé
+        if ($evenement->est_archive) {
+            session()->flash('error', "Cet événement est archivé et ne peut pas être publié.");
+            return;
+        }
+
+        $nouvelleValeur = ! $evenement->est_publie;
+
+        $evenement->update([
+            'est_publie' => $nouvelleValeur,
+        ]);
+
+        session()->flash(
+            'success',
+            $nouvelleValeur ? 'Événement publié.' : 'Événement mis en brouillon.'
+        );
+    }
+
     public function render()
     {
         $query = Evenement::query();
@@ -69,7 +121,11 @@ class EvenementIndex extends Component
             }
         }
 
-        $evenements = $query->orderByDesc('est_important')->orderByDesc('date_debut')->paginate($this->perPage);
+        $evenements = $query
+            ->orderBy('est_archive')          // non archivés d’abord
+            ->orderByDesc('est_important')
+            ->orderByDesc('date_debut')
+            ->paginate($this->perPage);
 
         return view('livewire.admin.evenements.evenement-index', [
             'evenements' => $evenements,

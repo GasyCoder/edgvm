@@ -28,7 +28,7 @@
 
                     {{-- Colonne droite : boutons --}}
                     <div class="flex flex-col sm:flex-row md:flex-col lg:flex-row gap-3 justify-center md:justify-end">
-                        <a href="{{ route('register') }}"
+                        <a href="{{ route('ead.index') }}"
                         class="group inline-flex items-center justify-center px-6 py-3 
                                 text-sm md:text-[15px] font-semibold rounded-lg
                                 bg-ed-primary text-white shadow-sm hover:shadow-md

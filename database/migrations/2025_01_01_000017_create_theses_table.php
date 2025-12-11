@@ -25,7 +25,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('eads')
                 ->nullOnDelete();
-
+            $table->string('universite_soutenance')->nullable();
             // Fichier PDF de la thèse (table media)
             $table->foreignId('media_id')
                 ->nullable()

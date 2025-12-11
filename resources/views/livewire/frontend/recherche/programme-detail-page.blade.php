@@ -153,7 +153,7 @@
                             <p class="text-sm text-white/80 mb-4">
                                 Contactez-nous pour plus d'informations sur ce programme doctoral.
                             </p>
-                            <a href="mailto:contact@edgvm.mg" 
+                            <a href="{{ route('contact') }}" 
                                class="block text-center px-4 py-2.5 bg-white text-ed-primary rounded-lg hover:bg-ed-yellow transition font-bold text-sm">
                                 Nous contacter
                             </a>
