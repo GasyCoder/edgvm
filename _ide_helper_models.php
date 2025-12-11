@@ -640,9 +640,49 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @property int $id
+ * @property string $site_name
+ * @property string|null $seo_title
+ * @property string|null $meta_description
+ * @property string|null $meta_keywords
+ * @property string|null $site_email
+ * @property string|null $site_phone
+ * @property string|null $site_address
+ * @property string|null $facebook_url
+ * @property string|null $twitter_url
+ * @property string|null $linkedin_url
+ * @property string|null $youtube_url
+ * @property string|null $instagram_url
+ * @property string|null $sitemap_url
+ * @property string|null $logo_path
+ * @property string|null $favicon_path
+ * @property int $maintenance_mode
+ * @property string|null $maintenance_message
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereFacebookUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereFaviconPath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereInstagramUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereLinkedinUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereLogoPath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereMaintenanceMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereMaintenanceMode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereMetaDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereMetaKeywords($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereSeoTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereSiteAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereSiteEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereSiteName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereSitePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereSitemapUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereTwitterUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting whereYoutubeUrl($value)
  */
 	class Setting extends \Eloquent {}
 }

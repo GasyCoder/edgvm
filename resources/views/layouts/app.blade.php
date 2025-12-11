@@ -319,6 +319,19 @@
                         <span>Thèses</span>
                     </a>
 
+                    {{-- Paramètres --}}
+                    <a href="{{ route('admin.settings') }}"
+                    class="flex items-center gap-3 px-6 py-3 hover:bg-white/10 transition 
+                            {{ request()->routeIs('admin.settings') ? 'bg-white/20 border-r-4 border-ed-yellow' : '' }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11.049 2.927c.3-1.141 1.603-1.141 1.902 0l.284 1.08a1 1 0 00.95.735h1.137c1.163 0 1.64 1.49.74 2.17l-.89.667a1 1 0 000 1.6l.89.667c.9.68.423 2.17-.74 2.17h-1.137a1 1 0 00-.95.735l-.284 1.08c-.3 1.141-1.603 1.141-1.902 0l-.284-1.08a1 1 0 00-.95-.735H8.678c-1.163 0-1.64-1.49-.74-2.17l.89-.667a1 1 0 000-1.6l-.89-.667c-.9-.68-.423-2.17.74-2.17h1.137a1 1 0 00.95-.735l.284-1.08z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>Paramètres</span>
+                    </a>
+
                     {{-- Séparateur --}}
                     <div class="border-t border-white/10 my-4 mx-6"></div>
 

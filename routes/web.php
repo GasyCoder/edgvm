@@ -4,12 +4,13 @@
 use App\Livewire\Frontend\HomePage;
 use App\Livewire\Frontend\PageShow;
 use App\Livewire\Admin\Eads\EadEdit;
+use App\Livewire\Admin\SettingsPage;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\Admin\Eads\EadIndex;
 use App\Livewire\Admin\Tags\TagIndex;
-use Illuminate\Support\Facades\Route;
 
 // Composants Admin Livewire
+use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Eads\EadCreate;
 use App\Livewire\Admin\Jurys\JuryEdit;
 use App\Livewire\Admin\Pages\PageEdit;
@@ -166,7 +167,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // Admin
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-        
+        Route::get('/parametres', SettingsPage::class)->name('settings');
         // Gestion des Sliders
         Route::get('/sliders', SliderIndex::class)->name('sliders.index');
         Route::get('/sliders/create', SliderCreate::class)->name('sliders.create');
