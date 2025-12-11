@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
+            'frontend.maintenance' => \App\Http\Middleware\FrontendMaintenanceFromSettings::class,
             'role' => \App\Http\Middleware\CheckRole::class,
             'active' => \App\Http\Middleware\CheckActive::class,
         ]);

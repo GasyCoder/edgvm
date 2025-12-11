@@ -26,9 +26,10 @@ class Setting extends Model
         'maintenance_message',
     ];
 
-    /**
-     * Retourne l’unique enregistrement de paramètres
-     */
+    protected $casts = [
+        'maintenance_mode' => 'boolean',
+    ];
+
     public static function main(): self
     {
         return static::first() ?? static::create([
@@ -36,3 +37,4 @@ class Setting extends Model
         ]);
     }
 }
+

@@ -1,474 +1,627 @@
-<x-app-layout>
-    {{-- HEADER --}}
-    <x-slot name="header">
-        <div class="flex items-center justify-between gap-3">
-            <div>
-                <h2 class="font-semibold text-lg md:text-xl text-slate-900 leading-tight">
-                    Paramètres du site
-                </h2>
-                <p class="text-xs md:text-sm text-slate-500 mt-0.5">
-                    Configuration générale, SEO, apparence, maintenance et sécurité.
-                </p>
-            </div>
-            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full
-                         text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-                <span>Paramètres</span>
+<div class="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+    {{-- En-tête --}}
+    <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">
+                Paramètres du site
+            </h1>
+            <p class="mt-1 text-sm text-gray-500">
+                Configurez l’identité du site, les informations de contact, le SEO et la maintenance.
+            </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <span class="hidden sm:inline-flex items-center px-3 py-1.5 rounded-full bg-ed-primary/10 text-ed-primary text-xs font-semibold">
+                {{ auth()->user()->email ?? '' }}
+            </span>
+            <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-slate-900 text-white text-xs font-semibold shadow-sm">
+                Espace administration
             </span>
         </div>
-    </x-slot>
+    </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6 space-y-6">
-
-        {{-- MESSAGES FLASH --}}
-        @if(session('status'))
-            <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs md:text-sm text-emerald-800 flex items-start gap-2">
-                <span class="mt-0.5">✅</span>
-                <span>{{ session('status') }}</span>
+    {{-- Messages flash / erreurs globales --}}
+    <div class="space-y-3">
+        @if (session()->has('settings_saved'))
+            <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 flex items-start gap-2">
+                <span class="mt-0.5">
+                    ✅
+                </span>
+                <p>{{ session('settings_saved') }}</p>
             </div>
         @endif
 
-        @if(session('password_status'))
-            <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs md:text-sm text-emerald-800 flex items-start gap-2">
-                <span class="mt-0.5">🔐</span>
-                <span>{{ session('password_status') }}</span>
+        @if (session()->has('security_updated'))
+            <div class="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800 flex items-start gap-2">
+                <span class="mt-0.5">
+                    🔐
+                </span>
+                <p>{{ session('security_updated') }}</p>
             </div>
         @endif
 
-        @if(session('secretary_status'))
-            <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs md:text-sm text-amber-800 flex items-start gap-2">
-                <span class="mt-0.5">👤</span>
-                <span>{{ session('secretary_status') }}</span>
+        @if (session()->has('error'))
+            <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                {{ session('error') }}
             </div>
         @endif
+    </div>
 
-        @if($errors->any())
-            <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs md:text-sm text-red-800">
-                <p class="font-semibold mb-1">Certaines informations sont à corriger :</p>
-                <ul class="list-disc list-inside space-y-0.5">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        {{-- FORMULAIRE PRINCIPAL PARAMÈTRES --}}
-        <form wire:submit.prevent="save" class="space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {{-- Colonne 1/2 : Général + Contact/RS --}}
-                <div class="lg:col-span-2 space-y-6">
-                    {{-- Infos générales --}}
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6">
-                        <h3 class="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                            <span class="inline-flex w-7 h-7 items-center justify-center rounded-xl bg-ed-primary/10 text-ed-primary">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M3 7h18M3 12h18M3 17h18"/>
-                                </svg>
-                            </span>
-                            <span>Informations générales</span>
-                        </h3>
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Nom du site</label>
-                                <input type="text"
-                                       wire:model.defer="site_name"
-                                       class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                              focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Titre SEO principal</label>
-                                <input type="text"
-                                       wire:model.defer="seo_title"
-                                       class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                              focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                                <p class="mt-1 text-[11px] text-slate-500">
-                                    Utilisé comme titre par défaut si aucun titre spécifique n’est défini.
-                                </p>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Description SEO globale</label>
-                                <textarea rows="3"
-                                          wire:model.defer="meta_description"
-                                          class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                                 focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent"></textarea>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                                    Mots-clés (séparés par des virgules)
-                                </label>
-                                <textarea rows="2"
-                                          wire:model.defer="meta_keywords"
-                                          class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                                 focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent"
-                                          placeholder="ex : doctorat, EDGVM, recherche, sciences du vivant"></textarea>
-                            </div>
-                        </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {{-- COLONNE GAUCHE / CENTRE : PARAMÈTRES GÉNÉRAUX + SEO + MAINTENANCE --}}
+        <div class="lg:col-span-2 space-y-6">
+            {{-- Bloc identité du site / contact --}}
+            <form wire:submit.prevent="save" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-6">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm font-semibold text-gray-900">
+                            Identité du site & contacts
+                        </h2>
+                        <p class="text-xs text-gray-500 mt-0.5">
+                            Nom, coordonnées et informations publiques affichées sur le site.
+                        </p>
                     </div>
-
-                    {{-- Contact + Réseaux sociaux --}}
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6">
-                        <h3 class="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                            <span class="inline-flex w-7 h-7 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M3 5h18M8 5v14m8-14v14M5 19h2m10 0h2"/>
-                                </svg>
-                            </span>
-                            <span>Contacts & réseaux sociaux</span>
-                        </h3>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Email du site</label>
-                                <input type="email"
-                                       wire:model.defer="site_email"
-                                       class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                              focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Téléphone</label>
-                                <input type="text"
-                                       wire:model.defer="site_phone"
-                                       class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                              focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                            </div>
-
-                            <div class="md:col-span-2">
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Adresse</label>
-                                <textarea rows="2"
-                                          wire:model.defer="site_address"
-                                          class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                                 focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent"></textarea>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Facebook</label>
-                                <input type="url"
-                                       wire:model.defer="facebook_url"
-                                       class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                              focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">X / Twitter</label>
-                                <input type="url"
-                                       wire:model.defer="twitter_url"
-                                       class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                              focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">LinkedIn</label>
-                                <input type="url"
-                                       wire:model.defer="linkedin_url"
-                                       class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                              focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">YouTube</label>
-                                <input type="url"
-                                       wire:model.defer="youtube_url"
-                                       class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                              focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Instagram</label>
-                                <input type="url"
-                                       wire:model.defer="instagram_url"
-                                       class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                              focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                            </div>
-
-                            <div class="md:col-span-2">
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">URL du sitemap</label>
-                                <input type="url"
-                                       wire:model.defer="sitemap_url"
-                                       placeholder="https://edgvm.mg/sitemap.xml"
-                                       class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                              focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Colonne 3 : Apparence + Maintenance --}}
-                <div class="space-y-6">
-                    {{-- Apparence --}}
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6">
-                        <h3 class="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                            <span class="inline-flex w-7 h-7 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M3 7h18M3 12h18M3 17h18"/>
-                                </svg>
-                            </span>
-                            <span>Apparence (logo & favicon)</span>
-                        </h3>
-
-                        <div class="space-y-4 text-sm">
-                            {{-- Logo --}}
-                            <div class="space-y-2">
-                                <label class="block text-xs font-semibold text-slate-700">
-                                    Logo du site
-                                </label>
-                                @if($logo_current_path)
-                                    <div class="flex items-center gap-3">
-                                        <img src="{{ asset('storage/'.$logo_current_path) }}"
-                                             alt="Logo actuel"
-                                             class="h-10 object-contain bg-slate-50 rounded-lg border border-slate-200 px-2 py-1">
-                                        <span class="text-[11px] text-slate-500">Logo actuel</span>
-                                    </div>
-                                @else
-                                    <p class="text-[11px] text-slate-500">
-                                        Aucun logo défini pour le moment.
-                                    </p>
-                                @endif
-                                <input type="file"
-                                       wire:model="logoUpload"
-                                       class="mt-1 block w-full text-xs text-slate-600
-                                              file:mr-3 file:py-1.5 file:px-3
-                                              file:rounded-full file:border-0
-                                              file:text-xs file:font-semibold
-                                              file:bg-slate-100 file:text-slate-700
-                                              hover:file:bg-slate-200">
-                                @error('logoUpload')
-                                    <p class="text-[11px] text-red-600 mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            {{-- Favicon --}}
-                            <div class="space-y-2">
-                                <label class="block text-xs font-semibold text-slate-700">
-                                    Favicon
-                                </label>
-                                @if($favicon_current_path)
-                                    <div class="flex items-center gap-3">
-                                        <img src="{{ asset('storage/'.$favicon_current_path) }}"
-                                             alt="Favicon actuel"
-                                             class="h-6 w-6 object-contain bg-slate-50 rounded border border-slate-200">
-                                        <span class="text-[11px] text-slate-500">Favicon actuel</span>
-                                    </div>
-                                @else
-                                    <p class="text-[11px] text-slate-500">
-                                        Aucun favicon défini pour le moment.
-                                    </p>
-                                @endif
-                                <input type="file"
-                                       wire:model="faviconUpload"
-                                       class="mt-1 block w-full text-xs text-slate-600
-                                              file:mr-3 file:py-1.5 file:px-3
-                                              file:rounded-full file:border-0
-                                              file:text-xs file:font-semibold
-                                              file:bg-slate-100 file:text-slate-700
-                                              hover:file:bg-slate-200">
-                                <p class="mt-1 text-[11px] text-slate-500">
-                                    De préférence carré (ex : 64×64, 128×128).
-                                </p>
-                                @error('faviconUpload')
-                                    <p class="text-[11px] text-red-600 mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Maintenance --}}
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6">
-                        <h3 class="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                            <span class="inline-flex w-7 h-7 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </span>
-                            <span>Mode maintenance</span>
-                        </h3>
-
-                        <div class="space-y-3 text-sm">
-                            <label class="inline-flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox"
-                                       wire:model="maintenance_mode"
-                                       class="rounded border-slate-300 text-ed-primary focus:ring-ed-primary">
-                                <span class="text-slate-700">
-                                    Activer le mode maintenance
-                                </span>
-                            </label>
-                            <p class="text-[11px] text-slate-500">
-                                La logique d’affichage de la page de maintenance sera à brancher dans un middleware global.
-                            </p>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                                    Message de maintenance
-                                </label>
-                                <textarea rows="3"
-                                          wire:model.defer="maintenance_message"
-                                          class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                                 focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent"
-                                          placeholder="Ex : Le site est temporairement en maintenance pour mise à jour. Merci de votre compréhension."></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Bouton sauvegarde --}}
-            <div class="flex justify-end">
-                <button type="submit"
-                        class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-5 py-2.5 text-sm font-semibold text-white
-                               shadow-sm hover:bg-ed-secondary focus:outline-none focus:ring-2 focus:ring-ed-primary/60 focus:ring-offset-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M5 13l4 4L19 7"/>
-                    </svg>
-                    <span>Enregistrer les paramètres</span>
-                </button>
-            </div>
-        </form>
-
-        {{-- Bloc Sécurité : mot de passe + secrétaire --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {{-- Mot de passe admin --}}
-            <form wire:submit.prevent="updatePassword"
-                  class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 space-y-4">
-                <h3 class="text-sm font-semibold text-slate-900 mb-1 flex items-center gap-2">
-                    <span class="inline-flex w-7 h-7 items-center justify-center rounded-xl bg-red-50 text-red-600">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M12 11c.828 0 1.5-.672 1.5-1.5S12.828 8 12 8s-1.5.672-1.5 1.5S11.172 11 12 11zm0 2v3m-6 4h12a2 2 0 002-2v-7a2 2 0 00-2-2h-1V7a5 5 0 00-10 0v2H6a2 2 0 00-2 2v7a2 2 0 002 2z"/>
-                        </svg>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-ed-primary/10 text-ed-primary text-[11px] font-semibold">
+                        Général
                     </span>
-                    <span>Sécurité : mot de passe administrateur</span>
-                </h3>
-                <p class="text-[11px] text-slate-500">
-                    Modifier le mot de passe de votre compte administrateur connecté.
-                </p>
+                </div>
 
-                <div class="space-y-3 text-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {{-- Nom du site --}}
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                            Mot de passe actuel
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            Nom du site
                         </label>
-                        <input type="password"
-                               wire:model.defer="current_password"
-                               class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                      focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                        @error('current_password')
-                            <p class="text-[11px] text-red-600 mt-1">{{ $message }}</p>
+                        <input type="text"
+                               wire:model.defer="settings.site_name"
+                               class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                      focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                               placeholder="Ex : EDGVM – Université de Mahajanga">
+                        @error('settings.site_name')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
+                    {{-- Slogan / baseline (optionnel) --}}
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                            Nouveau mot de passe
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            Slogan / baseline (optionnel)
                         </label>
-                        <input type="password"
-                               wire:model.defer="password"
-                               class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                      focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                        @error('password')
-                            <p class="text-[11px] text-red-600 mt-1">{{ $message }}</p>
+                        <input type="text"
+                               wire:model.defer="settings.site_baseline"
+                               class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                      focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                               placeholder="Ex : Génie du vivant et modélisation">
+                        @error('settings.site_baseline')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
+                    {{-- Email de contact --}}
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                            Confirmation du nouveau mot de passe
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            Email de contact
                         </label>
-                        <input type="password"
-                               wire:model.defer="password_confirmation"
-                               class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                      focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
+                        <input type="email"
+                               wire:model.defer="settings.contact_email"
+                               class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                      focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                               placeholder="contact@edgvm.mg">
+                        @error('settings.contact_email')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Téléphone --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            Téléphone
+                        </label>
+                        <input type="text"
+                               wire:model.defer="settings.contact_phone"
+                               class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                      focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                               placeholder="+261 xx xx xxx xx">
+                        @error('settings.contact_phone')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Adresse --}}
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            Adresse postale
+                        </label>
+                        <input type="text"
+                               wire:model.defer="settings.contact_address"
+                               class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                      focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                               placeholder="Campus Ambondrona, Université de Mahajanga, Madagascar">
+                        @error('settings.contact_address')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
-                <div class="pt-2 flex justify-end">
+                {{-- Réseaux sociaux --}}
+                <div class="border-t border-gray-100 pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            Facebook
+                        </label>
+                        <input type="text"
+                               wire:model.defer="settings.social_facebook"
+                               class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                      focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                               placeholder="https://facebook.com/…">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            X / Twitter
+                        </label>
+                        <input type="text"
+                               wire:model.defer="settings.social_twitter"
+                               class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                      focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                               placeholder="https://x.com/…">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            LinkedIn
+                        </label>
+                        <input type="text"
+                               wire:model.defer="settings.social_linkedin"
+                               class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                      focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                               placeholder="https://linkedin.com/…">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            YouTube
+                        </label>
+                        <input type="text"
+                               wire:model.defer="settings.social_youtube"
+                               class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                      focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                               placeholder="https://youtube.com/…">
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-3 border-t border-gray-100 mt-2">
                     <button type="submit"
-                            class="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs md:text-sm font-semibold text-white
-                                   shadow-sm hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500/70 focus:ring-offset-1">
-                        <span>Mettre à jour le mot de passe</span>
+                            wire:target="save"
+                            wire:loading.attr="disabled"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-ed-primary text-white text-sm font-semibold
+                                   shadow-sm hover:bg-ed-secondary focus:outline-none focus:ring-2 focus:ring-ed-primary/60 focus:ring-offset-1
+                                   disabled:opacity-60">
+                        <span wire:loading.remove wire:target="save">Enregistrer les paramètres</span>
+                        <span wire:loading wire:target="save" class="inline-flex items-center gap-2">
+                            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                            <span>Enregistrement…</span>
+                        </span>
                     </button>
                 </div>
             </form>
 
-            {{-- Création compte secrétaire --}}
-            <form wire:submit.prevent="createSecretary"
-                  class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 space-y-4">
-                <h3 class="text-sm font-semibold text-slate-900 mb-1 flex items-center gap-2">
-                    <span class="inline-flex w-7 h-7 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-                        </svg>
-                    </span>
-                    <span>Créer un compte secrétaire</span>
-                </h3>
-                <p class="text-[11px] text-slate-500">
-                    Création rapide d’un compte avec le rôle <strong>secrétaire</strong>.
-                </p>
-
-                <div class="space-y-3 text-sm">
+            {{-- Bloc SEO / META / SITEMAP --}}
+            <form wire:submit.prevent="saveSeo" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
+                <div class="flex items-center justify-between gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                            Nom complet
+                        <h2 class="text-sm font-semibold text-gray-900">
+                            SEO & métadonnées
+                        </h2>
+                        <p class="text-xs text-gray-500 mt-0.5">
+                            Titre, description et mots-clés pour le référencement.
+                        </p>
+                    </div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-[11px] font-semibold border border-amber-100">
+                        SEO
+                    </span>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            Titre par défaut (balise &lt;title&gt;)
                         </label>
                         <input type="text"
-                               wire:model.defer="secretary_name"
-                               class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                      focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                        @error('secretary_name')
-                            <p class="text-[11px] text-red-600 mt-1">{{ $message }}</p>
+                               wire:model.defer="settings.meta_title"
+                               class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                      focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                               placeholder="EDGVM – École Doctorale Génie du Vivant et Modélisation">
+                        @error('settings.meta_title')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                            Adresse email
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            Meta description
                         </label>
-                        <input type="email"
-                               wire:model.defer="secretary_email"
-                               class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                      focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                        @error('secretary_email')
-                            <p class="text-[11px] text-red-600 mt-1">{{ $message }}</p>
+                        <textarea rows="3"
+                                  wire:model.defer="settings.meta_description"
+                                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                         focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                                  placeholder="Brève description de l’EDGVM pour les moteurs de recherche…"></textarea>
+                        @error('settings.meta_description')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                            Mot de passe (laisser vide pour générer automatiquement)
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            Mots-clés (séparés par des virgules)
                         </label>
-                        <input type="password"
-                               wire:model.defer="secretary_password"
-                               class="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm
-                                      focus:outline-none focus:ring-2 focus:ring-ed-primary focus:border-transparent">
-                        @error('secretary_password')
-                            <p class="text-[11px] text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
+                        <input type="text"
+                               wire:model.defer="settings.meta_keywords"
+                               class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                      focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                               placeholder="doctorat, EDGVM, Mahajanga, génie du vivant, modélisation…">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            URL du sitemap (si généré)
+                        </label>
+                        <input type="text"
+                               wire:model.defer="settings.sitemap_url"
+                               class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                      focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                               placeholder="{{ url('sitemap.xml') }}">
                     </div>
                 </div>
 
-                <div class="pt-2 flex justify-end">
+                <div class="flex justify-end pt-3 border-t border-gray-100 mt-2">
                     <button type="submit"
-                            class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs md:text-sm font-semibold text-white
-                                   shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/70 focus:ring-offset-1">
-                        <span>Créer le compte secrétaire</span>
+                            wire:target="saveSeo"
+                            wire:loading.attr="disabled"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold
+                                   shadow-sm hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-800/60 focus:ring-offset-1
+                                   disabled:opacity-60">
+                        <span wire:loading.remove wire:target="saveSeo">Mettre à jour le SEO</span>
+                        <span wire:loading wire:target="saveSeo" class="inline-flex items-center gap-2">
+                            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                            <span>Enregistrement…</span>
+                        </span>
+                    </button>
+                </div>
+            </form>
+
+            {{-- Bloc Maintenance --}}
+            <form wire:submit.prevent="saveMaintenance" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm font-semibold text-gray-900">
+                            Mode maintenance
+                        </h2>
+                        <p class="text-xs text-gray-500 mt-0.5">
+                            Activez la maintenance avec un message personnalisé pour les visiteurs.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer"
+                                   wire:model.defer="settings.maintenance_enabled">
+                            <div class="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full
+                                        peer peer-checked:bg-ed-primary
+                                        relative transition-colors">
+                                <span class="absolute left-0.5 top-0.5 h-4 w-4 bg-white rounded-full shadow
+                                             transition-transform peer-checked:translate-x-5"></span>
+                            </div>
+                            <span class="ml-2 text-xs font-medium text-gray-700">
+                                @if($settings['maintenance_enabled'] ?? false)
+                                    Activé
+                                @else
+                                    Désactivé
+                                @endif
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                            Message affiché aux visiteurs
+                        </label>
+                        <textarea rows="3"
+                                  wire:model.defer="settings.maintenance_message"
+                                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                         focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                                  placeholder="Le site est momentanément en maintenance. Merci de revenir ultérieurement."></textarea>
+                    </div>
+
+                    <p class="text-[11px] text-gray-500">
+                        Astuce : laissez l’accès normal pour les comptes administrateurs pendant la maintenance.
+                    </p>
+                </div>
+
+                <div class="flex justify-end pt-3 border-t border-gray-100 mt-2">
+                    <button type="submit"
+                            wire:target="saveMaintenance"
+                            wire:loading.attr="disabled"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 text-white text-sm font-semibold
+                                   shadow-sm hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:ring-offset-1
+                                   disabled:opacity-60">
+                        <span wire:loading.remove wire:target="saveMaintenance">Mettre à jour le mode maintenance</span>
+                        <span wire:loading wire:target="saveMaintenance" class="inline-flex items-center gap-2">
+                            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                            <span>Enregistrement…</span>
+                        </span>
                     </button>
                 </div>
             </form>
         </div>
+
+        {{-- COLONNE DROITE : LOGO / FAVICON / SÉCURITÉ --}}
+        <div class="space-y-6">
+            {{-- Logo & favicon --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm font-semibold text-gray-900">
+                            Logo & favicon
+                        </h2>
+                        <p class="text-xs text-gray-500 mt-0.5">
+                            Identité visuelle utilisée dans le frontend et l’administration.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    {{-- Logo --}}
+                    <div class="flex items-center gap-4">
+                        <div class="w-20 h-20 rounded-2xl border border-dashed border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden">
+                            @if($current_logo_url ?? false)
+                                <img src="{{ $current_logo_url }}" alt="Logo actuel" class="w-full h-full object-contain">
+                            @else
+                                <span class="text-[11px] text-gray-400 text-center px-2">
+                                    Logo
+                                </span>
+                            @endif
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-xs font-semibold text-gray-700 mb-1">
+                                Logo principal
+                            </p>
+                            <input type="file"
+                                   wire:model="logo"
+                                   class="block w-full text-xs text-gray-500
+                                          file:mr-3 file:py-1.5 file:px-3
+                                          file:rounded-md file:border-0
+                                          file:text-xs file:font-semibold
+                                          file:bg-ed-primary/10 file:text-ed-primary
+                                          hover:file:bg-ed-primary/20">
+                            <p class="mt-1 text-[11px] text-gray-400">
+                                PNG ou SVG, fond transparent recommandé.
+                            </p>
+                            @error('logo')
+                                <p class="mt-1 text-[11px] text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Favicon --}}
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl border border-dashed border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden">
+                            @if($current_favicon_url ?? false)
+                                <img src="{{ $current_favicon_url }}" alt="Favicon actuel" class="w-full h-full object-contain">
+                            @else
+                                <span class="text-[11px] text-gray-400 text-center px-1">
+                                    Favicon
+                                </span>
+                            @endif
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-xs font-semibold text-gray-700 mb-1">
+                                Favicon
+                            </p>
+                            <input type="file"
+                                   wire:model="favicon"
+                                   class="block w-full text-xs text-gray-500
+                                          file:mr-3 file:py-1.5 file:px-3
+                                          file:rounded-md file:border-0
+                                          file:text-xs file:font-semibold
+                                          file:bg-slate-900/5 file:text-slate-900
+                                          hover:file:bg-slate-900/10">
+                            <p class="mt-1 text-[11px] text-gray-400">
+                                Icône 32×32 ou 64×64 (PNG).
+                            </p>
+                            @error('favicon')
+                                <p class="mt-1 text-[11px] text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-2">
+                    <button type="button"
+                            wire:click="saveMedia"
+                            wire:loading.attr="disabled"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-semibold
+                                   shadow-sm hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-800/60 focus:ring-offset-1
+                                   disabled:opacity-60">
+                        <span wire:loading.remove wire:target="saveMedia">Mettre à jour logo & favicon</span>
+                        <span wire:loading wire:target="saveMedia" class="inline-flex items-center gap-2">
+                            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                            <span>Sauvegarde…</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Sécurité / comptes --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm font-semibold text-gray-900">
+                            Sécurité & comptes
+                        </h2>
+                        <p class="text-xs text-gray-500 mt-0.5">
+                            Mettre à jour le mot de passe admin et gérer le compte secrétaire.
+                        </p>
+                    </div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-red-50 text-red-600 text-[11px] font-semibold border border-red-100">
+                        Sécurité
+                    </span>
+                </div>
+
+                {{-- Mot de passe admin --}}
+                <form wire:submit.prevent="updateAdminPassword" class="space-y-3 border-b border-gray-100 pb-4">
+                    <p class="text-xs font-semibold text-gray-700">
+                        Mettre à jour le mot de passe administrateur
+                    </p>
+
+                    <div class="space-y-2">
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                                Mot de passe actuel
+                            </label>
+                            <input type="password"
+                                   wire:model.defer="security.current_password"
+                                   class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm
+                                          focus:ring-2 focus:ring-ed-primary focus:border-transparent">
+                            @error('security.current_password')
+                                <p class="mt-1 text-[11px] text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                                Nouveau mot de passe
+                            </label>
+                            <input type="password"
+                                   wire:model.defer="security.new_password"
+                                   class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm
+                                          focus:ring-2 focus:ring-ed-primary focus:border-transparent">
+                            @error('security.new_password')
+                                <p class="mt-1 text-[11px] text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                                Confirmation
+                            </label>
+                            <input type="password"
+                                   wire:model.defer="security.new_password_confirmation"
+                                   class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm
+                                          focus:ring-2 focus:ring-ed-primary focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit"
+                                wire:target="updateAdminPassword"
+                                wire:loading.attr="disabled"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-ed-primary text-white text-xs font-semibold
+                                       shadow-sm hover:bg-ed-secondary focus:outline-none focus:ring-2 focus:ring-ed-primary/60 focus:ring-offset-1
+                                       disabled:opacity-60">
+                            <span wire:loading.remove wire:target="updateAdminPassword">Mettre à jour le mot de passe</span>
+                            <span wire:loading wire:target="updateAdminPassword" class="inline-flex items-center gap-2">
+                                <svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                            stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                </svg>
+                                <span>En cours…</span>
+                            </span>
+                        </button>
+                    </div>
+                </form>
+
+                {{-- Création / gestion du compte secrétaire --}}
+                <form wire:submit.prevent="createOrUpdateSecretaire" class="space-y-3">
+                    <p class="text-xs font-semibold text-gray-700">
+                        Compte secrétaire
+                    </p>
+
+                    <div class="space-y-2">
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                                Nom complet secrétaire
+                            </label>
+                            <input type="text"
+                                   wire:model.defer="secretaire.name"
+                                   class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm
+                                          focus:ring-2 focus:ring-ed-primary focus:border-transparent">
+                            @error('secretaire.name')
+                                <p class="mt-1 text-[11px] text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                                Email secrétaire
+                            </label>
+                            <input type="email"
+                                   wire:model.defer="secretaire.email"
+                                   class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm
+                                          focus:ring-2 focus:ring-ed-primary focus:border-transparent">
+                            @error('secretaire.email')
+                                <p class="mt-1 text-[11px] text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-600 mb-1">
+                                Mot de passe (si création / réinitialisation)
+                            </label>
+                            <input type="password"
+                                   wire:model.defer="secretaire.password"
+                                   class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm
+                                          focus:ring-2 focus:ring-ed-primary focus:border-transparent">
+                            @error('secretaire.password')
+                                <p class="mt-1 text-[11px] text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit"
+                                wire:target="createOrUpdateSecretaire"
+                                wire:loading.attr="disabled"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold
+                                       shadow-sm hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900/60 focus:ring-offset-1
+                                       disabled:opacity-60">
+                            <span wire:loading.remove wire:target="createOrUpdateSecretaire">
+                                Sauvegarder le compte secrétaire
+                            </span>
+                            <span wire:loading wire:target="createOrUpdateSecretaire" class="inline-flex items-center gap-2">
+                                <svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                            stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                </svg>
+                                <span>En cours…</span>
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-</x-app-layout>
+</div>

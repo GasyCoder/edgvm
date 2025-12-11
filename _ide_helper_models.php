@@ -656,7 +656,7 @@ namespace App\Models{
  * @property string|null $sitemap_url
  * @property string|null $logo_path
  * @property string|null $favicon_path
- * @property int $maintenance_mode
+ * @property bool $maintenance_mode
  * @property string|null $maintenance_message
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at

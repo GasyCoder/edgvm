@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             TagSeeder::class,
             MenuAProposSeeder::class,
-            MessageDirectionSeeder::class
+            MessageDirectionSeeder::class,
+            SettingSeeder::class,
         ]);
 
     }

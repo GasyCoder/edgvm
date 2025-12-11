@@ -1,5 +1,4 @@
 <footer class="relative bg-ed-primary text-white/90">
-    {{-- Séparateur visuel avec le CTA au-dessus --}}
     <div class="absolute inset-x-0 -top-px h-[2px] bg-gradient-to-r from-ed-yellow via-white/70 to-ed-secondary opacity-90"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
@@ -15,39 +14,41 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold tracking-tight">EDGVM</h3>
+                        <h3 class="text-lg font-bold tracking-tight">EDGVM</h3> 
                         <p class="text-xs text-white/70">École Doctorale Génie du Vivant et Modélisation</p>
                     </div>
                 </div>
 
                 <p class="text-sm text-white/80 leading-relaxed mb-5">
-                    École Doctorale de l’Université de Mahajanga, dédiée à la formation doctorale, 
-                    à la recherche scientifique et à l’innovation dans les domaines du vivant et de la modélisation.
+                    {{ $appSettings->meta_description 
+                        ?? "École Doctorale de l’Université de Mahajanga, dédiée à la formation doctorale, à la recherche scientifique et à l’innovation dans les domaines du vivant et de la modélisation." }}
                 </p>
 
-                {{-- Réseaux sociaux : Facebook + LinkedIn --}}
+                {{-- Réseaux sociaux --}}
                 <div class="flex flex-wrap gap-3">
-                    {{-- Facebook --}}
-                    <a href="#"
-                       class="w-9 h-9 rounded-full border border-white/25 flex items-center justify-center 
-                              text-white/80 hover:text-ed-primary hover:bg-ed-yellow transition-colors duration-200">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M24 12.073C24 5.403 18.627 0 12 0S0 5.403 0 12.073C0 18.09 4.388 22.953 10.125 24v-8.385H7.078v-3.542h3.047V9.356c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.513c-1.491 0-1.956.925-1.956 1.874v2.24h3.328l-.532 3.542h-2.796V24C19.612 22.953 24 18.09 24 12.073z"/>
-                        </svg>
-                    </a>
+                    @if(!empty($appSettings->facebook_url))
+                        <a href="{{ $appSettings->facebook_url }}" target="_blank"
+                           class="w-9 h-9 rounded-full border border-white/25 flex items-center justify-center 
+                                  text-white/80 hover:text-ed-primary hover:bg-ed-yellow transition-colors duration-200">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 12.073C24 5.403 18.627 0 12 0S0 5.403 0 12.073C0 18.09 4.388 22.953 10.125 24v-8.385H7.078v-3.542h3.047V9.356c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.513c-1.491 0-1.956.925-1.956 1.874v2.24h3.328l-.532 3.542h-2.796V24C19.612 22.953 24 18.09 24 12.073z"/>
+                            </svg>
+                        </a>
+                    @endif
 
-                    {{-- LinkedIn --}}
-                    <a href="#"
-                       class="w-9 h-9 rounded-full border border-white/25 flex items-center justify-center 
-                              text-white/80 hover:text-ed-primary hover:bg-ed-yellow transition-colors duration-200">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.026-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.047c.476-.9 1.636-1.851 3.369-1.851 3.602 0 4.266 2.372 4.266 5.456v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zM6.97 20.452H3.701V9H6.97v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.454C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/>
-                        </svg>
-                    </a>
+                    @if(!empty($appSettings->linkedin_url))
+                        <a href="{{ $appSettings->linkedin_url }}" target="_blank"
+                           class="w-9 h-9 rounded-full border border-white/25 flex items-center justify-center 
+                                  text-white/80 hover:text-ed-primary hover:bg-ed-yellow transition-colors duration-200">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.026-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.047c.476-.9 1.636-1.851 3.369-1.851 3.602 0 4.266 2.372 4.266 5.456v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zM6.97 20.452H3.701V9H6.97v11.452z"/>
+                            </svg>
+                        </a>
+                    @endif
                 </div>
             </div>
 
-            {{-- Bloc Liens rapides --}}
+                       {{-- Bloc Liens rapides (inchangé) --}}
             <div class="md:col-span-3">
                 <h4 class="text-sm font-semibold tracking-wide uppercase mb-5 text-white/80">
                     Liens rapides
@@ -84,6 +85,7 @@
                 </ul>
             </div>
 
+
             {{-- Bloc Contact --}}
             <div class="md:col-span-4">
                 <h4 class="text-sm font-semibold tracking-wide uppercase mb-5 text-white/80">
@@ -100,30 +102,36 @@
                             </svg>
                         </span>
                         <span>
-                            Université de Mahajanga<br>
+                            {{ $appSettings->site_address ?? "Université de Mahajanga" }}<br>
                             <span class="text-white/60">Mahajanga, Madagascar</span>
                         </span>
                     </li>
-                    <li class="flex items-center gap-3">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
-                            <svg class="w-5 h-5 text-ed-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                            </svg>
-                        </span>
-                        <a href="mailto:contact@edgvm.mg" class="hover:text-ed-yellow transition-colors">
-                            contact@edgvm.mg
-                        </a>
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
-                            <svg class="w-5 h-5 text-ed-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498A1 1 0 0121 19.25V21a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 8.999V7a2 2 0 012-2z"/>
-                            </svg>
-                        </span>
-                        <span>+261 32 00 000 00</span>
-                    </li>
+
+                    @if(!empty($appSettings->site_email))
+                        <li class="flex items-center gap-3">
+                            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
+                                <svg class="w-5 h-5 text-ed-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </span>
+                            <a href="mailto:{{ $appSettings->site_email }}" class="hover:text-ed-yellow transition-colors">
+                                {{ $appSettings->site_email }}
+                            </a>
+                        </li>
+                    @endif
+
+                    @if(!empty($appSettings->site_phone))
+                        <li class="flex items-center gap-3">
+                            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
+                                <svg class="w-5 h-5 text-ed-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498A1 1 0 0121 19.25V21a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 8.999V7a2 2 0 012-2z"/>
+                                </svg>
+                            </span>
+                            <span>{{ $appSettings->site_phone }}</span>
+                        </li>
+                    @endif
                 </ul>
             </div>
         </div>
@@ -131,7 +139,7 @@
         {{-- Bas de page --}}
         <div class="border-t border-white/10 mt-10 pt-6 text-center space-y-1.5">
             <p class="text-xs sm:text-sm text-white/60">
-                &copy; {{ date('Y') }} EDGVM – École Doctorale Génie du Vivant et Modélisation. Tous droits réservés.
+                &copy; {{ date('Y') }} {{ $appSettings->site_name ?? 'EDGVM – École Doctorale Génie du Vivant et Modélisation' }}. Tous droits réservés.
             </p>
             <p class="text-[11px] text-white/40">
                 Plateforme développée par 

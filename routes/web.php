@@ -86,64 +86,51 @@ use App\Http\Controllers\Admin\EncadrantImportController;
 | Routes Frontend
 |--------------------------------------------------------------------------
 */
+Route::middleware(['frontend.maintenance'])->group(function () {
+    // Page d'accueil
+    Route::get('/', HomePage::class)->name('home');
 
-// Page d'accueil
-Route::get('/', HomePage::class)->name('home');
+    // Programmes (Spécialités)
+    Route::prefix('programmes')->name('programmes.')->group(function () {
+        Route::get('/', ProgrammesPage::class)->name('index');
+        Route::get('/{specialite}', ProgrammeDetailPage::class)->name('show');
+    });
 
-// Programmes (Spécialités)
-Route::prefix('programmes')->name('programmes.')->group(function () {
-    Route::get('/', ProgrammesPage::class)->name('index');
-    Route::get('/{specialite}', ProgrammeDetailPage::class)->name('show');
+    // EAD (Équipes d'Accueil Doctorales)
+    Route::prefix('equipe-accueil')->name('ead.')->group(function () {
+        Route::get('/', EadsPage::class)->name('index');
+        Route::get('/{ead}', EadDetailPage::class)->name('show');
+    });
+
+    // Doctorants
+    Route::prefix('doctorants')->name('doctorants.')->group(function () {
+        Route::get('/', DoctorantsPage::class)->name('index');
+        Route::get('/voir-{doctorant}', DoctorantDetail::class)->name('show');
+    });
+
+    // Thèses (frontend)
+    Route::prefix('theses')->name('theses.')->group(function () {
+        Route::get('/', ThesePage::class)->name('index');
+        Route::get('/{these}', TheseDetail::class)->name('show');
+    });
+
+    // Actualités
+    Route::prefix('actualites')->name('actualites.')->group(function () {
+        Route::get('/', ActualitesPage::class)->name('index');
+        Route::get('/{actualite:slug}', ActualiteDetailPage::class)->name('show');
+    });
+
+    // Contact
+    Route::get('/contact', ContactPage::class)->name('contact');
+
+    // Événements
+    Route::get('/evenements', EvenementsPage::class)->name('evenements.index');
+    Route::get('/evenements/{evenement}', EvenementDetailPage::class)->name('evenements.show');
+
+    // Pages dynamiques
+    Route::get('/page/{slug}', PageShow::class)->name('pages.show');
 });
 
-// EAD (Équipes d'Accueil Doctorales)
-Route::prefix('equipe-accueil')->name('ead.')->group(function () {
-    Route::get('/', EadsPage::class)->name('index');
-    Route::get('/{ead}', EadDetailPage::class)->name('show');
-});
-
-// Doctorants
-Route::prefix('doctorants')->name('doctorants.')->group(function () {
-    Route::get('/', DoctorantsPage::class)->name('index');
-    Route::get('/voir-{doctorant}', DoctorantDetail::class)->name('show');
-});
-
-
-// Thèses (frontend)
-Route::prefix('theses')->name('theses.')->group(function () {
-    Route::get('/', ThesePage::class)->name('index');
-    Route::get('/{these}', TheseDetail::class)->name('show');
-});
-
-// Actualités
-Route::prefix('actualites')->name('actualites.')->group(function () {
-    Route::get('/', ActualitesPage::class)->name('index');
-    Route::get('/{actualite:slug}', ActualiteDetailPage::class)->name('show');
-});
-
-
-// Contact
-Route::get('/contact', ContactPage::class)->name('contact');
-
-Route::get('/evenements', EvenementsPage::class)
-    ->name('evenements.index');
-
-Route::get('/evenements/{evenement}', EvenementDetailPage::class)
-    ->name('evenements.show');
-
-/*
-|--------------------------------------------------------------------------
-| Pages Dynamiques (gérées depuis l'admin)
-|--------------------------------------------------------------------------
-| Toutes les pages statiques sont gérées via la base de données
-| Créer les pages dans l'admin avec les slugs suivants :
-| - a-propos
-| - organisation
-| - conseil-scientifique
-| - comite-suivi
-| - reglement-interieur
-*/
-Route::get('/page/{slug}', PageShow::class)->name('pages.show');
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     

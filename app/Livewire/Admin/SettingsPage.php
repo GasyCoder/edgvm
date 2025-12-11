@@ -4,238 +4,339 @@ namespace App\Livewire\Admin;
 
 use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-#[Title('Paramètres du site')]
-#[Layout('layouts.app')]
 class SettingsPage extends Component
 {
     use WithFileUploads;
 
-    // Paramètres généraux / SEO
-    public string $site_name = '';
-    public ?string $seo_title = null;
-    public ?string $meta_description = null;
-    public ?string $meta_keywords = null;
+    /* =======================
+     *  PARAMÈTRES (liés à settings.* dans la vue)
+     * ======================= */
 
-    // Contact
-    public ?string $site_email = null;
-    public ?string $site_phone = null;
-    public ?string $site_address = null;
+    public array $settings = [
+        'site_name'           => '',
+        'site_baseline'       => null,
 
-    // Réseaux sociaux
-    public ?string $facebook_url = null;
-    public ?string $twitter_url = null;
-    public ?string $linkedin_url = null;
-    public ?string $youtube_url = null;
-    public ?string $instagram_url = null;
+        'contact_email'       => null,
+        'contact_phone'       => null,
+        'contact_address'     => null,
 
-    // SEO / sitemap
-    public ?string $sitemap_url = null;
+        'social_facebook'     => null,
+        'social_twitter'      => null,
+        'social_linkedin'     => null,
+        'social_youtube'      => null,
+        'social_instagram'    => null,
 
-    // Maintenance
-    public bool $maintenance_mode = false;
-    public ?string $maintenance_message = null;
+        'meta_title'          => null,
+        'meta_description'    => null,
+        'meta_keywords'       => null,
+        'sitemap_url'         => null,
 
-    // Uploads Livewire
-    public $logoUpload;
-    public $faviconUpload;
-    public ?string $logo_current_path = null;
-    public ?string $favicon_current_path = null;
+        'maintenance_enabled' => false,
+        'maintenance_message' => null,
+    ];
 
-    // Sécurité : mot de passe admin
-    public ?string $current_password = null;
-    public ?string $password = null;
-    public ?string $password_confirmation = null;
+    /* =======================
+     *  MÉDIAS (logo + favicon)
+     *  (liés aux inputs wire:model="logo" et wire:model="favicon")
+     * ======================= */
 
-    // Sécurité : compte secrétaire
-    public ?string $secretary_name = null;
-    public ?string $secretary_email = null;
-    public ?string $secretary_password = null;
+    public $logo;
+    public $favicon;
+
+    public ?string $logoPath = null;
+    public ?string $faviconPath = null;
+
+    /* =======================
+     *  SÉCURITÉ
+     *  (liés à security.* dans la vue)
+     * ======================= */
+
+    public array $security = [
+        'current_password'          => '',
+        'new_password'              => '',
+        'new_password_confirmation' => '',
+    ];
+
+    /* =======================
+     *  COMPTE SECRÉTAIRE
+     *  (liés à secretaire.* dans la vue)
+     * ======================= */
+
+    public array $secretaire = [
+        'name'     => '',
+        'email'    => '',
+        'password' => '',
+    ];
+
+    /* =======================
+     *  MOUNT : on charge les données depuis la table settings
+     * ======================= */
 
     public function mount(): void
     {
-        $setting = Setting::main();
+        $settingsModel = Setting::main(); // récupère (ou crée) l’unique ligne
 
-        // Remplir les propriétés depuis la DB
-        $this->site_name        = $setting->site_name ?? 'EDGVM';
-        $this->seo_title        = $setting->seo_title;
-        $this->meta_description = $setting->meta_description;
-        $this->meta_keywords    = $setting->meta_keywords;
+        // Généraux
+        $this->settings['site_name']       = $settingsModel->site_name ?? 'EDGVM';
+        $this->settings['site_baseline']   = null; // si tu ajoutes une colonne plus tard, on pourra la mapper ici
 
-        $this->site_email   = $setting->site_email;
-        $this->site_phone   = $setting->site_phone;
-        $this->site_address = $setting->site_address;
+        $this->settings['contact_email']   = $settingsModel->site_email;
+        $this->settings['contact_phone']   = $settingsModel->site_phone;
+        $this->settings['contact_address'] = $settingsModel->site_address;
 
-        $this->facebook_url  = $setting->facebook_url;
-        $this->twitter_url   = $setting->twitter_url;
-        $this->linkedin_url  = $setting->linkedin_url;
-        $this->youtube_url   = $setting->youtube_url;
-        $this->instagram_url = $setting->instagram_url;
+        // Réseaux sociaux
+        $this->settings['social_facebook']  = $settingsModel->facebook_url;
+        $this->settings['social_twitter']   = $settingsModel->twitter_url;
+        $this->settings['social_linkedin']  = $settingsModel->linkedin_url;
+        $this->settings['social_youtube']   = $settingsModel->youtube_url;
+        $this->settings['social_instagram'] = $settingsModel->instagram_url;
 
-        $this->sitemap_url = $setting->sitemap_url;
+        // SEO / sitemap
+        $this->settings['meta_title']       = $settingsModel->seo_title;
+        $this->settings['meta_description'] = $settingsModel->meta_description;
+        $this->settings['meta_keywords']    = $settingsModel->meta_keywords;
+        $this->settings['sitemap_url']      = $settingsModel->sitemap_url;
 
-        $this->maintenance_mode    = (bool) $setting->maintenance_mode;
-        $this->maintenance_message = $setting->maintenance_message;
+        // Maintenance
+        $this->settings['maintenance_enabled'] = (bool) $settingsModel->maintenance_mode;
+        $this->settings['maintenance_message'] = $settingsModel->maintenance_message
+            ?? "Le site est actuellement en maintenance. Merci de revenir plus tard.";
 
-        $this->logo_current_path    = $setting->logo_path;
-        $this->favicon_current_path = $setting->favicon_path;
+        // Médias existants
+        $this->logoPath    = $settingsModel->logo_path;
+        $this->faviconPath = $settingsModel->favicon_path;
+
+        // Secrétaire existant
+        $secretary = User::where('role', 'secrétaire')->first();
+        if ($secretary) {
+            $this->secretaire['name']  = $secretary->name;
+            $this->secretaire['email'] = $secretary->email;
+        }
     }
 
-    /* ---------- Validation ---------- */
-
-    protected function rulesSettings(): array
-    {
-        return [
-            'site_name'        => ['required', 'string', 'max:255'],
-            'seo_title'        => ['nullable', 'string', 'max:255'],
-            'meta_description' => ['nullable', 'string'],
-            'meta_keywords'    => ['nullable', 'string'],
-
-            'site_email'   => ['nullable', 'email', 'max:255'],
-            'site_phone'   => ['nullable', 'string', 'max:255'],
-            'site_address' => ['nullable', 'string'],
-
-            'facebook_url'  => ['nullable', 'url'],
-            'twitter_url'   => ['nullable', 'url'],
-            'linkedin_url'  => ['nullable', 'url'],
-            'youtube_url'   => ['nullable', 'url'],
-            'instagram_url' => ['nullable', 'url'],
-
-            'sitemap_url' => ['nullable', 'url'],
-
-            'maintenance_mode'    => ['boolean'],
-            'maintenance_message' => ['nullable', 'string'],
-
-            'logoUpload'    => ['nullable', 'image', 'max:2048'],
-            'faviconUpload' => ['nullable', 'image', 'max:1024'],
-        ];
-    }
-
-    protected function rulesPassword(): array
-    {
-        return [
-            'current_password'      => ['required'],
-            'password'              => ['required', 'min:8', 'same:password_confirmation'],
-            'password_confirmation' => ['required'],
-        ];
-    }
-
-    protected function rulesSecretary(): array
-    {
-        return [
-            'secretary_name'     => ['required', 'string', 'max:255'],
-            'secretary_email'    => ['required', 'email', 'max:255', 'unique:users,email'],
-            'secretary_password' => ['nullable', 'string', 'min:8'],
-        ];
-    }
-
-    /* ---------- Actions ---------- */
+    /* =======================
+     *  FORMULAIRE GÉNÉRAL (Identité + contacts + réseaux)
+     *  wire:submit.prevent="save"
+     * ======================= */
 
     public function save(): void
     {
-        $this->validate($this->rulesSettings());
+        $this->validate([
+            'settings.site_name'       => 'required|string|max:255',
+            'settings.site_baseline'   => 'nullable|string|max:255',
 
-        $setting = Setting::main();
+            'settings.contact_email'   => 'nullable|email|max:255',
+            'settings.contact_phone'   => 'nullable|string|max:255',
+            'settings.contact_address' => 'nullable|string|max:500',
 
-        $setting->site_name        = $this->site_name;
-        $setting->seo_title        = $this->seo_title;
-        $setting->meta_description = $this->meta_description;
-        $setting->meta_keywords    = $this->meta_keywords;
-
-        $setting->site_email   = $this->site_email;
-        $setting->site_phone   = $this->site_phone;
-        $setting->site_address = $this->site_address;
-
-        $setting->facebook_url  = $this->facebook_url;
-        $setting->twitter_url   = $this->twitter_url;
-        $setting->linkedin_url  = $this->linkedin_url;
-        $setting->youtube_url   = $this->youtube_url;
-        $setting->instagram_url = $this->instagram_url;
-
-        $setting->sitemap_url = $this->sitemap_url;
-
-        $setting->maintenance_mode    = $this->maintenance_mode;
-        $setting->maintenance_message = $this->maintenance_message;
-
-        // Upload logo via Livewire
-        if ($this->logoUpload) {
-            if ($setting->logo_path) {
-                Storage::disk('public')->delete($setting->logo_path);
-            }
-            $path = $this->logoUpload->store('branding', 'public');
-            $setting->logo_path = $path;
-            $this->logo_current_path = $path;
-        }
-
-        // Upload favicon via Livewire
-        if ($this->faviconUpload) {
-            if ($setting->favicon_path) {
-                Storage::disk('public')->delete($setting->favicon_path);
-            }
-            $path = $this->faviconUpload->store('branding', 'public');
-            $setting->favicon_path = $path;
-            $this->favicon_current_path = $path;
-        }
-
-        $setting->save();
-
-        session()->flash('status', 'Paramètres du site mis à jour avec succès.');
-    }
-
-    public function updatePassword(): void
-    {
-        $this->validate($this->rulesPassword(), [], [
-            'current_password' => 'mot de passe actuel',
-            'password'         => 'nouveau mot de passe',
+            'settings.social_facebook'  => 'nullable|url|max:255',
+            'settings.social_twitter'   => 'nullable|url|max:255',
+            'settings.social_linkedin'  => 'nullable|url|max:255',
+            'settings.social_youtube'   => 'nullable|url|max:255',
+            'settings.social_instagram' => 'nullable|url|max:255',
         ]);
 
-        $user = auth()->user();
+        $settingsModel = Setting::main();
 
-        if (! Hash::check($this->current_password, $user->password)) {
-            $this->addError('current_password', 'Le mot de passe actuel est incorrect.');
-            return;
-        }
+        $settingsModel->fill([
+            'site_name'    => $this->settings['site_name'],
+            'site_email'   => $this->settings['contact_email'],
+            'site_phone'   => $this->settings['contact_phone'],
+            'site_address' => $this->settings['contact_address'],
 
-        $user->password = Hash::make($this->password);
-        $user->save();
-
-        $this->reset(['current_password', 'password', 'password_confirmation']);
-
-        session()->flash('password_status', 'Mot de passe administrateur mis à jour.');
-    }
-
-    public function createSecretary(): void
-    {
-        $this->validate($this->rulesSecretary());
-
-        $plainPassword = $this->secretary_password ?: Str::random(10);
-
-        $user = User::create([
-            'name'              => $this->secretary_name,
-            'email'             => $this->secretary_email,
-            'password'          => Hash::make($plainPassword),
-            'role'              => 'secrétaire',
-            'active'            => true,
-            'email_verified_at' => now(),
+            'facebook_url' => $this->settings['social_facebook'],
+            'twitter_url'  => $this->settings['social_twitter'],
+            'linkedin_url' => $this->settings['social_linkedin'],
+            'youtube_url'  => $this->settings['social_youtube'],
+            'instagram_url'=> $this->settings['social_instagram'],
         ]);
 
-        $this->reset(['secretary_name', 'secretary_email', 'secretary_password']);
+        $settingsModel->save();
 
-        session()->flash(
-            'secretary_status',
-            "Compte secrétaire créé : {$user->email}. Mot de passe provisoire : {$plainPassword}"
-        );
+        session()->flash('settings_saved', 'Paramètres généraux enregistrés avec succès.');
     }
+
+    /* =======================
+     *  FORMULAIRE SEO
+     *  wire:submit.prevent="saveSeo"
+     * ======================= */
+
+    public function saveSeo(): void
+    {
+        $this->validate([
+            'settings.meta_title'       => 'nullable|string|max:255',
+            'settings.meta_description' => 'nullable|string|max:500',
+            'settings.meta_keywords'    => 'nullable|string|max:500',
+            'settings.sitemap_url'      => 'nullable|url|max:255',
+        ]);
+
+        $settingsModel = Setting::main();
+
+        $settingsModel->fill([
+            'seo_title'       => $this->settings['meta_title'],
+            'meta_description'=> $this->settings['meta_description'],
+            'meta_keywords'   => $this->settings['meta_keywords'],
+            'sitemap_url'     => $this->settings['sitemap_url'],
+        ]);
+
+        $settingsModel->save();
+
+        session()->flash('settings_saved', 'Paramètres SEO enregistrés avec succès.');
+    }
+
+    /* =======================
+     *  FORMULAIRE MAINTENANCE
+     *  wire:submit.prevent="saveMaintenance"
+     * ======================= */
+
+    public function saveMaintenance(): void
+    {
+        $this->validate([
+            'settings.maintenance_enabled' => 'boolean',
+            'settings.maintenance_message' => 'nullable|string|max:500',
+        ]);
+
+        $settingsModel = Setting::main();
+
+        $settingsModel->maintenance_mode    = $this->settings['maintenance_enabled'] ? 1 : 0;
+        $settingsModel->maintenance_message = $this->settings['maintenance_message'];
+
+        $settingsModel->save();
+
+        session()->flash('settings_saved', 'Mode maintenance mis à jour avec succès.');
+    }
+
+    /* =======================
+     *  MÉDIAS (logo + favicon)
+     *  bouton : wire:click="saveMedia"
+     * ======================= */
+
+    public function saveMedia(): void
+    {
+        $this->validate([
+            'logo'    => 'nullable|image|max:2048', // 2 Mo
+            'favicon' => 'nullable|image|max:1024', // 1 Mo
+        ]);
+
+        $settingsModel = Setting::main();
+
+        // Logo
+        if ($this->logo) {
+            if ($this->logoPath) {
+                Storage::disk('public')->delete($this->logoPath);
+            }
+            $path = $this->logo->store('settings/logo', 'public');
+            $settingsModel->logo_path = $path;
+            $this->logoPath = $path;
+        }
+
+        // Favicon
+        if ($this->favicon) {
+            if ($this->faviconPath) {
+                Storage::disk('public')->delete($this->faviconPath);
+            }
+            $path = $this->favicon->store('settings/favicon', 'public');
+            $settingsModel->favicon_path = $path;
+            $this->faviconPath = $path;
+        }
+
+        $settingsModel->save();
+
+        // on vide juste les champs fichier
+        $this->reset('logo', 'favicon');
+
+        session()->flash('settings_saved', 'Logo et favicon mis à jour avec succès.');
+    }
+
+    /* =======================
+     *  MOT DE PASSE ADMIN
+     *  wire:submit.prevent="updateAdminPassword"
+     * ======================= */
+
+    public function updateAdminPassword(): void
+    {
+        $this->validate([
+            'security.current_password'          => 'required|current_password',
+            'security.new_password'              => 'required|min:8|same:security.new_password_confirmation',
+            'security.new_password_confirmation' => 'required',
+        ], [
+            'security.current_password.current_password' => 'Le mot de passe actuel est incorrect.',
+        ]);
+
+        $user = Auth::user();
+        if ($user) {
+            $user->password = Hash::make($this->security['new_password']);
+            $user->save();
+        }
+
+        $this->security = [
+            'current_password'          => '',
+            'new_password'              => '',
+            'new_password_confirmation' => '',
+        ];
+
+        session()->flash('security_updated', 'Mot de passe administrateur mis à jour.');
+    }
+
+    /* =======================
+     *  COMPTE SECRÉTAIRE
+     *  wire:submit.prevent="createOrUpdateSecretaire"
+     * ======================= */
+
+    public function createOrUpdateSecretaire(): void
+    {
+        $this->validate([
+            'secretaire.name'     => 'required|string|max:255',
+            'secretaire.email'    => 'required|email|max:255',
+            'secretaire.password' => 'nullable|min:8',
+        ]);
+
+        $secretary = User::firstOrNew(['email' => $this->secretaire['email']]);
+
+        $secretary->name   = $this->secretaire['name'];
+        $secretary->role   = 'secrétaire';
+        $secretary->active = true;
+
+        if (!empty($this->secretaire['password'])) {
+            $secretary->password = Hash::make($this->secretaire['password']);
+        } elseif (! $secretary->exists) {
+            // mot de passe par défaut si nouvelle création sans password saisi
+            $secretary->password = Hash::make('password1234');
+        }
+
+        $secretary->save();
+
+        // on ne garde pas le mdp en mémoire
+        $this->secretaire['password'] = '';
+
+        session()->flash('security_updated', 'Compte secrétaire créé / mis à jour.');
+    }
+
+    /* =======================
+     *  RENDER
+     * ======================= */
 
     public function render()
     {
-        return view('livewire.admin.settings-page');
+        $currentLogoUrl = $this->logoPath
+            ? Storage::disk('public')->url($this->logoPath)
+            : null;
+
+        $currentFaviconUrl = $this->faviconPath
+            ? Storage::disk('public')->url($this->faviconPath)
+            : null;
+
+        return view('livewire.admin.settings-page', [
+            'title'              => 'Paramètres',
+            'subtitle'           => 'Configuration globale du site EDGVM',
+            'current_logo_url'   => $currentLogoUrl,
+            'current_favicon_url'=> $currentFaviconUrl,
+        ]);
     }
 }

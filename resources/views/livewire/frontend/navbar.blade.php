@@ -7,7 +7,9 @@
         <div class="flex justify-between items-center h-20">
             <!-- Logo -->
             <a href="{{ route('home') }}" class="flex items-center space-x-3">
-                <img src="/images/logo-edgvm.jpg" alt="EDGVM Logo" class="h-14 w-auto">
+              <img src="{{ $appSettings->logo_path ? asset('storage/'.$appSettings->logo_path) : asset('images/logo-edgvm.jpg') }}" 
+                alt="{{ $appSettings->site_name ?? 'EDGVM' }} Logo" 
+                class="h-14 w-auto">
                 <div>
                     <h1 class="text-xl font-bold text-ed-primary leading-tight">EDGVM</h1>
                     <p class="text-xs text-ed-gray leading-tight">École Doctorale Génie du Vivant et Modélisation</p>
