@@ -262,11 +262,11 @@
                                     </a>
                                 </td>
                                 <td style="width:12px;"></td>
-                                <td>
+                                {{-- <td>
                                     <a href="{{ config('app.url') }}" class="btn-secondary" target="_blank">
                                         Accéder au site EDGVM
                                     </a>
-                                </td>
+                                </td>  --}}
                             </tr>
                         </table>
 

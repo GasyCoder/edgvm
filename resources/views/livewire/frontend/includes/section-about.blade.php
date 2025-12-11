@@ -1,6 +1,5 @@
 <!-- About Section - UI/UX épuré pour EDGVM -->
-<section class="py-20 bg-white relative overflow-hidden">
-
+<section class="pt-10 pb-14 md:pt-12 md:pb-16 bg-white relative overflow-hidden">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-16 items-center">
 
