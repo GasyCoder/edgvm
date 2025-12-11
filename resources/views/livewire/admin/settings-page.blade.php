@@ -310,21 +310,32 @@
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <label class="inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer"
-                                   wire:model.defer="settings.maintenance_enabled">
-                            <div class="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full
-                                        peer peer-checked:bg-ed-primary
-                                        relative transition-colors">
-                                <span class="absolute left-0.5 top-0.5 h-4 w-4 bg-white rounded-full shadow
-                                             transition-transform peer-checked:translate-x-5"></span>
+                        <label class="inline-flex items-center cursor-pointer select-none">
+                            {{-- Input toggle (vrai switch) --}}
+                            <input
+                                type="checkbox"
+                                class="sr-only peer"
+                                wire:model.live="settings.maintenance_enabled"
+                            >
+
+                            {{-- Rail du toggle --}}
+                            <div
+                                class="relative w-11 h-6 rounded-full bg-gray-200
+                                    transition-colors duration-200
+                                    peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-ed-primary/40
+                                    peer-checked:bg-ed-primary"
+                            >
+                                {{-- Pastille mobile --}}
+                                <span
+                                    class="absolute left-[3px] top-[3px] h-5 w-5 rounded-full bg-white shadow
+                                        transition-transform duration-200
+                                        peer-checked:translate-x-5"
+                                ></span>
                             </div>
+
+                            {{-- Texte état --}}
                             <span class="ml-2 text-xs font-medium text-gray-700">
-                                @if($settings['maintenance_enabled'] ?? false)
-                                    Activé
-                                @else
-                                    Désactivé
-                                @endif
+                                {{ ($settings['maintenance_enabled'] ?? false) ? 'Activé' : 'Désactivé' }}
                             </span>
                         </label>
                     </div>
@@ -336,14 +347,14 @@
                             Message affiché aux visiteurs
                         </label>
                         <textarea rows="3"
-                                  wire:model.defer="settings.maintenance_message"
-                                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
-                                         focus:ring-2 focus:ring-ed-primary focus:border-transparent"
-                                  placeholder="Le site est momentanément en maintenance. Merci de revenir ultérieurement."></textarea>
+                                wire:model.defer="settings.maintenance_message"
+                                class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+                                        focus:ring-2 focus:ring-ed-primary focus:border-transparent"
+                                placeholder="Le site est momentanément en maintenance. Merci de revenir ultérieurement."></textarea>
                     </div>
 
                     <p class="text-[11px] text-gray-500">
-                        Astuce : laissez l’accès normal pour les comptes administrateurs pendant la maintenance.
+                        Merci pour votre compréhension. Le site restera accessible une fois les mises à jour terminées.
                     </p>
                 </div>
 
@@ -352,21 +363,22 @@
                             wire:target="saveMaintenance"
                             wire:loading.attr="disabled"
                             class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 text-white text-sm font-semibold
-                                   shadow-sm hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:ring-offset-1
-                                   disabled:opacity-60">
+                                shadow-sm hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:ring-offset-1
+                                disabled:opacity-60">
                         <span wire:loading.remove wire:target="saveMaintenance">Mettre à jour le mode maintenance</span>
                         <span wire:loading wire:target="saveMaintenance" class="inline-flex items-center gap-2">
                             <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10"
                                         stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor"
-                                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                             </svg>
                             <span>Enregistrement…</span>
                         </span>
                     </button>
                 </div>
             </form>
+
         </div>
 
         {{-- COLONNE DROITE : LOGO / FAVICON / SÉCURITÉ --}}
