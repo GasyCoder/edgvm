@@ -640,6 +640,15 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Setting query()
+ */
+	class Setting extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * @property int $id
  * @property string $cle
  * @property string|null $valeur
