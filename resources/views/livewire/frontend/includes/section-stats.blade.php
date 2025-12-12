@@ -3,22 +3,28 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {{-- En-tête de section --}}
-        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
-            <div>
-                <p class="text-xs font-semibold tracking-[0.18em] text-ed-primary uppercase">
-                    Chiffres clés
-                </p>
-                <h2 class="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+        {{-- En-tête --}}
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 md:mb-12">
+            <div class="max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-ed-primary/8 border border-ed-primary/15">
+                    <span class="w-2 h-2 rounded-full bg-ed-primary"></span>
+                    <p class="text-[11px] font-semibold tracking-[0.18em] text-ed-primary uppercase">
+                        Chiffres clés
+                    </p>
+                </div>
+
+                <h2 class="mt-4 text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 leading-tight">
                     Une communauté doctorale dynamique
                 </h2>
-                <p class="mt-2 text-sm sm:text-base text-gray-600 max-w-xl">
-                    L’École Doctorale EDGVM rassemble doctorants, encadrants et équipes d’accueil 
+
+                <p class="mt-2 text-sm sm:text-base text-gray-600">
+                    L’École Doctorale EDGVM rassemble doctorants, encadrants et équipes d’accueil
                     engagés dans la recherche et l’innovation.
                 </p>
             </div>
 
             <div class="text-sm text-gray-500">
-                <span class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1">
+                <span class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white/80 backdrop-blur px-3 py-1">
                     <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
                     <span>Données indicatives à jour</span>
                 </span>
