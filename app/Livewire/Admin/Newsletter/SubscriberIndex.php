@@ -2,123 +2,179 @@
 
 namespace App\Livewire\Admin\Newsletter;
 
+use App\Exports\NewsletterSubscribersExport;
+use App\Imports\NewsletterSubscribersImport;
 use App\Models\NewsletterSubscriber;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
+use Maatwebsite\Excel\Facades\Excel;
 
 #[Title('Abonnés Newsletter')]
 class SubscriberIndex extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
-    public $search = '';
-    public $filterType = 'all';
-    public $filterActif = 'all';
-    
-    // Pour la création/édition
-    public $editing = false;
-    public $subscriberId = null;
-    public $email = '';
-    public $nom = '';
-    public $type = 'autre';
-    public $actif = true;
+    public string $search = '';
+    public string $filterType = 'all';
+    public string $filterActif = 'all';
+
+    // modal create/edit
+    public bool $editing = false;
+    public ?int $subscriberId = null;
+    public string $email = '';
+    public string $nom = '';
+    public string $type = 'autre';
+    public bool $actif = true;
     public $subscriberCreatedAt = null;
 
-    protected $rules = [
-        'email' => 'required|email',
-        'nom' => 'nullable|string|max:255',
-        'type' => 'required|in:doctorant,encadrant,autre',
-        'actif' => 'boolean',
-    ];
+    // Import
+    public $importFile = null;
 
-    protected $messages = [
-        'email.required' => 'L\'email est obligatoire.',
-        'email.email' => 'L\'email doit être valide.',
-        'email.unique' => 'Cet email est déjà inscrit.',
-    ];
-
-    public function create()
+    protected function rules(): array
     {
-        $this->reset(['editing', 'subscriberId', 'email', 'nom', 'type', 'actif']);
-        $this->editing = true;
-        $this->actif = true;
-        $this->type = 'autre';
+        return [
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('newsletter_subscribers', 'email')->ignore($this->subscriberId),
+            ],
+            'nom'   => ['nullable', 'string', 'max:255'],
+            'type'  => ['required', Rule::in(['doctorant', 'encadrant', 'autre'])],
+            'actif' => ['boolean'],
+        ];
     }
 
-    public function edit($subscriberId)
+    public function updatingSearch(): void { $this->resetPage(); }
+    public function updatingFilterType(): void { $this->resetPage(); }
+    public function updatingFilterActif(): void { $this->resetPage(); }
+
+    public function create(): void
     {
-        $subscriber = NewsletterSubscriber::findOrFail($subscriberId);
-        $this->subscriberId = $subscriber->id;
-        $this->email = $subscriber->email;
-        $this->nom = $subscriber->nom;
-        $this->type = $subscriber->type;
-        $this->actif = $subscriber->actif;
-        $this->subscriberCreatedAt = $subscriber->created_at; // ← AJOUTÉ
+        $this->resetForm();
         $this->editing = true;
     }
 
-    public function save()
+    public function edit(int $id): void
     {
-        // Validation avec règle unique conditionnelle
-        $rules = $this->rules;
-        if ($this->subscriberId) {
-            // Lors de la modification, ignorer l'email actuel
-            $rules['email'] = 'required|email|unique:newsletter_subscribers,email,' . $this->subscriberId;
-        } else {
-            // Lors de la création, vérifier l'unicité
-            $rules['email'] = 'required|email|unique:newsletter_subscribers,email';
-        }
+        $s = NewsletterSubscriber::findOrFail($id);
 
-        $this->validate($rules);
+        $this->subscriberId = $s->id;
+        $this->email = $s->email;
+        $this->nom = $s->nom ?? '';
+        $this->type = $s->type;
+        $this->actif = (bool) $s->actif;
+        $this->subscriberCreatedAt = $s->created_at;
+
+        $this->editing = true;
+    }
+
+    public function save(): void
+    {
+        $this->validate();
 
         if ($this->subscriberId) {
-            // Mise à jour
-            $subscriber = NewsletterSubscriber::find($this->subscriberId);
-            $subscriber->update([
-                'email' => $this->email,
-                'nom' => $this->nom,
-                'type' => $this->type,
+            NewsletterSubscriber::whereKey($this->subscriberId)->update([
+                'email' => strtolower(trim($this->email)),
+                'nom'   => $this->nom ?: null,
+                'type'  => $this->type,
                 'actif' => $this->actif,
             ]);
-            session()->flash('success', 'Abonné mis à jour avec succès !');
+            session()->flash('success', 'Abonné mis à jour avec succès.');
         } else {
-            // Création
             NewsletterSubscriber::create([
-                'email' => $this->email,
-                'nom' => $this->nom,
-                'type' => $this->type,
+                'email' => strtolower(trim($this->email)),
+                'nom'   => $this->nom ?: null,
+                'type'  => $this->type,
                 'actif' => $this->actif,
+                // token + abonne_le sont auto via model (creating)
             ]);
-            session()->flash('success', 'Abonné créé avec succès !');
+            session()->flash('success', 'Abonné créé avec succès.');
         }
 
-        $this->reset(['editing', 'subscriberId', 'email', 'nom', 'type', 'actif']);
+        $this->editing = false;
+        $this->resetForm();
     }
 
-    public function toggleActif($subscriberId)
+    public function toggleActif(int $id): void
     {
-        $subscriber = NewsletterSubscriber::find($subscriberId);
-        if ($subscriber) {
-            $subscriber->update(['actif' => !$subscriber->actif]);
-            session()->flash('success', 'Statut mis à jour !');
-        }
+        $s = NewsletterSubscriber::find($id);
+        if (!$s) return;
+
+        $new = !$s->actif;
+
+        $s->update([
+            'actif' => $new,
+            'desabonne_le' => $new ? null : now(),
+            'abonne_le' => $s->abonne_le ?? now(),
+        ]);
+
+        session()->flash('success', 'Statut mis à jour.');
     }
 
-    public function delete($subscriberId)
+    public function delete(int $id): void
     {
-        NewsletterSubscriber::find($subscriberId)?->delete();
-        session()->flash('success', 'Abonné supprimé !');
+        NewsletterSubscriber::whereKey($id)->delete();
+        session()->flash('success', 'Abonné supprimé.');
+    }
+
+    // EXPORT
+    public function exportExcel()
+    {
+        $fileName = 'newsletter_subscribers_' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(
+            new NewsletterSubscribersExport($this->search, $this->filterType, $this->filterActif),
+            $fileName
+        );
+    }
+
+    // IMPORT
+    public function importExcel(): void
+    {
+        $this->validate([
+            'importFile' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:5120'], // 5MB
+        ]);
+
+        Excel::import(new NewsletterSubscribersImport(), $this->importFile);
+
+        $this->importFile = null;
+        session()->flash('success', 'Import terminé avec succès.');
+    }
+
+    private function resetForm(): void
+    {
+        $this->reset(['subscriberId', 'email', 'nom', 'type', 'actif', 'subscriberCreatedAt']);
+        $this->type = 'autre';
+        $this->actif = true;
+    }
+
+
+    public function clearImportFile(): void
+    {
+        $this->importFile = null;
+        $this->resetErrorBag('importFile');
+    }
+
+
+    public function updatedImportFile(): void
+    {
+        $this->validateOnly('importFile', [
+            'importFile' => ['nullable', 'file', 'mimes:xlsx,xls,csv', 'max:5120'],
+        ]);
     }
 
     public function render()
     {
         $query = NewsletterSubscriber::query();
 
-        if ($this->search) {
-            $query->where(function($q) {
-                $q->where('email', 'like', '%' . $this->search . '%')
-                  ->orWhere('nom', 'like', '%' . $this->search . '%');
+        if ($this->search !== '') {
+            $s = trim($this->search);
+            $query->where(function ($q) use ($s) {
+                $q->where('email', 'like', "%{$s}%")
+                  ->orWhere('nom', 'like', "%{$s}%");
             });
         }
 
@@ -132,19 +188,16 @@ class SubscriberIndex extends Component
             $query->where('actif', false);
         }
 
-        $subscribers = $query->orderBy('created_at', 'desc')->paginate(20);
+        $subscribers = $query->orderByDesc('created_at')->paginate(20);
 
         $stats = [
-            'total' => NewsletterSubscriber::count(),
-            'actifs' => NewsletterSubscriber::where('actif', true)->count(),
-            'inactifs' => NewsletterSubscriber::where('actif', false)->count(), 
+            'total'      => NewsletterSubscriber::count(),
+            'actifs'     => NewsletterSubscriber::where('actif', true)->count(),
+            'inactifs'   => NewsletterSubscriber::where('actif', false)->count(),
             'doctorants' => NewsletterSubscriber::where('type', 'doctorant')->count(),
             'encadrants' => NewsletterSubscriber::where('type', 'encadrant')->count(),
         ];
 
-        return view('livewire.admin.newsletter.subscriber-index', [
-            'subscribers' => $subscribers,
-            'stats' => $stats,
-        ]);
+        return view('livewire.admin.newsletter.subscriber-index', compact('subscribers', 'stats'));
     }
 }

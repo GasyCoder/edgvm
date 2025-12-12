@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Actualite;
 use App\Models\NewsletterSubscriber;
+use App\Mail\ActualiteNotificationMailable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,7 +17,7 @@ class SendActualiteNotification implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $actualite;
+    public Actualite $actualite;
 
     public function __construct(Actualite $actualite)
     {
@@ -25,32 +26,25 @@ class SendActualiteNotification implements ShouldQueue
 
     public function handle(): void
     {
-        // Récupérer tous les abonnés actifs
-        $subscribers = NewsletterSubscriber::actif()->get();
+        Log::info("Actualité #{$this->actualite->id} : préparation envoi newsletter");
 
-        Log::info("Envoi de notification pour l'actualité #{$this->actualite->id} à {$subscribers->count()} abonnés");
+        NewsletterSubscriber::actif()
+            ->whereNotNull('email')
+            ->select(['id','email','nom','type'])
+            ->orderBy('id')
+            ->chunkById(500, function ($subscribers) {
+                foreach ($subscribers as $subscriber) {
+                    Mail::to($subscriber->email)->queue(
+                        new ActualiteNotificationMailable($this->actualite, $subscriber)
+                    );
+                }
+            });
 
-        foreach ($subscribers as $subscriber) {
-            try {
-                Mail::send('emails.actualite-notification', [
-                    'actualite' => $this->actualite,
-                    'subscriber' => $subscriber,
-                ], function ($message) use ($subscriber) {
-                    $message->to($subscriber->email, $subscriber->nom)
-                            ->subject('Nouvelle actualité : ' . $this->actualite->titre);
-                });
-
-                Log::info("Email envoyé à {$subscriber->email}");
-            } catch (\Exception $e) {
-                Log::error("Erreur envoi email à {$subscriber->email}: " . $e->getMessage());
-            }
-        }
-
-        // Marquer comme envoyée
+        // Ici tu “queues” tous les emails. Tu peux marquer “queued”/“planifiée”
         $this->actualite->update([
-            'notification_envoyee_le' => now(),
+            'notification_envoyee_le' => now(), // si tu l'utilises comme “planifiée”
         ]);
 
-        Log::info("Notification terminée pour l'actualité #{$this->actualite->id}");
+        Log::info("Actualité #{$this->actualite->id} : envoi mis en file (queue)");
     }
 }

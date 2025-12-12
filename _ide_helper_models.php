@@ -72,6 +72,45 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $titre
+ * @property string|null $contenu_html
+ * @property string $cible
+ * @property int|null $media_id
+ * @property bool $est_publie
+ * @property \Illuminate\Support\Carbon|null $publie_at
+ * @property bool $envoyer_email
+ * @property string|null $email_cible
+ * @property \Illuminate\Support\Carbon|null $email_envoye_at
+ * @property int|null $auteur_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $auteur
+ * @property-read string|null $media_name
+ * @property-read string|null $media_url
+ * @property-read \App\Models\Media|null $media
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce whereAuteurId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce whereCible($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce whereContenuHtml($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce whereEmailCible($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce whereEmailEnvoyeAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce whereEnvoyerEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce whereEstPublie($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce whereMediaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce wherePublieAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce whereTitre($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Annonce whereUpdatedAt($value)
+ */
+	class Annonce extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $nom
  * @property string $slug
  * @property string|null $description
@@ -495,8 +534,6 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $abonne_le
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
- * @property-read int|null $notifications_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|NewsletterSubscriber actif()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|NewsletterSubscriber byType($type)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|NewsletterSubscriber newModelQuery()

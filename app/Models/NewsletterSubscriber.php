@@ -4,13 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
 class NewsletterSubscriber extends Model
 {
     use HasFactory;
-    use Notifiable;
 
     protected $fillable = [
         'email',
@@ -18,23 +16,30 @@ class NewsletterSubscriber extends Model
         'type',
         'actif',
         'token',
+        'abonne_le',
         'desabonne_le',
     ];
 
     protected $casts = [
-        'actif'         => 'boolean',
-        'abonne_le'     => 'datetime',
-        'desabonne_le'  => 'datetime',
+        'actif'        => 'boolean',
+        'abonne_le'    => 'datetime',
+        'desabonne_le' => 'datetime',
     ];
 
-    // Générer token automatiquement
-    protected static function boot()
+    protected static function booted(): void
     {
-        parent::boot();
+        static::creating(function (self $subscriber) {
+            // Normaliser email
+            if (!empty($subscriber->email)) {
+                $subscriber->email = strtolower(trim($subscriber->email));
+            }
 
-        static::creating(function ($subscriber) {
             if (empty($subscriber->token)) {
                 $subscriber->token = Str::random(32);
+            }
+
+            if (empty($subscriber->abonne_le)) {
+                $subscriber->abonne_le = now();
             }
         });
     }
@@ -49,10 +54,4 @@ class NewsletterSubscriber extends Model
     {
         return $query->where('type', $type);
     }
-
-    /**
-     * Par défaut Laravel utilisera la colonne "email"
-     * pour routeNotificationForMail(), donc pas besoin
-     * d’override, sauf cas particulier.
-     */
 }

@@ -84,14 +84,12 @@ class ContactPage extends Component
     {
         $this->validate();
 
-        // Vérification captcha
         if ((int) $this->captchaAnswer !== $this->captchaA + $this->captchaB) {
             $this->addError('captchaAnswer', 'La vérification anti-robot est incorrecte.');
             $this->generateCaptcha();
             return;
         }
 
-        // On prépare les données AVANT reset
         $data = [
             'full_name'      => $this->fullName,
             'phone'          => $this->phone,
@@ -102,23 +100,28 @@ class ContactPage extends Component
         ];
 
         try {
-            // 1) Notification vers le secrétariat EDGVM
-            Notification::route('mail', 'secretaire@edgvm.mg')
-                ->notify(new ContactMessageForSecretary($data));
+            // 1) Vers secrétariat (queue)
+            Mail::to('secretaire@edgvm.mg')->queue(
+                new ContactToSecretaryMailable($data)
+            );
 
-            // 2) Notification de confirmation vers l'utilisateur
-            Notification::route('mail', $data['email'])
-                ->notify(new ContactMessageConfirmation($data));
+            // 2) Confirmation vers l'utilisateur (queue)
+            Mail::to($data['email'])->queue(
+                new ContactConfirmationMailable($data)
+            );
 
-            Log::info('Nouveau message de contact EDGVM envoyé avec succès', $data);
+            Log::info('Contact EDGVM: emails queued', ['email' => $data['email'], 'subject' => $data['subject_key']]);
+
         } catch (\Throwable $e) {
-            Log::error('Erreur lors de l’envoi des notifications de contact EDGVM', [
-                'data'      => $data,
+            Log::error('Contact EDGVM: erreur envoi mail', [
+                'email' => $data['email'],
                 'exception' => $e->getMessage(),
             ]);
+
+            session()->flash('error', "Une erreur s'est produite lors de l'envoi. Veuillez réessayer.");
+            return;
         }
 
-        // Reset du formulaire
         $this->reset([
             'fullName',
             'phone',

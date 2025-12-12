@@ -32,10 +32,12 @@ use App\Livewire\Admin\Sliders\SliderEdit;
 use App\Livewire\Admin\Slides\SlideCreate;
 use App\Livewire\Admin\Theses\TheseCreate;
 use App\Livewire\Admin\Sliders\SliderIndex;
+use App\Livewire\Admin\Annonces\AnnonceForm;
 use App\Livewire\Admin\Sliders\SliderCreate;
 use App\Livewire\Admin\Theses\TheseJuryEdit;
 use App\Http\Controllers\DoctorantController;
 use App\Http\Controllers\EncadrantController;
+use App\Livewire\Admin\Annonces\AnnonceIndex;
 use App\Livewire\Frontend\Recherche\EadsPage;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\SecretaireController;
@@ -291,6 +293,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
                 ->name('edit');
         });
 
+
+        Route::prefix('annonces')->name('annonces.')->group(function () {
+            Route::get('/', AnnonceIndex::class)->name('index');
+            Route::get('/create', AnnonceForm::class)->name('create');
+            Route::get('/{annonce}/edit', AnnonceForm::class)->name('edit');
+        });
     });
 
 

@@ -2,15 +2,16 @@
 
 namespace App\Livewire\Admin\Evenements;
 
-use Livewire\Component;
-use Livewire\WithFileUploads;
-use App\Models\Evenement;
 use App\Models\Media;
+use Livewire\Component;
+use App\Models\Evenement;
+use Livewire\WithFileUploads;
+use Illuminate\Validation\Rule;
+use App\Mail\EvenementCreeMailable;
 use App\Models\NewsletterSubscriber;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\Rule;
-use App\Mail\EvenementCreeMailable;
+use App\Jobs\SendEvenementNewsletterJob;
 
 class EvenementCreate extends Component
 {
@@ -190,37 +191,25 @@ class EvenementCreate extends Component
                 // 4) Envoi des emails newsletter (Mail + Mailable)
         if ($this->notify_all || $this->notify_encadrants || $this->notify_doctorants) {
 
-            $query = NewsletterSubscriber::actif();
+            $types = [];
 
             if (! $this->notify_all) {
-                $types = [];
+                if ($this->notify_encadrants) $types[] = 'encadrant';
+                if ($this->notify_doctorants) $types[] = 'doctorant';
 
-                if ($this->notify_encadrants) {
-                    $types[] = 'encadrant';
-                }
-
-                if ($this->notify_doctorants) {
-                    $types[] = 'doctorant';
-                }
-
-                if (count($types) > 0) {
-                    $query->whereIn('type', $types);
-                } else {
-                    // aucun type coché → pas d'envoi
-                    $query->whereRaw('1 = 0');
+                // Aucun type coché => rien
+                if (empty($types)) {
+                    $types = ['__none__']; // évite envoi, mais on peut juste return
                 }
             }
 
-            $subscribers = $query->get();
+            if ($this->notify_all) {
+                $types = []; // vide = all
+            }
 
-            foreach ($subscribers as $subscriber) {
-                if (! $subscriber->email) {
-                    continue;
-                }
-
-                Mail::to($subscriber->email)->queue(
-                    new EvenementCreeMailable($evenement, $subscriber)
-                );
+            // Si aucun type réel, on n'envoie pas
+            if ($types !== ['__none__']) {
+                SendEvenementNewsletterJob::dispatch($evenement->id, $types);
             }
         }
 

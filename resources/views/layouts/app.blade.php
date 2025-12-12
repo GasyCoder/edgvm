@@ -48,6 +48,7 @@
                      x-data="{
                         openCommunication: {{ 
                             request()->routeIs('admin.actualites.*') 
+                            || request()->routeIs('admin.annonces.*') 
                             || request()->routeIs('admin.newsletter.*')
                             || request()->routeIs('admin.categories.*')
                             || request()->routeIs('admin.tags.*')
@@ -87,6 +88,7 @@
                                 class="w-full flex items-center justify-between px-6 py-3 text-sm
                                        hover:bg-white/10 transition-all duration-150 text-left
                                        {{ (request()->routeIs('admin.actualites.*') 
+                                            || request()->routeIs('admin.annonces.*') 
                                             || request()->routeIs('admin.newsletter.*')
                                             || request()->routeIs('admin.categories.*')
                                             || request()->routeIs('admin.tags.*')
@@ -157,7 +159,17 @@
                                 </svg>
                                 <span>Événements</span>
                             </a>
-
+                            {{-- Annonces académiques --}}
+                            <a href="{{ route('admin.annonces.index') }}"
+                            class="flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-150
+                                    hover:bg-white/10 hover:pl-4
+                                    {{ request()->routeIs('admin.annonces.*') ? 'bg-white/15 text-ed-yellow font-semibold shadow-sm' : 'text-white/80' }}">
+                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 8h10M7 12h10M7 16h6M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H7l-4 3V6a2 2 0 012-2z"/>
+                                </svg>
+                                <span>Annonces</span>
+                            </a>
                             {{-- Newsletter --}}
                             <a href="{{ route('admin.newsletter.subscribers') }}"
                                class="flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-150
