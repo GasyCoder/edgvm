@@ -8,7 +8,7 @@ use App\Models\EAD;
 use App\Models\Actualite;
 use App\Models\Partenaire;
 use App\Models\MessageDirection;
-use App\Models\Evenement; // <-- IMPORTANT
+use App\Models\Evenement;
 
 class HomePage extends Component
 {
@@ -23,12 +23,10 @@ class HomePage extends Component
             ->byPosition('homepage')
             ->first();
 
-        // Message de la Directrice (dernier visible)
         $messageDirection = MessageDirection::where('visible', true)
             ->latest()
             ->first();
 
-        // Stats (tu peux les adapter si besoin)
         $stats = [
             'doctorants'        => $messageDirection?->nb_doctorants ?? 0,
             'equipes'           => $messageDirection?->nb_equipes ?? 0,
@@ -44,7 +42,10 @@ class HomePage extends Component
             ->take(4)
             ->get();
 
+        // ✅ AJOUT DU FILTRE SLUG
         $actualites = Actualite::with(['category', 'image', 'tags'])
+            ->whereNotNull('slug')  // ← AJOUTE CETTE LIGNE
+            ->where('slug', '!=', '')  // ← AJOUTE CETTE LIGNE
             ->latest()
             ->published()
             ->orderBy('est_important', 'desc')
@@ -56,7 +57,6 @@ class HomePage extends Component
             ->orderBy('ordre')
             ->get();
 
-        // ✅ Événements FUTURS uniquement (agenda)
         $evenementsFuturs = Evenement::futurs()
             ->latest()
             ->limit(2)
