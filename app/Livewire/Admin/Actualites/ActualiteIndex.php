@@ -2,18 +2,16 @@
 
 namespace App\Livewire\Admin\Actualites;
 
-use App\Models\Actualite;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Title;
+use App\Models\Actualite;
 
-#[Title('Actualités')]
 class ActualiteIndex extends Component
 {
     use WithPagination;
 
     public $search = '';
-    public $filterVisible = 'all'; // all, visible, hidden
+    public $filterVisible = 'all';
     public $confirmingDeletion = false;
     public $actualiteToDelete = null;
 
@@ -27,26 +25,35 @@ class ActualiteIndex extends Component
         $this->resetPage();
     }
 
-    public function toggleVisibility($actualiteId)
+    public function updatingFilterVisible()
     {
-        $actualite = Actualite::find($actualiteId);
+        $this->resetPage();
+    }
+
+    public function toggleVisibility($id)
+    {
+        $actualite = Actualite::find($id);
         if ($actualite) {
-            $actualite->update(['visible' => !$actualite->visible]);
-            session()->flash('success', 'Visibilité mise à jour !');
+            $actualite->visible = !$actualite->visible;
+            $actualite->save();
+            session()->flash('success', 'Visibilité mise à jour avec succès.');
         }
     }
 
-    public function confirmDelete($actualiteId)
+    public function confirmDelete($id)
     {
         $this->confirmingDeletion = true;
-        $this->actualiteToDelete = $actualiteId;
+        $this->actualiteToDelete = $id;
     }
 
     public function deleteActualite()
     {
         if ($this->actualiteToDelete) {
-            Actualite::find($this->actualiteToDelete)?->delete();
-            session()->flash('success', 'Actualité supprimée avec succès !');
+            $actualite = Actualite::find($this->actualiteToDelete);
+            if ($actualite) {
+                $actualite->delete();
+                session()->flash('success', 'Actualité supprimée avec succès.');
+            }
         }
 
         $this->confirmingDeletion = false;
@@ -55,11 +62,16 @@ class ActualiteIndex extends Component
 
     public function render()
     {
-        $query = Actualite::with(['auteur', 'image', 'category']); 
+        $query = Actualite::with(['category', 'image', 'auteur'])
+            ->whereNotNull('slug')  // ← AJOUTE CETTE LIGNE
+            ->where('slug', '!=', '');  // ← AJOUTE CETTE LIGNE
 
         // Recherche
         if ($this->search) {
-            $query->where('titre', 'like', '%' . $this->search . '%');
+            $query->where(function ($q) {
+                $q->where('titre', 'like', '%' . $this->search . '%')
+                  ->orWhere('contenu', 'like', '%' . $this->search . '%');
+            });
         }
 
         // Filtre visibilité
@@ -69,12 +81,13 @@ class ActualiteIndex extends Component
             $query->where('visible', false);
         }
 
-        $actualites = $query->orderBy('date_publication', 'desc')->paginate(10);
+        $actualites = $query->latest()->paginate(15);
 
+        // Stats
         $stats = [
-            'total' => Actualite::count(),
-            'visibles' => Actualite::where('visible', true)->count(),
-            'cachees' => Actualite::where('visible', false)->count(),
+            'total' => Actualite::whereNotNull('slug')->where('slug', '!=', '')->count(),
+            'visibles' => Actualite::whereNotNull('slug')->where('slug', '!=', '')->where('visible', true)->count(),
+            'cachees' => Actualite::whereNotNull('slug')->where('slug', '!=', '')->where('visible', false)->count(),
         ];
 
         return view('livewire.admin.actualites.actualite-index', [
