@@ -10,7 +10,6 @@ class ActualiteDetailPage extends Component
 {
     public Actualite $actualite;
     
-    // Newsletter
     public $newsletterEmail = '';
     public $newsletterNom = '';
     public $newsletterType = 'autre';
@@ -22,25 +21,15 @@ class ActualiteDetailPage extends Component
         }
 
         $this->actualite = $actualite;
-        
-        // Incrémenter les vues ← AJOUTÉ
         $this->incrementUniqueView();
     }
 
-    /**
-     * Incrémente les vues une seule fois par session navigateur
-     */
     private function incrementUniqueView(): void
     {
-        // Clé unique pour cette actu dans la session
         $key = 'actualite_viewed_' . $this->actualite->id;
 
-        // Si pas encore vue dans cette session → on incrémente
         if (!session()->has($key)) {
-            // Utilise ton helper de modèle
             $this->actualite->incrementVues();
-
-            // On mémorise dans la session que cette actu a été vue
             session()->put($key, true);
         }
     }
@@ -71,18 +60,23 @@ class ActualiteDetailPage extends Component
 
     public function render()
     {
-        // Charger les relations + galerie ← AJOUTÉ
         $this->actualite->load(['category', 'image', 'tags', 'auteur', 'galerie']);
 
+        // ✅ SIMILAIRES (même catégorie) - AVEC FILTRE SLUG
         $similaires = Actualite::with(['category', 'image'])
+            ->whereNotNull('slug')  // ← AJOUTÉ
+            ->where('slug', '!=', '')  // ← AJOUTÉ
             ->published()
             ->where('id', '!=', $this->actualite->id)
             ->where('category_id', $this->actualite->category_id)
             ->limit(3)
             ->get();
 
+        // ✅ FALLBACK SI PAS ASSEZ - AVEC FILTRE SLUG
         if ($similaires->count() < 3) {
             $similaires = Actualite::with(['category', 'image'])
+                ->whereNotNull('slug')  // ← AJOUTÉ
+                ->where('slug', '!=', '')  // ← AJOUTÉ
                 ->published()
                 ->where('id', '!=', $this->actualite->id)
                 ->latest('date_publication')
@@ -90,13 +84,18 @@ class ActualiteDetailPage extends Component
                 ->get();
         }
 
-        // Articles précédent/suivant
-        $precedent = Actualite::published()
+        // ✅ PRÉCÉDENT - AVEC FILTRE SLUG
+        $precedent = Actualite::whereNotNull('slug')  // ← AJOUTÉ
+            ->where('slug', '!=', '')  // ← AJOUTÉ
+            ->published()
             ->where('date_publication', '<', $this->actualite->date_publication)
             ->orderBy('date_publication', 'desc')
             ->first();
 
-        $suivant = Actualite::published()
+        // ✅ SUIVANT - AVEC FILTRE SLUG
+        $suivant = Actualite::whereNotNull('slug')  // ← AJOUTÉ
+            ->where('slug', '!=', '')  // ← AJOUTÉ
+            ->published()
             ->where('date_publication', '>', $this->actualite->date_publication)
             ->orderBy('date_publication', 'asc')
             ->first();

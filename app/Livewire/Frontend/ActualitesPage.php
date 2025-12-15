@@ -24,9 +24,8 @@ class ActualitesPage extends Component
     public $search = '';
     
     #[Url]
-    public $view = 'grid'; // 'grid' ou 'list'
+    public $view = 'grid';
 
-    // Newsletter
     public $newsletterEmail = '';
     public $newsletterNom = '';
     public $newsletterType = 'autre';
@@ -78,7 +77,6 @@ class ActualitesPage extends Component
         $this->reset(['newsletterEmail', 'newsletterNom', 'newsletterType']);
     }
 
-    // Calculer le temps de lecture (nombre de mots / 200 mots par minute)
     public function calculateReadingTime($content)
     {
         $wordCount = str_word_count(strip_tags($content));
@@ -88,7 +86,10 @@ class ActualitesPage extends Component
 
     public function render()
     {
+        // ✅ AJOUTE LE FILTRE SLUG ICI
         $query = Actualite::with(['category', 'image', 'tags', 'auteur'])
+            ->whereNotNull('slug')  // ← AJOUTE
+            ->where('slug', '!=', '')  // ← AJOUTE
             ->published();
 
         // Filtre par catégorie
@@ -117,31 +118,38 @@ class ActualitesPage extends Component
             ->orderBy('date_publication', 'desc')
             ->paginate($this->view === 'list' ? 10 : 9);
 
-        // Actualités importantes (sidebar)
+        // ✅ AJOUTE LE FILTRE SLUG POUR ACTUALITÉS IMPORTANTES
         $actuImportantes = Actualite::with(['category', 'image'])
+            ->whereNotNull('slug')  // ← AJOUTE
+            ->where('slug', '!=', '')  // ← AJOUTE
             ->published()
             ->where('est_important', true)
             ->limit(3)
             ->get();
 
-        // Catégories pour filtres
         $categories = Category::visible()
             ->withCount(['actualites' => function($q) {
-                $q->published();
+                $q->whereNotNull('slug')  // ← AJOUTE
+                  ->where('slug', '!=', '')  // ← AJOUTE
+                  ->published();
             }])
             ->having('actualites_count', '>', 0)
             ->orderBy('nom')
             ->get();
 
-        // Tags pour filtres
         $tags = Tag::withCount(['actualites' => function($q) {
-                $q->published();
+                $q->whereNotNull('slug')  // ← AJOUTE
+                  ->where('slug', '!=', '')  // ← AJOUTE
+                  ->published();
             }])
             ->having('actualites_count', '>', 0)
             ->orderBy('nom')
             ->get();
 
+        // ✅ AJOUTE LE FILTRE SLUG POUR PLUS LUS
         $plusLus = Actualite::with(['category', 'image'])
+            ->whereNotNull('slug')  // ← AJOUTE
+            ->where('slug', '!=', '')  // ← AJOUTE
             ->published()
             ->orderBy('vues', 'desc')
             ->limit(5)
@@ -151,7 +159,7 @@ class ActualitesPage extends Component
             'actualites' => $actualites,
             'categories' => $categories,
             'tags' => $tags,
-            'plusLus' => $plusLus, // ← AJOUTÉ
+            'plusLus' => $plusLus,
         ])
         ->layout('layouts.frontend')
         ->title('Actualités - EDGVM');
