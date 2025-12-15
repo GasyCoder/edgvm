@@ -527,7 +527,7 @@ namespace App\Models{
  * @property int $id
  * @property string $email
  * @property string|null $nom
- * @property string|null $type
+ * @property string $type
  * @property bool $actif
  * @property \Illuminate\Support\Carbon|null $desabonne_le
  * @property string $token
@@ -754,6 +754,7 @@ namespace App\Models{
  * @property string|null $titre_ligne1
  * @property string $titre_highlight
  * @property string|null $titre_ligne2
+ * @property int|null $actualite_id
  * @property string|null $description
  * @property int $image_id
  * @property string|null $lien_cta
@@ -763,9 +764,9 @@ namespace App\Models{
  * @property string|null $badge_texte
  * @property string|null $badge_icon
  * @property string $couleur_fond
+ * @property string|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int|null $actualite_id
  * @property-read \App\Models\Actualite|null $actualite
  * @property-read mixed $cta_url
  * @property-read mixed $titre_complet
@@ -780,6 +781,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide whereBadgeTexte($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide whereCouleurFond($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Slide whereImageId($value)
@@ -908,21 +910,22 @@ namespace App\Models{
  * @property int $id
  * @property int $doctorant_id
  * @property int|null $specialite_id
+ * @property int|null $ead_id
+ * @property string|null $universite_soutenance
+ * @property int|null $media_id
  * @property string $sujet_these
  * @property string|null $description
- * @property int $ead_id
- * @property string|null $universite_soutenance
+ * @property string|null $resume_these
+ * @property string|null $mots_cles
+ * @property string|null $universite
  * @property \Illuminate\Support\Carbon|null $date_debut
  * @property \Illuminate\Support\Carbon|null $date_prevue_fin
  * @property \Illuminate\Support\Carbon|null $date_publication
  * @property string $statut
- * @property int|null $media_id
- * @property string|null $resume_these
- * @property string|null $mots_cles
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Doctorant $doctorant
- * @property-read \App\Models\EAD $ead
+ * @property-read \App\Models\EAD|null $ead
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Encadrant> $encadrants
  * @property-read int|null $encadrants_count
  * @property-read \App\Models\Media|null $fichier
@@ -952,6 +955,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereSpecialiteId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereStatut($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereSujetThese($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereUniversite($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereUniversiteSoutenance($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|These whereUpdatedAt($value)
  */

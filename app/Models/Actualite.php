@@ -36,13 +36,16 @@ class Actualite extends Model
         'updated_at' => 'datetime',
     ];
 
-    // Méthode pour incrémenter les vues
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     public function incrementVues()
     {
         $this->increment('vues');
     }
 
-    // Helper pour formater les vues
     public function getVuesFormattedAttribute()
     {
         if ($this->vues >= 1000) {
@@ -51,7 +54,6 @@ class Actualite extends Model
         return $this->vues;
     }
 
-    // Relations
     public function auteur()
     {
         return $this->belongsTo(User::class, 'auteur_id');
@@ -67,7 +69,6 @@ class Actualite extends Model
         return $this->belongsTo(Media::class, 'image_id');
     }
 
-    // ← AJOUTÉ : Relation galerie d'images
     public function galerie()
     {
         return $this->belongsToMany(Media::class, 'actualite_media')
@@ -81,7 +82,6 @@ class Actualite extends Model
         return $this->belongsToMany(Tag::class);
     }
 
-    // Scopes
     public function scopeVisible($query)
     {
         return $query->where('visible', true);
@@ -115,20 +115,41 @@ class Actualite extends Model
         return $query->where('est_important', true);
     }
 
-
     protected static function booted()
     {
         static::creating(function ($actualite) {
             if (empty($actualite->slug) && !empty($actualite->titre)) {
-                $slug = Str::slug($actualite->titre);
-                $count = 0;
-                $base = $slug;
-                while (self::where('slug', $slug)->exists()) {
-                    $count++;
-                    $slug = $base . '-' . $count;
-                }
-                $actualite->slug = $slug;
+                $actualite->slug = self::generateUniqueSlug($actualite->titre);
             }
         });
+
+        static::updating(function ($actualite) {
+            if ($actualite->isDirty('titre') && empty($actualite->slug)) {
+                $actualite->slug = self::generateUniqueSlug($actualite->titre, $actualite->id);
+            }
+        });
+    }
+
+    private static function generateUniqueSlug($titre, $ignoreId = null)
+    {
+        $slug = Str::slug($titre);
+        $originalSlug = $slug;
+        $count = 1;
+
+        $query = self::where('slug', $slug);
+        if ($ignoreId) {
+            $query->where('id', '!=', $ignoreId);
+        }
+
+        while ($query->exists()) {
+            $slug = $originalSlug . '-' . $count;
+            $count++;
+            $query = self::where('slug', $slug);
+            if ($ignoreId) {
+                $query->where('id', '!=', $ignoreId);
+            }
+        }
+
+        return $slug;
     }
 }
