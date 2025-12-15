@@ -148,7 +148,7 @@
                                         {{-- Title --}}
                                         <h3 class="mt-2 text-sm md:text-[15px] font-semibold leading-snug line-clamp-2">
                                             <a
-                                                href="{{ route('actualites.show', $actualite) }}"
+                                                href="{{ route('actualites.show', $actualite->slug) }}"
                                                 class="text-gray-900 transition-colors group-hover:text-ed-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ed-primary/40 rounded"
                                             >
                                                 {{ $actualite->titre }}
@@ -178,7 +178,7 @@
                                             </span>
 
                                             <a
-                                                href="{{ route('actualites.show', $actualite) }}"
+                                                href="{{ route('actualites.show', $actualite->slug) }}"
                                                 class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-[12px] font-semibold text-ed-primary
                                                        shadow-sm transition hover:border-ed-primary/50 hover:shadow-md
                                                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ed-primary/40"
