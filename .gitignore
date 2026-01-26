@@ -11,6 +11,17 @@
 /.phpunit.cache
 /.vscode
 /.zed
+/.claude
+/.codex
+/.cursor
+/.gemini
+/.github
+/.mcp.json
+/AGENTS.md
+/CLAUDE.md
+/GEMINI.md
+/boost.json
+/opencode.json
 /auth.json
 /node_modules
 # /public/build
