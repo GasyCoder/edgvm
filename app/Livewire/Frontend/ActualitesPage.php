@@ -4,11 +4,11 @@ namespace App\Livewire\Frontend;
 
 use App\Models\Actualite;
 use App\Models\Category;
-use App\Models\Tag;
 use App\Models\NewsletterSubscriber;
+use App\Models\Tag;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Url;
 
 class ActualitesPage extends Component
 {
@@ -16,18 +16,20 @@ class ActualitesPage extends Component
 
     #[Url]
     public $category = '';
-    
+
     #[Url]
     public $tag = '';
-    
+
     #[Url]
     public $search = '';
-    
+
     #[Url]
     public $view = 'grid';
 
     public $newsletterEmail = '';
+
     public $newsletterNom = '';
+
     public $newsletterType = 'autre';
 
     public function filterByCategory($categorySlug)
@@ -73,7 +75,7 @@ class ActualitesPage extends Component
         ]);
 
         session()->flash('newsletter_success', '✅ Merci ! Vous êtes maintenant abonné(e) à notre newsletter.');
-        
+
         $this->reset(['newsletterEmail', 'newsletterNom', 'newsletterType']);
     }
 
@@ -81,36 +83,28 @@ class ActualitesPage extends Component
     {
         $wordCount = str_word_count(strip_tags($content));
         $minutes = ceil($wordCount / 200);
+
         return $minutes;
     }
 
     public function render()
     {
-        // ✅ AJOUTE LE FILTRE SLUG ICI
         $query = Actualite::with(['category', 'image', 'tags', 'auteur'])
-            ->whereNotNull('slug')  // ← AJOUTE
-            ->where('slug', '!=', '')  // ← AJOUTE
+            ->withSlug()
             ->published();
 
-        // Filtre par catégorie
         if ($this->category) {
-            $query->whereHas('category', function($q) {
-                $q->where('slug', $this->category);
-            });
+            $query->whereHas('category', fn ($q) => $q->where('slug', $this->category));
         }
 
-        // Filtre par tag
         if ($this->tag) {
-            $query->whereHas('tags', function($q) {
-                $q->where('slug', $this->tag);
-            });
+            $query->whereHas('tags', fn ($q) => $q->where('slug', $this->tag));
         }
 
-        // Recherche
         if ($this->search) {
-            $query->where(function($q) {
-                $q->where('titre', 'like', '%' . $this->search . '%')
-                  ->orWhere('contenu', 'like', '%' . $this->search . '%');
+            $query->where(function ($q) {
+                $q->where('titre', 'like', '%'.$this->search.'%')
+                    ->orWhere('contenu', 'like', '%'.$this->search.'%');
             });
         }
 
@@ -118,38 +112,19 @@ class ActualitesPage extends Component
             ->orderBy('date_publication', 'desc')
             ->paginate($this->view === 'list' ? 10 : 9);
 
-        // ✅ AJOUTE LE FILTRE SLUG POUR ACTUALITÉS IMPORTANTES
-        $actuImportantes = Actualite::with(['category', 'image'])
-            ->whereNotNull('slug')  // ← AJOUTE
-            ->where('slug', '!=', '')  // ← AJOUTE
-            ->published()
-            ->where('est_important', true)
-            ->limit(3)
-            ->get();
-
         $categories = Category::visible()
-            ->withCount(['actualites' => function($q) {
-                $q->whereNotNull('slug')  // ← AJOUTE
-                  ->where('slug', '!=', '')  // ← AJOUTE
-                  ->published();
-            }])
+            ->withCount(['actualites' => fn ($q) => $q->withSlug()->published()])
             ->having('actualites_count', '>', 0)
             ->orderBy('nom')
             ->get();
 
-        $tags = Tag::withCount(['actualites' => function($q) {
-                $q->whereNotNull('slug')  // ← AJOUTE
-                  ->where('slug', '!=', '')  // ← AJOUTE
-                  ->published();
-            }])
+        $tags = Tag::withCount(['actualites' => fn ($q) => $q->withSlug()->published()])
             ->having('actualites_count', '>', 0)
             ->orderBy('nom')
             ->get();
 
-        // ✅ AJOUTE LE FILTRE SLUG POUR PLUS LUS
         $plusLus = Actualite::with(['category', 'image'])
-            ->whereNotNull('slug')  // ← AJOUTE
-            ->where('slug', '!=', '')  // ← AJOUTE
+            ->withSlug()
             ->published()
             ->orderBy('vues', 'desc')
             ->limit(5)
@@ -161,7 +136,7 @@ class ActualitesPage extends Component
             'tags' => $tags,
             'plusLus' => $plusLus,
         ])
-        ->layout('layouts.frontend')
-        ->title('Actualités - EDGVM');
+            ->layout('layouts.frontend')
+            ->title('Actualités - EDGVM');
     }
 }

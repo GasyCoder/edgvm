@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Actualite extends Model
 {
@@ -20,18 +20,18 @@ class Actualite extends Model
         'date_publication',
         'visible',
         'est_important',
-        'notifier_abonnes', 
+        'notifier_abonnes',
         'notification_envoyee_le',
-        'vues', 
+        'vues',
     ];
 
     protected $casts = [
         'date_publication' => 'date',
         'visible' => 'boolean',
-        'vues' => 'integer', 
-        'est_important' => 'boolean', 
+        'vues' => 'integer',
+        'est_important' => 'boolean',
         'notifier_abonnes' => 'boolean',
-        'notification_envoyee_le' => 'datetime', 
+        'notification_envoyee_le' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -49,8 +49,9 @@ class Actualite extends Model
     public function getVuesFormattedAttribute()
     {
         if ($this->vues >= 1000) {
-            return number_format($this->vues / 1000, 1) . 'k';
+            return number_format($this->vues / 1000, 1).'k';
         }
+
         return $this->vues;
     }
 
@@ -59,7 +60,7 @@ class Actualite extends Model
         return $this->belongsTo(User::class, 'auteur_id');
     }
 
-    public function category() 
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }
@@ -72,12 +73,12 @@ class Actualite extends Model
     public function galerie()
     {
         return $this->belongsToMany(Media::class, 'actualite_media')
-                    ->withPivot('ordre')
-                    ->withTimestamps()
-                    ->orderBy('ordre');
+            ->withPivot('ordre')
+            ->withTimestamps()
+            ->orderBy('ordre');
     }
 
-    public function tags() 
+    public function tags()
     {
         return $this->belongsToMany(Tag::class);
     }
@@ -103,9 +104,9 @@ class Actualite extends Model
         return $query->where('category_id', $categoryId);
     }
 
-    public function scopeByTag($query, $tagId) 
+    public function scopeByTag($query, $tagId)
     {
-        return $query->whereHas('tags', function($q) use ($tagId) {
+        return $query->whereHas('tags', function ($q) use ($tagId) {
             $q->where('tags.id', $tagId);
         });
     }
@@ -115,10 +116,15 @@ class Actualite extends Model
         return $query->where('est_important', true);
     }
 
+    public function scopeWithSlug($query)
+    {
+        return $query->whereNotNull('slug')->where('slug', '!=', '');
+    }
+
     protected static function booted()
     {
         static::creating(function ($actualite) {
-            if (empty($actualite->slug) && !empty($actualite->titre)) {
+            if (empty($actualite->slug) && ! empty($actualite->titre)) {
                 $actualite->slug = self::generateUniqueSlug($actualite->titre);
             }
         });
@@ -142,7 +148,7 @@ class Actualite extends Model
         }
 
         while ($query->exists()) {
-            $slug = $originalSlug . '-' . $count;
+            $slug = $originalSlug.'-'.$count;
             $count++;
             $query = self::where('slug', $slug);
             if ($ignoreId) {

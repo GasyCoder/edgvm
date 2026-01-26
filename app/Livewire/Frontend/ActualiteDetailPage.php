@@ -9,14 +9,16 @@ use Livewire\Component;
 class ActualiteDetailPage extends Component
 {
     public Actualite $actualite;
-    
+
     public $newsletterEmail = '';
+
     public $newsletterNom = '';
+
     public $newsletterType = 'autre';
 
     public function mount(Actualite $actualite)
     {
-        if (!$actualite->visible || $actualite->date_publication > now()) {
+        if (! $actualite->visible || $actualite->date_publication > now()) {
             abort(404);
         }
 
@@ -26,9 +28,9 @@ class ActualiteDetailPage extends Component
 
     private function incrementUniqueView(): void
     {
-        $key = 'actualite_viewed_' . $this->actualite->id;
+        $key = 'actualite_viewed_'.$this->actualite->id;
 
-        if (!session()->has($key)) {
+        if (! session()->has($key)) {
             $this->actualite->incrementVues();
             session()->put($key, true);
         }
@@ -54,7 +56,7 @@ class ActualiteDetailPage extends Component
         ]);
 
         session()->flash('newsletter_success', '✅ Merci ! Vous êtes maintenant abonné(e) à notre newsletter.');
-        
+
         $this->reset(['newsletterEmail', 'newsletterNom', 'newsletterType']);
     }
 
@@ -62,21 +64,17 @@ class ActualiteDetailPage extends Component
     {
         $this->actualite->load(['category', 'image', 'tags', 'auteur', 'galerie']);
 
-        // ✅ SIMILAIRES (même catégorie) - AVEC FILTRE SLUG
         $similaires = Actualite::with(['category', 'image'])
-            ->whereNotNull('slug')  // ← AJOUTÉ
-            ->where('slug', '!=', '')  // ← AJOUTÉ
+            ->withSlug()
             ->published()
             ->where('id', '!=', $this->actualite->id)
             ->where('category_id', $this->actualite->category_id)
             ->limit(3)
             ->get();
 
-        // ✅ FALLBACK SI PAS ASSEZ - AVEC FILTRE SLUG
         if ($similaires->count() < 3) {
             $similaires = Actualite::with(['category', 'image'])
-                ->whereNotNull('slug')  // ← AJOUTÉ
-                ->where('slug', '!=', '')  // ← AJOUTÉ
+                ->withSlug()
                 ->published()
                 ->where('id', '!=', $this->actualite->id)
                 ->latest('date_publication')
@@ -84,17 +82,13 @@ class ActualiteDetailPage extends Component
                 ->get();
         }
 
-        // ✅ PRÉCÉDENT - AVEC FILTRE SLUG
-        $precedent = Actualite::whereNotNull('slug')  // ← AJOUTÉ
-            ->where('slug', '!=', '')  // ← AJOUTÉ
+        $precedent = Actualite::withSlug()
             ->published()
             ->where('date_publication', '<', $this->actualite->date_publication)
             ->orderBy('date_publication', 'desc')
             ->first();
 
-        // ✅ SUIVANT - AVEC FILTRE SLUG
-        $suivant = Actualite::whereNotNull('slug')  // ← AJOUTÉ
-            ->where('slug', '!=', '')  // ← AJOUTÉ
+        $suivant = Actualite::withSlug()
             ->published()
             ->where('date_publication', '>', $this->actualite->date_publication)
             ->orderBy('date_publication', 'asc')
@@ -105,7 +99,7 @@ class ActualiteDetailPage extends Component
             'precedent' => $precedent,
             'suivant' => $suivant,
         ])
-        ->layout('layouts.frontend')
-        ->title($this->actualite->titre . ' - EDGVM');
+            ->layout('layouts.frontend')
+            ->title($this->actualite->titre.' - EDGVM');
     }
 }

@@ -2,23 +2,23 @@
 
 namespace App\Livewire\Frontend;
 
-use Livewire\Component;
-use App\Models\Slider;
-use App\Models\EAD;
 use App\Models\Actualite;
-use App\Models\Partenaire;
-use App\Models\MessageDirection;
+use App\Models\EAD;
 use App\Models\Evenement;
+use App\Models\MessageDirection;
+use App\Models\Partenaire;
+use App\Models\Slider;
+use Livewire\Component;
 
 class HomePage extends Component
 {
     public function render()
     {
-        $slider = Slider::with(['slides' => function($query) {
-                $query->visible()
-                      ->with('image')
-                      ->orderBy('ordre');
-            }])
+        $slider = Slider::with(['slides' => function ($query) {
+            $query->visible()
+                ->with('image')
+                ->orderBy('ordre');
+        }])
             ->visible()
             ->byPosition('homepage')
             ->first();
@@ -28,12 +28,12 @@ class HomePage extends Component
             ->first();
 
         $stats = [
-            'doctorants'        => $messageDirection?->nb_doctorants ?? 0,
-            'equipes'           => $messageDirection?->nb_equipes ?? 0,
-            'theses_soutenues'  => $messageDirection?->nb_theses ?? 0,
-            'encadrants'        => 30,
-            'publications'      => 150,
-            'hdr_soutenues'     => 2,
+            'doctorants' => $messageDirection?->nb_doctorants ?? 0,
+            'equipes' => $messageDirection?->nb_equipes ?? 0,
+            'theses_soutenues' => $messageDirection?->nb_theses ?? 0,
+            'encadrants' => 30,
+            'publications' => 150,
+            'hdr_soutenues' => 2,
         ];
 
         $eads = EAD::with(['responsable.user', 'specialites'])
@@ -42,11 +42,8 @@ class HomePage extends Component
             ->take(4)
             ->get();
 
-        // ✅ AJOUT DU FILTRE SLUG
         $actualites = Actualite::with(['category', 'image', 'tags'])
-            ->whereNotNull('slug')  // ← AJOUTE CETTE LIGNE
-            ->where('slug', '!=', '')  // ← AJOUTE CETTE LIGNE
-            ->latest()
+            ->withSlug()
             ->published()
             ->orderBy('est_important', 'desc')
             ->orderBy('date_publication', 'desc')
@@ -63,14 +60,14 @@ class HomePage extends Component
             ->get();
 
         return view('livewire.frontend.home-page', [
-                'slider'            => $slider,
-                'eads'              => $eads,
-                'actualites'        => $actualites,
-                'stats'             => $stats,
-                'partenaires'       => $partenaires,
-                'messageDirection'  => $messageDirection,
-                'evenementsFuturs'  => $evenementsFuturs,
-            ])
+            'slider' => $slider,
+            'eads' => $eads,
+            'actualites' => $actualites,
+            'stats' => $stats,
+            'partenaires' => $partenaires,
+            'messageDirection' => $messageDirection,
+            'evenementsFuturs' => $evenementsFuturs,
+        ])
             ->layout('layouts.frontend');
     }
 }
