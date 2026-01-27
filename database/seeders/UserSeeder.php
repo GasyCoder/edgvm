@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Doctorant;
 use App\Models\Encadrant;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -46,7 +46,10 @@ class UserSeeder extends Seeder
         ]);
 
         Encadrant::create([
-            'user_id' => $encadrantUser->id,
+            'nom' => 'RABEHAVANA',
+            'prenoms' => 'Van Aldo',
+            'email' => $encadrantUser->email,
+            'genre' => 'homme',
             'grade' => 'Professeur Titulaire',
             'specialite' => 'Gestion et Management',
             'phone' => '+261 34 00 000 01',
