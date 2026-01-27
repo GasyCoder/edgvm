@@ -7,7 +7,9 @@
 
     <div>
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-            @livewire('api.api-token-manager')
+            <div class="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm">
+                Cette page a migre vers Inertia. Les composants precedents ont ete retires.
+            </div>
         </div>
     </div>
 </x-app-layout>

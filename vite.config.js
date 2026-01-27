@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
     plugins: [
@@ -10,8 +11,22 @@ export default defineConfig({
             ],
             refresh: true,
         }),
+        vue({
+            template: {
+                transformAssetUrls: {
+                    base: null,
+                    includeAbsolute: false,
+                },
+            },
+        }),
     ],
-    
+
+    resolve: {
+        alias: {
+            '@': '/resources/js',
+        },
+    },
+
     // Optimisations de build
     build: {
         chunkSizeWarningLimit: 1000,
@@ -19,7 +34,8 @@ export default defineConfig({
             output: {
                 manualChunks: {
                     'vendor': [
-                        'alpinejs',
+                        'vue',
+                        '@inertiajs/vue3',
                     ],
                 },
             },
@@ -36,6 +52,6 @@ export default defineConfig({
 
     // Optimisation des dépendances
     optimizeDeps: {
-        include: ['alpinejs'],
+        include: ['vue', '@inertiajs/vue3', 'lodash-es'],
     },
 });

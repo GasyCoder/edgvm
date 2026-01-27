@@ -7,7 +7,7 @@
     {{-- Évite l’auto-détection téléphone sur mobile (souvent préférable) --}}
     <meta name="format-detection" content="telephone=no">
 
-    {{-- CSRF (utile pour Livewire/AJAX) --}}
+    {{-- CSRF (utile pour AJAX) --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @php
@@ -121,28 +121,23 @@
 
     {{-- CSS/JS --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @livewireStyles
 
     {{-- Permet aux pages d’injecter des metas spécifiques : og:type=article, noindex, etc. --}}
     @stack('head')
 </head>
 
 <body class="antialiased">
-    {{-- Pour l’accessibilité + SEO UX --}}
+    {{-- Pour l'accessibilité + SEO UX --}}
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 bg-white text-black px-3 py-2 rounded">
         Aller au contenu principal
     </a>
 
-    @livewire('frontend.navbar')
 
     <main id="main-content">
         {{ $slot }}
     </main>
 
-    @livewire('frontend.footer')
-    @livewire('frontend.scroll-to-top')
 
-    @livewireScripts
     @stack('scripts')
 </body>
 </html>

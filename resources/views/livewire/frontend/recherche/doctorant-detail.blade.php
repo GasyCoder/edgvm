@@ -272,15 +272,15 @@
                                             <div class="flex items-start justify-between gap-2">
                                                 <div>
                                                     <p class="font-bold text-gray-900">
-                                                        {{ $encadrant->user->name ?? 'Non renseigné' }}
+                                                        {{ $encadrant->name ?: 'Non renseigné' }}
                                                     </p>
                                                     @if($encadrant->grade)
                                                         <p class="text-sm text-gray-600">{{ $encadrant->grade }}</p>
                                                     @endif
-                                                    @if($encadrant->user->email)
-                                                        <a href="mailto:{{ $encadrant->user->email }}"
+                                                    @if($encadrant->email)
+                                                        <a href="mailto:{{ $encadrant->email }}"
                                                            class="text-sm text-indigo-600 hover:text-indigo-800 hover:underline">
-                                                            {{ $encadrant->user->email }}
+                                                            {{ $encadrant->email }}
                                                         </a>
                                                     @endif
                                                 </div>

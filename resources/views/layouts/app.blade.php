@@ -10,7 +10,6 @@
     <!-- TinyMCE -->
     <script src="https://cdn.tiny.cloud/1/ggl24otsg6ii4amtaziztgfu6y1fv23npxoqemawhqdwvmnd/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
 
-    @livewireStyles
 </head>
 <body class="bg-slate-100 font-poppins antialiased">
 
@@ -436,7 +435,6 @@
         </div>
     </div>
 
-    @livewireScripts
     @stack('scripts')
 </body>
 </html>

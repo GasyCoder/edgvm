@@ -248,7 +248,7 @@
                                         </p>
                                     @endif
                                     
-                                    @if($ead->responsable && $ead->responsable->user)
+                                    @if($ead->responsable)
                                         <div class="flex items-center gap-2 mb-4 p-3 bg-gray-50 rounded-lg">
                                             <svg class="w-5 h-5 text-gray-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
@@ -256,7 +256,7 @@
                                             <div class="flex-1 min-w-0">
                                                 <p class="text-xs text-gray-500">Responsable de l’équipe</p>
                                                 <p class="text-sm font-semibold text-gray-900 truncate">
-                                                    {{ $ead->responsable->user->name }}
+                                                    {{ $ead->responsable->name }}
                                                 </p>
                                             </div>
                                         </div>

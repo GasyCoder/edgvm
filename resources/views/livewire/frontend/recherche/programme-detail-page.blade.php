@@ -71,7 +71,7 @@
                         </div>
                         
                         <!-- Responsable EAD -->
-                        @if($specialite->ead && $specialite->ead->responsable && $specialite->ead->responsable->user)
+                        @if($specialite->ead && $specialite->ead->responsable)
                         <div class="bg-blue-50 rounded-xl p-6 mb-8">
                             <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                                 <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,14 +86,14 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="font-bold text-gray-900">{{ $specialite->ead->responsable->user->name }}</p>
+                                    <p class="font-bold text-gray-900">{{ $specialite->ead->responsable->name }}</p>
                                     @if($specialite->ead->responsable->grade)
                                     <p class="text-xs text-gray-600">{{ $specialite->ead->responsable->grade }}</p>
                                     @endif
-                                    @if($specialite->ead->responsable->user->email)
-                                    <a href="mailto:{{ $specialite->ead->responsable->user->email }}" 
+                                    @if($specialite->ead->responsable->email)
+                                    <a href="mailto:{{ $specialite->ead->responsable->email }}" 
                                     class="text-sm text-blue-600 hover:text-blue-800">
-                                        {{ $specialite->ead->responsable->user->email }}
+                                        {{ $specialite->ead->responsable->email }}
                                     </a>
                                     @endif
                                 </div>

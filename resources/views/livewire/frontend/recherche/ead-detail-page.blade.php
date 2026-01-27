@@ -127,7 +127,7 @@
                     <div class="lg:sticky lg:top-24 space-y-6">
                         
                         <!-- Responsable -->
-                        @if($ead->responsable && $ead->responsable->user)
+                        @if($ead->responsable)
                         <div class="bg-white rounded-2xl shadow-xl p-6">
                             <h3 class="text-lg font-bold text-gray-900 mb-4">Responsable</h3>
                             <div class="flex items-start gap-4">
@@ -138,15 +138,15 @@
                                 </div>
                                 <div class="flex-1">
                                     <p class="font-bold text-gray-900">
-                                        {{ $ead->responsable->user->name }}
+                                        {{ $ead->responsable->name }}
                                     </p>
                                     @if($ead->responsable->grade)
                                     <p class="text-sm text-gray-600">{{ $ead->responsable->grade }}</p>
                                     @endif
-                                    @if($ead->responsable->user->email)
-                                    <a href="mailto:{{ $ead->responsable->user->email }}" 
+                                    @if($ead->responsable->email)
+                                    <a href="mailto:{{ $ead->responsable->email }}" 
                                     class="text-sm text-blue-600 hover:text-blue-800 break-all">
-                                        {{ $ead->responsable->user->email }}
+                                        {{ $ead->responsable->email }}
                                     </a>
                                     @endif
                                     @if($ead->responsable->phone)

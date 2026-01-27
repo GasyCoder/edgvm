@@ -323,11 +323,8 @@
                         <ul class="space-y-3 text-sm">
                             @foreach($these->encadrants as $encadrant)
                                 @php
-                                    $encName = $encadrant->user->name
-                                        ?? trim(($encadrant->prenom ?? '') . ' ' . ($encadrant->nom ?? ''));
-                                    $encInitials = $encadrant->user?->name
-                                        ? strtoupper(mb_substr($encadrant->user->name, 0, 2))
-                                        : strtoupper(mb_substr(trim(($encadrant->prenom ?? $encadrant->nom ?? '')), 0, 2));
+                                    $encName = $encadrant->name ?: 'Encadrant';
+                                    $encInitials = $encadrant->initials ?: 'EN';
                                 @endphp
                                 <li class="flex items-start gap-3">
                                     <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-xs font-semibold text-emerald-700">
