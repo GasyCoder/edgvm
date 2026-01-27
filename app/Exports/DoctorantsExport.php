@@ -4,19 +4,19 @@ namespace App\Exports;
 
 use App\Models\Doctorant;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class DoctorantsExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
+class DoctorantsExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     public function collection()
     {
         return Doctorant::with([
-                'user',
-            ])
+            'eadDirect',
+        ])
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -25,8 +25,11 @@ class DoctorantsExport implements FromCollection, WithHeadings, WithMapping, Wit
     {
         return [
             'Matricule',
-            'Nom complet',
+            'Nom',
+            'Prenoms',
+            'Genre',
             'Email',
+            'Equipe d\'accueil',
             'Niveau',
             'Date de naissance',
             'Lieu de naissance',
@@ -34,7 +37,6 @@ class DoctorantsExport implements FromCollection, WithHeadings, WithMapping, Wit
             'Adresse',
             'Date d\'inscription',
             'Statut',
-            'A un compte',
         ];
     }
 
@@ -42,8 +44,11 @@ class DoctorantsExport implements FromCollection, WithHeadings, WithMapping, Wit
     {
         return [
             $doctorant->matricule,
-            $doctorant->user?->name ?? 'Pas de compte',
-            $doctorant->user?->email ?? 'N/A',
+            $doctorant->nom ?? '',
+            $doctorant->prenoms ?? '',
+            ucfirst($doctorant->genre ?? ''),
+            $doctorant->email ?? '',
+            $doctorant->eadDirect?->nom ?? '',
             $doctorant->niveau,
             $doctorant->date_naissance?->format('d/m/Y') ?? '',
             $doctorant->lieu_naissance ?? '',
@@ -53,7 +58,6 @@ class DoctorantsExport implements FromCollection, WithHeadings, WithMapping, Wit
                 ? $doctorant->date_inscription->format('d/m/Y')
                 : '',
             ucfirst($doctorant->statut),
-            $doctorant->user ? 'Oui' : 'Non',
         ];
     }
 

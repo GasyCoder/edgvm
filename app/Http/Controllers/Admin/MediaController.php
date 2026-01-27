@@ -2,41 +2,98 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Media;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MediaUploadRequest;
+use App\Models\Media;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class MediaController extends Controller
 {
-
-    public function create()
+    public function index(Request $request): Response
     {
-        return view('admin.media.upload');
+        $search = trim($request->string('search')->toString());
+        $typeFilter = $request->string('type')->toString();
+        $viewMode = $request->string('view')->toString();
+
+        if (! in_array($typeFilter, ['all', 'image', 'document', 'video'], true)) {
+            $typeFilter = 'all';
+        }
+
+        if (! in_array($viewMode, ['grid', 'list'], true)) {
+            $viewMode = 'grid';
+        }
+
+        $query = Media::query();
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('nom_original', 'like', '%'.$search.'%')
+                    ->orWhere('nom_fichier', 'like', '%'.$search.'%');
+            });
+        }
+
+        if ($typeFilter !== 'all') {
+            $query->where('type', $typeFilter);
+        }
+
+        $medias = $query->orderBy('created_at', 'desc')
+            ->paginate(24)
+            ->withQueryString()
+            ->through(fn (Media $media) => [
+                'id' => $media->id,
+                'nom_original' => $media->nom_original,
+                'nom_fichier' => $media->nom_fichier,
+                'type' => $media->type,
+                'taille_bytes' => $media->taille_bytes,
+                'url' => $media->url,
+                'created_at' => $media->created_at?->format('d/m/Y'),
+            ]);
+
+        $stats = [
+            'total' => Media::count(),
+            'images' => Media::where('type', 'image')->count(),
+            'documents' => Media::where('type', 'document')->count(),
+            'videos' => Media::where('type', 'video')->count(),
+            'taille_totale' => Media::sum('taille_bytes'),
+        ];
+
+        return Inertia::render('Admin/Media/Index', [
+            'filters' => [
+                'search' => $search,
+                'type' => $typeFilter,
+                'view' => $viewMode,
+            ],
+            'medias' => $medias,
+            'stats' => $stats,
+        ]);
     }
 
-    public function store(Request $request)
+    public function create(): Response
     {
-        $request->validate([
-            'files' => 'required|array',
-            'files.*' => 'required|file|max:10240', // 10MB
-        ]);
+        return Inertia::render('Admin/Media/Upload');
+    }
 
+    public function store(MediaUploadRequest $request): RedirectResponse
+    {
         $uploadedCount = 0;
         $errors = [];
 
-        foreach ($request->file('files') as $file) {
+        foreach ($request->file('files', []) as $file) {
             try {
                 // Déterminer le type
                 $mimeType = $file->getMimeType();
                 $type = $this->getTypeFromMimeType($mimeType);
 
                 // Générer un nom unique
-                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
-                
+                $filename = time().'_'.uniqid().'_'.$file->getClientOriginalName();
+
                 // Déterminer le dossier
-                $folder = match($type) {
+                $folder = match ($type) {
                     'image' => 'images',
                     'document' => 'documents',
                     'video' => 'videos',
@@ -58,9 +115,8 @@ class MediaController extends Controller
                 ]);
 
                 $uploadedCount++;
-
             } catch (\Exception $e) {
-                $errors[] = $file->getClientOriginalName() . ': ' . $e->getMessage();
+                $errors[] = $file->getClientOriginalName().': '.$e->getMessage();
             }
         }
 
@@ -72,9 +128,19 @@ class MediaController extends Controller
         return back()->withErrors($errors)->withInput();
     }
 
+    public function destroy(Media $media): RedirectResponse
+    {
+        if (Storage::disk('public')->exists($media->chemin)) {
+            Storage::disk('public')->delete($media->chemin);
+        }
 
+        $media->delete();
 
-    private function getTypeFromMimeType($mimeType)
+        return redirect()->route('admin.media.index')
+            ->with('success', 'Media supprime avec succes.');
+    }
+
+    private function getTypeFromMimeType(string $mimeType): string
     {
         if (str_starts_with($mimeType, 'image/')) {
             return 'image';
@@ -91,7 +157,7 @@ class MediaController extends Controller
         ])) {
             return 'document';
         }
-        
+
         return 'other';
     }
 }

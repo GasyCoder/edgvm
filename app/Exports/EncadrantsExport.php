@@ -4,20 +4,20 @@ namespace App\Exports;
 
 use App\Models\Encadrant;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class EncadrantsExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths
+class EncadrantsExport implements FromCollection, WithColumnWidths, WithHeadings, WithMapping, WithStyles
 {
     /**
      * @return \Illuminate\Support\Collection
      */
     public function collection()
     {
-        return Encadrant::with(['user'])->get();
+        return Encadrant::query()->get();
     }
 
     /**
@@ -26,13 +26,14 @@ class EncadrantsExport implements FromCollection, WithHeadings, WithMapping, Wit
     public function headings(): array
     {
         return [
-            'Nom complet',
+            'Nom',
+            'Prenoms',
             'Email',
+            'Genre',
             'Grade',
             'Spécialité',
             'Téléphone',
             'Bureau',
-            'A un compte',
         ];
     }
 
@@ -42,13 +43,14 @@ class EncadrantsExport implements FromCollection, WithHeadings, WithMapping, Wit
     public function map($encadrant): array
     {
         return [
-            $encadrant->user?->name ?? 'Pas de compte',
-            $encadrant->user?->email ?? 'N/A',
+            $encadrant->nom ?? '',
+            $encadrant->prenoms ?? '',
+            $encadrant->email ?? '',
+            $encadrant->genre ?? '',
             $encadrant->grade ?? '',
             $encadrant->specialite ?? '',
             $encadrant->phone ?? '',
             $encadrant->bureau ?? '',
-            $encadrant->user ? 'Oui' : 'Non',
         ];
     }
 
@@ -83,13 +85,14 @@ class EncadrantsExport implements FromCollection, WithHeadings, WithMapping, Wit
     public function columnWidths(): array
     {
         return [
-            'A' => 30, // Nom complet
-            'B' => 35, // Email
-            'C' => 25, // Grade
-            'D' => 30, // Spécialité
-            'E' => 20, // Téléphone
-            'F' => 25, // Bureau
-            'G' => 15, // A un compte
+            'A' => 20, // Nom
+            'B' => 25, // Prenoms
+            'C' => 35, // Email
+            'D' => 12, // Genre
+            'E' => 25, // Grade
+            'F' => 30, // Spécialité
+            'G' => 20, // Téléphone
+            'H' => 25, // Bureau
         ];
     }
 }

@@ -4,20 +4,20 @@ namespace App\Exports;
 
 use App\Models\These;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ThesesExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths
+class ThesesExport implements FromCollection, WithColumnWidths, WithHeadings, WithMapping, WithStyles
 {
     /**
      * @return \Illuminate\Support\Collection
      */
     public function collection()
     {
-        return These::with(['doctorant.user', 'encadrants.user', 'ead'])->get();
+        return These::with(['doctorant.user', 'encadrants', 'ead'])->get();
     }
 
     /**
@@ -55,10 +55,10 @@ class ThesesExport implements FromCollection, WithHeadings, WithMapping, WithSty
             $these->doctorant->user?->name ?? 'Pas de compte',
             $these->doctorant->user?->email ?? 'N/A',
             $these->sujet_these ?? '',
-            $directeur?->user?->name ?? '',
-            $directeur?->user?->email ?? '',
-            $codirecteur?->user?->name ?? '',
-            $codirecteur?->user?->email ?? '',
+            $directeur?->name ?? '',
+            $directeur?->email ?? '',
+            $codirecteur?->name ?? '',
+            $codirecteur?->email ?? '',
             $these->ead?->nom ?? '',
             $these->statut ?? '',
             $these->date_debut?->format('Y-m-d') ?? '',

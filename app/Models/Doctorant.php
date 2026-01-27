@@ -11,6 +11,11 @@ class Doctorant extends Model
 
     protected $fillable = [
         'user_id',
+        'nom',
+        'prenoms',
+        'genre',
+        'email',
+        'ead_id',
         'matricule',
         'niveau',
         'phone',
@@ -23,7 +28,7 @@ class Doctorant extends Model
 
     protected $casts = [
         'date_inscription' => 'date',
-        'date_naissance'   => 'date',
+        'date_naissance' => 'date',
     ];
 
     /**
@@ -64,6 +69,11 @@ class Doctorant extends Model
         );
     }
 
+    public function eadDirect(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(EAD::class, 'ead_id');
+    }
+
     /**
      * Accessors pratiques
      */
@@ -71,6 +81,12 @@ class Doctorant extends Model
     // Nom / email via User
     public function getNameAttribute()
     {
+        $fullName = trim("{$this->nom} {$this->prenoms}");
+
+        if ($fullName !== '') {
+            return $fullName;
+        }
+
         return $this->user?->name ?? 'Pas de compte';
     }
 
@@ -116,7 +132,7 @@ class Doctorant extends Model
      */
     public function hasUser(): bool
     {
-        return !is_null($this->user_id) && $this->user()->exists();
+        return ! is_null($this->user_id) && $this->user()->exists();
     }
 
     /**
@@ -136,8 +152,7 @@ class Doctorant extends Model
         });
     }
 
-
-        /**
+    /**
      * Attribut "thèse principale" (en_cours > préparation > rédaction > soutenue > le reste)
      */
     public function getThesePrincipaleAttribute()
@@ -149,17 +164,16 @@ class Doctorant extends Model
 
         return $this->theses
             ->sortBy(function ($these) {
-                return match($these->statut) {
-                    'en_cours'    => 0,
+                return match ($these->statut) {
+                    'en_cours' => 0,
                     'preparation' => 1,
-                    'redaction'   => 2,
-                    'soutenue'    => 3,
-                    'suspendue'   => 4,
-                    'abandonnee'  => 5,
-                    default       => 99,
+                    'redaction' => 2,
+                    'soutenue' => 3,
+                    'suspendue' => 4,
+                    'abandonnee' => 5,
+                    default => 99,
                 };
             })
             ->first();
     }
-    
 }

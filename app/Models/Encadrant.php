@@ -10,22 +10,25 @@ class Encadrant extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'nom',
+        'prenoms',
+        'email',
+        'genre',
         'grade',
         'specialite',
         'phone',
         'bureau',
     ];
 
-    // Relations
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function eads()
     {
         return $this->hasMany(EAD::class, 'responsable_id');
+    }
+
+    public function eadMemberships()
+    {
+        return $this->belongsToMany(EAD::class, 'ead_encadrants', 'encadrant_id', 'ead_id')
+            ->withTimestamps();
     }
 
     public function theses()
@@ -51,5 +54,27 @@ class Encadrant extends Model
     public function scopeBySpecialite($query, $specialite)
     {
         return $query->where('specialite', $specialite);
+    }
+
+    public function getNameAttribute(): string
+    {
+        return trim(sprintf('%s %s', $this->nom, $this->prenoms));
+    }
+
+    public function getInitialsAttribute(): string
+    {
+        $name = trim($this->name);
+        if ($name === '') {
+            return '';
+        }
+
+        $parts = preg_split('/\s+/', $name);
+        $initials = collect($parts)
+            ->filter()
+            ->map(fn ($part) => mb_substr($part, 0, 1))
+            ->take(2)
+            ->implode('');
+
+        return mb_strtoupper($initials);
     }
 }

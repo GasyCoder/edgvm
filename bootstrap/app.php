@@ -17,8 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\CheckRole::class,
             'active' => \App\Http\Middleware\CheckActive::class,
         ]);
-        
+
         $middleware->web(append: [
+            \App\Http\Middleware\HandleInertiaRequests::class,
             \App\Http\Middleware\CheckActive::class,
         ]);
     })

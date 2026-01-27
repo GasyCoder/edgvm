@@ -10,11 +10,11 @@ class EAD extends Model
     use HasFactory;
 
     protected $table = 'eads';
+
     protected $fillable = [
         'nom',
         'description',
         'responsable_id',
-        'domaine',
         'slug',
     ];
 
@@ -35,6 +35,12 @@ class EAD extends Model
     public function specialites()
     {
         return $this->hasMany(Specialite::class, 'ead_id');
+    }
+
+    public function encadrants()
+    {
+        return $this->belongsToMany(Encadrant::class, 'ead_encadrants', 'ead_id', 'encadrant_id')
+            ->withTimestamps();
     }
 
     public function theses()

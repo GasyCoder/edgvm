@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\These;
 use App\Models\Publication;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,6 +10,9 @@ class EncadrantController extends Controller
     public function dashboard()
     {
         $encadrant = Auth::user()->encadrant;
+        if (! $encadrant) {
+            abort(404);
+        }
 
         $stats = [
             'mes_theses' => $encadrant->theses()->count(),

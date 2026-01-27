@@ -18,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Évite les erreurs pendant les migrations / premières installations
         if (Schema::hasTable('settings')) {
-            // Partage une variable $appSettings dans TOUTES les vues (frontend + backend + Livewire)
+            // Partage une variable $appSettings dans toutes les vues (frontend + backend)
             View::share('appSettings', Setting::main());
         }
     }

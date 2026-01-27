@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Frontend\Recherche;
 
-use App\Models\Specialite;
 use App\Models\EAD;
-use Livewire\Component;
+use App\Models\Specialite;
 use Livewire\Attributes\Url;
+use Livewire\Component;
 
 class ProgrammesPage extends Component
 {
@@ -38,14 +38,14 @@ class ProgrammesPage extends Component
     public function render()
     {
         $query = Specialite::with([
-                'ead.responsable.user', // ← pour pouvoir afficher le responsable si besoin
-                'theses',
-            ])
+            'ead.responsable', // ← pour pouvoir afficher le responsable si besoin
+            'theses',
+        ])
             ->active();
 
         // Filtre par EAD
         if ($this->ead) {
-            $query->whereHas('ead', function($q) {
+            $query->whereHas('ead', function ($q) {
                 $q->where('slug', $this->ead);
             });
         }
@@ -53,12 +53,12 @@ class ProgrammesPage extends Component
         // Recherche
         if ($this->search) {
             $search = $this->search;
-            $query->where(function($q) use ($search) {
-                $q->where('nom', 'like', '%' . $search . '%')
-                  ->orWhere('description', 'like', '%' . $search . '%')
-                  ->orWhereHas('ead', function($sub) use ($search) {
-                      $sub->where('nom', 'like', '%' . $search . '%');
-                  });
+            $query->where(function ($q) use ($search) {
+                $q->where('nom', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%')
+                    ->orWhereHas('ead', function ($sub) use ($search) {
+                        $sub->where('nom', 'like', '%'.$search.'%');
+                    });
             });
         }
 
@@ -72,9 +72,9 @@ class ProgrammesPage extends Component
 
         return view('livewire.frontend.recherche.programmes-page', [
             'specialites' => $specialites,
-            'eads'        => $eads,
+            'eads' => $eads,
         ])
-        ->layout('layouts.frontend')
-        ->title('Programmes Doctoraux - EDGVM');
+            ->layout('layouts.frontend')
+            ->title('Programmes Doctoraux - EDGVM');
     }
 }

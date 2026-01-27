@@ -36,7 +36,7 @@ class HomePage extends Component
             'hdr_soutenues' => 2,
         ];
 
-        $eads = EAD::with(['responsable.user', 'specialites'])
+        $eads = EAD::with(['responsable', 'specialites'])
             ->withCount(['specialites', 'theses'])
             ->active()
             ->take(4)
