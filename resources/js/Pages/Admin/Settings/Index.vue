@@ -35,6 +35,12 @@ const maintenanceForm = useForm({
     maintenance_message: props.settings?.maintenance_message ?? '',
 });
 
+const statsForm = useForm({
+    message_direction_doctorants: props.settings?.message_direction_doctorants ?? 0,
+    message_direction_equipes: props.settings?.message_direction_equipes ?? 0,
+    message_direction_theses: props.settings?.message_direction_theses ?? 0,
+});
+
 const mediaForm = useForm({
     logo: null,
     favicon: null,
@@ -42,36 +48,53 @@ const mediaForm = useForm({
 
 const logoPreviewUrl = ref(null);
 const faviconPreviewUrl = ref(null);
+const logoInput = ref(null);
+const faviconInput = ref(null);
+const logoDragging = ref(false);
+const faviconDragging = ref(false);
 
-const setLogo = (event) => {
-    const file = event.target.files?.[0] ?? null;
-    mediaForm.logo = file;
+const handleFile = (file, type) => {
+    if (!file || !file.type.startsWith('image/')) return;
 
-    if (logoPreviewUrl.value) {
-        URL.revokeObjectURL(logoPreviewUrl.value);
+    if (type === 'logo') {
+        mediaForm.logo = file;
+        if (logoPreviewUrl.value) URL.revokeObjectURL(logoPreviewUrl.value);
+        logoPreviewUrl.value = URL.createObjectURL(file);
+    } else {
+        mediaForm.favicon = file;
+        if (faviconPreviewUrl.value) URL.revokeObjectURL(faviconPreviewUrl.value);
+        faviconPreviewUrl.value = URL.createObjectURL(file);
     }
-
-    logoPreviewUrl.value = file ? URL.createObjectURL(file) : null;
 };
 
-const setFavicon = (event) => {
-    const file = event.target.files?.[0] ?? null;
-    mediaForm.favicon = file;
+const setLogo = (event) => handleFile(event.target.files?.[0], 'logo');
+const setFavicon = (event) => handleFile(event.target.files?.[0], 'favicon');
 
-    if (faviconPreviewUrl.value) {
-        URL.revokeObjectURL(faviconPreviewUrl.value);
-    }
+const onDrop = (event, type) => {
+    event.preventDefault();
+    if (type === 'logo') logoDragging.value = false;
+    else faviconDragging.value = false;
+    const file = event.dataTransfer?.files?.[0];
+    handleFile(file, type);
+};
 
-    faviconPreviewUrl.value = file ? URL.createObjectURL(file) : null;
+const clearLogo = () => {
+    mediaForm.logo = null;
+    if (logoPreviewUrl.value) URL.revokeObjectURL(logoPreviewUrl.value);
+    logoPreviewUrl.value = null;
+    if (logoInput.value) logoInput.value.value = '';
+};
+
+const clearFavicon = () => {
+    mediaForm.favicon = null;
+    if (faviconPreviewUrl.value) URL.revokeObjectURL(faviconPreviewUrl.value);
+    faviconPreviewUrl.value = null;
+    if (faviconInput.value) faviconInput.value.value = '';
 };
 
 onBeforeUnmount(() => {
-    if (logoPreviewUrl.value) {
-        URL.revokeObjectURL(logoPreviewUrl.value);
-    }
-    if (faviconPreviewUrl.value) {
-        URL.revokeObjectURL(faviconPreviewUrl.value);
-    }
+    if (logoPreviewUrl.value) URL.revokeObjectURL(logoPreviewUrl.value);
+    if (faviconPreviewUrl.value) URL.revokeObjectURL(faviconPreviewUrl.value);
 });
 
 const securityForm = useForm({
@@ -98,11 +121,14 @@ const submitMaintenance = () => {
     maintenanceForm.put(route('admin.settings.maintenance'), { preserveScroll: true });
 };
 
+const submitStats = () => {
+    statsForm.put(route('admin.settings.statistics'), { preserveScroll: true });
+};
+
 const submitMedia = () => {
     mediaForm.post(route('admin.settings.media'), {
         preserveScroll: true,
         forceFormData: true,
-        method: 'put',
     });
 };
 
@@ -228,31 +254,152 @@ const submitSecretaire = () => {
                 </div>
             </section>
 
+            <section class="rounded-2xl border border-slate-100 bg-white p-6">
+                <h3 class="text-sm font-semibold text-slate-900">Statistiques Message Direction</h3>
+                <form class="mt-4 space-y-4" @submit.prevent="submitStats">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                        <div>
+                            <label class="text-xs font-semibold text-slate-700">Doctorants</label>
+                            <input v-model="statsForm.message_direction_doctorants" type="number" min="0" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" />
+                            <p v-if="statsForm.errors.message_direction_doctorants" class="mt-1 text-xs text-red-600">{{ statsForm.errors.message_direction_doctorants }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-700">Equipes</label>
+                            <input v-model="statsForm.message_direction_equipes" type="number" min="0" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" />
+                            <p v-if="statsForm.errors.message_direction_equipes" class="mt-1 text-xs text-red-600">{{ statsForm.errors.message_direction_equipes }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-700">Theses soutenues</label>
+                            <input v-model="statsForm.message_direction_theses" type="number" min="0" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" />
+                            <p v-if="statsForm.errors.message_direction_theses" class="mt-1 text-xs text-red-600">{{ statsForm.errors.message_direction_theses }}</p>
+                        </div>
+                    </div>
+                    <button type="submit" class="rounded-xl bg-ed-primary px-4 py-2 text-sm font-semibold text-white hover:bg-ed-secondary" :disabled="statsForm.processing">Enregistrer</button>
+                </form>
+            </section>
+
             <section class="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <div class="rounded-2xl border border-slate-100 bg-white p-6">
                     <h3 class="text-sm font-semibold text-slate-900">Logo & favicon</h3>
-                    <form class="mt-4 space-y-4" @submit.prevent="submitMedia">
+                    <form class="mt-4 space-y-6" @submit.prevent="submitMedia">
+                        <!-- Logo Upload -->
                         <div>
                             <label class="text-xs font-semibold text-slate-700">Logo</label>
-                            <div v-if="settings.logo_url" class="mt-2 overflow-hidden rounded-xl border border-slate-200">
-                                <img :src="settings.logo_url" alt="" class="h-16 w-full object-contain bg-slate-50" />
+                            <div
+                                class="mt-2 relative rounded-xl border-2 border-dashed transition-all duration-200"
+                                :class="logoDragging ? 'border-ed-primary bg-ed-primary/5' : 'border-slate-200 hover:border-slate-300'"
+                                @dragover.prevent="logoDragging = true"
+                                @dragleave.prevent="logoDragging = false"
+                                @drop="onDrop($event, 'logo')"
+                            >
+                                <!-- Preview -->
+                                <div v-if="logoPreviewUrl || settings.logo_url" class="p-4">
+                                    <div class="flex items-center gap-4">
+                                        <div class="h-16 w-24 flex-shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                                            <img :src="logoPreviewUrl || settings.logo_url" alt="Logo" class="h-full w-full object-contain" />
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-slate-700 truncate">
+                                                {{ logoPreviewUrl ? 'Nouveau logo selectionne' : 'Logo actuel' }}
+                                            </p>
+                                            <p class="text-xs text-slate-500">Cliquez ou deposez pour remplacer</p>
+                                        </div>
+                                        <button
+                                            v-if="logoPreviewUrl"
+                                            type="button"
+                                            class="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition"
+                                            @click="clearLogo"
+                                        >
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- Empty State -->
+                                <div v-else class="p-6 text-center">
+                                    <svg class="mx-auto h-10 w-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="mt-2 text-sm font-medium text-slate-600">Deposez votre logo ici</p>
+                                    <p class="text-xs text-slate-400">ou cliquez pour parcourir</p>
+                                </div>
+                                <input
+                                    ref="logoInput"
+                                    type="file"
+                                    accept="image/*"
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    @change="setLogo"
+                                />
                             </div>
-                            <div v-if="logoPreviewUrl" class="mt-2 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                                <img :src="logoPreviewUrl" alt="" class="h-16 w-full object-contain" />
-                            </div>
-                            <input type="file" accept="image/*" class="mt-2 text-sm" @change="setLogo" />
                         </div>
+
+                        <!-- Favicon Upload -->
                         <div>
                             <label class="text-xs font-semibold text-slate-700">Favicon</label>
-                            <div v-if="settings.favicon_url" class="mt-2 overflow-hidden rounded-xl border border-slate-200">
-                                <img :src="settings.favicon_url" alt="" class="h-12 w-full object-contain bg-slate-50" />
+                            <div
+                                class="mt-2 relative rounded-xl border-2 border-dashed transition-all duration-200"
+                                :class="faviconDragging ? 'border-ed-primary bg-ed-primary/5' : 'border-slate-200 hover:border-slate-300'"
+                                @dragover.prevent="faviconDragging = true"
+                                @dragleave.prevent="faviconDragging = false"
+                                @drop="onDrop($event, 'favicon')"
+                            >
+                                <!-- Preview -->
+                                <div v-if="faviconPreviewUrl || settings.favicon_url" class="p-4">
+                                    <div class="flex items-center gap-4">
+                                        <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center">
+                                            <img :src="faviconPreviewUrl || settings.favicon_url" alt="Favicon" class="h-8 w-8 object-contain" />
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-slate-700 truncate">
+                                                {{ faviconPreviewUrl ? 'Nouveau favicon selectionne' : 'Favicon actuel' }}
+                                            </p>
+                                            <p class="text-xs text-slate-500">Cliquez ou deposez pour remplacer</p>
+                                        </div>
+                                        <button
+                                            v-if="faviconPreviewUrl"
+                                            type="button"
+                                            class="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition"
+                                            @click="clearFavicon"
+                                        >
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- Empty State -->
+                                <div v-else class="p-6 text-center">
+                                    <svg class="mx-auto h-10 w-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="mt-2 text-sm font-medium text-slate-600">Deposez votre favicon ici</p>
+                                    <p class="text-xs text-slate-400">Format recommande: 32x32 ou 64x64 px</p>
+                                </div>
+                                <input
+                                    ref="faviconInput"
+                                    type="file"
+                                    accept="image/*"
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    @change="setFavicon"
+                                />
                             </div>
-                            <div v-if="faviconPreviewUrl" class="mt-2 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                                <img :src="faviconPreviewUrl" alt="" class="h-12 w-full object-contain" />
-                            </div>
-                            <input type="file" accept="image/*" class="mt-2 text-sm" @change="setFavicon" />
                         </div>
-                        <button type="submit" class="rounded-xl bg-ed-primary px-4 py-2 text-sm font-semibold text-white hover:bg-ed-secondary" :disabled="mediaForm.processing">Mettre a jour</button>
+
+                        <button
+                            type="submit"
+                            class="w-full rounded-xl bg-ed-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-ed-secondary disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            :disabled="mediaForm.processing || (!mediaForm.logo && !mediaForm.favicon)"
+                        >
+                            <span v-if="mediaForm.processing" class="flex items-center justify-center gap-2">
+                                <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Envoi en cours...
+                            </span>
+                            <span v-else>Mettre a jour</span>
+                        </button>
                     </form>
                 </div>
 

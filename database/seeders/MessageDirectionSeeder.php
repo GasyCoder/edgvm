@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\MessageDirection;
+use Illuminate\Database\Seeder;
 
 class MessageDirectionSeeder extends Seeder
 {
@@ -22,9 +21,6 @@ class MessageDirectionSeeder extends Seeder
             'photo_path' => null, // tu pourras mettre 'directrice.jpg' par ex.
             'citation' => "Bienvenue à l'École Doctorale Génie du Vivant et Modélisation. Notre mission est de former les chercheurs qui contribueront à l'avancement des connaissances et au développement durable.",
             'message_intro' => "Avec 8 équipes d'accueil et 109 doctorants, nous offrons un environnement de recherche d'excellence.",
-            'nb_doctorants' => 109,
-            'nb_equipes' => 8,
-            'nb_theses' => 23,
             'visible' => true,
         ]);
     }

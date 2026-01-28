@@ -16,9 +16,6 @@ const form = useForm({
     email: props.message?.email ?? '',
     citation: props.message?.citation ?? '',
     message_intro: props.message?.message_intro ?? '',
-    nb_doctorants: props.message?.nb_doctorants ?? 0,
-    nb_equipes: props.message?.nb_equipes ?? 0,
-    nb_theses: props.message?.nb_theses ?? 0,
     visible: props.message?.visible ?? true,
     photo: null,
 });
@@ -121,20 +118,8 @@ const submit = () => {
 
                 <aside class="space-y-6 lg:col-span-4">
                     <section class="rounded-2xl border border-slate-100 bg-white p-6">
-                        <h3 class="text-sm font-semibold text-slate-900">Statistiques</h3>
+                        <h3 class="text-sm font-semibold text-slate-900">Visibilite</h3>
                         <div class="mt-4 space-y-3">
-                            <div>
-                                <label class="text-xs font-semibold text-slate-700">Doctorants *</label>
-                                <input v-model="form.nb_doctorants" type="number" min="0" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" />
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold text-slate-700">Equipes *</label>
-                                <input v-model="form.nb_equipes" type="number" min="0" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" />
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold text-slate-700">Theses *</label>
-                                <input v-model="form.nb_theses" type="number" min="0" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" />
-                            </div>
                             <label class="flex items-start gap-3 text-sm">
                                 <input v-model="form.visible" type="checkbox" class="mt-0.5 rounded border-slate-300 text-ed-primary focus:ring-ed-primary/20" />
                                 <span>

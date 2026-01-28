@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class MessageDirection extends Model
 {
@@ -21,17 +21,11 @@ class MessageDirection extends Model
         'email',
         'citation',
         'message_intro',
-        'nb_doctorants',
-        'nb_equipes',
-        'nb_theses',
         'visible',
         'photo_path',
     ];
 
     protected $casts = [
-        'nb_doctorants' => 'integer',
-        'nb_equipes' => 'integer',
-        'nb_theses' => 'integer',
         'visible' => 'boolean',
     ];
 }

@@ -8,6 +8,7 @@ use App\Models\EAD;
 use App\Models\Evenement;
 use App\Models\MessageDirection;
 use App\Models\Partenaire;
+use App\Models\Setting;
 use App\Models\Slider;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,7 +20,7 @@ class HomeController extends Controller
         $slider = Slider::with([
             'slides' => function ($query) {
                 $query->visible()
-                    ->with('image')
+                    ->with(['image', 'actualite'])
                     ->orderBy('ordre');
             },
         ])
@@ -31,10 +32,12 @@ class HomeController extends Controller
             ->latest()
             ->first();
 
+        $settings = Setting::main();
+
         $stats = [
-            'doctorants' => $messageDirection?->nb_doctorants ?? 0,
-            'equipes' => $messageDirection?->nb_equipes ?? 0,
-            'theses_soutenues' => $messageDirection?->nb_theses ?? 0,
+            'doctorants' => $settings->message_direction_doctorants ?? 0,
+            'equipes' => $settings->message_direction_equipes ?? 0,
+            'theses_soutenues' => $settings->message_direction_theses ?? 0,
             'encadrants' => 30,
             'publications' => 150,
             'hdr_soutenues' => 2,
@@ -81,7 +84,9 @@ class HomeController extends Controller
                         'titre_complet' => $slide->titre_complet,
                         'description' => $slide->description,
                         'couleur_fond' => $slide->couleur_fond,
-                        'lien_cta' => $slide->lien_cta,
+                        'couleur_texte_titre' => $slide->couleur_texte_titre ?? '#FFFFFF',
+                        'couleur_cta' => $slide->couleur_cta ?? '#FFFFFF',
+                        'lien_cta' => $slide->cta_url,
                         'texte_cta' => $slide->texte_cta,
                         'image_url' => $slide->image?->url,
                     ];

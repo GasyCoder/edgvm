@@ -24,10 +24,16 @@ class Setting extends Model
         'favicon_path',
         'maintenance_mode',
         'maintenance_message',
+        'message_direction_doctorants',
+        'message_direction_equipes',
+        'message_direction_theses',
     ];
 
     protected $casts = [
         'maintenance_mode' => 'boolean',
+        'message_direction_doctorants' => 'integer',
+        'message_direction_equipes' => 'integer',
+        'message_direction_theses' => 'integer',
     ];
 
     public static function main(): self
@@ -37,4 +43,3 @@ class Setting extends Model
         ]);
     }
 }
-

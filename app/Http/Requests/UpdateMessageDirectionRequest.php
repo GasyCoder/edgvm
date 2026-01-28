@@ -21,9 +21,6 @@ class UpdateMessageDirectionRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:255'],
             'citation' => ['nullable', 'string'],
             'message_intro' => ['nullable', 'string'],
-            'nb_doctorants' => ['required', 'integer', 'min:0'],
-            'nb_equipes' => ['required', 'integer', 'min:0'],
-            'nb_theses' => ['required', 'integer', 'min:0'],
             'visible' => ['boolean'],
             'photo' => ['nullable', 'image', 'max:2048'],
         ];

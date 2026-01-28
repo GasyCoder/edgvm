@@ -251,9 +251,6 @@ it('renders annonces, newsletter, partenaires, settings, and message directions'
 
     $message = MessageDirection::query()->create([
         'nom' => 'Directeur',
-        'nb_doctorants' => 10,
-        'nb_equipes' => 2,
-        'nb_theses' => 5,
         'visible' => true,
     ]);
 

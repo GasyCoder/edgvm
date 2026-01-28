@@ -119,7 +119,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::put('/parametres/general', [AdminSettingsController::class, 'updateGeneral'])->name('settings.general');
         Route::put('/parametres/seo', [AdminSettingsController::class, 'updateSeo'])->name('settings.seo');
         Route::put('/parametres/maintenance', [AdminSettingsController::class, 'updateMaintenance'])->name('settings.maintenance');
-        Route::put('/parametres/media', [AdminSettingsController::class, 'updateMedia'])->name('settings.media');
+        Route::put('/parametres/statistiques', [AdminSettingsController::class, 'updateStatistics'])->name('settings.statistics');
+        Route::post('/parametres/media', [AdminSettingsController::class, 'updateMedia'])->name('settings.media');
         Route::put('/parametres/security', [AdminSettingsController::class, 'updateSecurity'])->name('settings.security');
         Route::put('/parametres/secretaire', [AdminSettingsController::class, 'updateSecretaire'])->name('settings.secretaire');
         // Gestion des Sliders

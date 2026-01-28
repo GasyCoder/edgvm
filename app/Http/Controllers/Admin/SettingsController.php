@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateSettingsRequest;
 use App\Http\Requests\UpdateSettingsGeneralRequest;
 use App\Http\Requests\UpdateSettingsMaintenanceRequest;
 use App\Http\Requests\UpdateSettingsMediaRequest;
@@ -46,6 +47,9 @@ class SettingsController extends Controller
                 'maintenance_message' => $settings->maintenance_message ?? 'Le site est actuellement en maintenance.',
                 'logo_url' => $settings->logo_path ? Storage::disk('public')->url($settings->logo_path) : null,
                 'favicon_url' => $settings->favicon_path ? Storage::disk('public')->url($settings->favicon_path) : null,
+                'message_direction_doctorants' => $settings->message_direction_doctorants,
+                'message_direction_equipes' => $settings->message_direction_equipes,
+                'message_direction_theses' => $settings->message_direction_theses,
             ],
             'security' => [
                 'secretaire' => $secretary ? [
@@ -101,6 +105,20 @@ class SettingsController extends Controller
 
         return redirect()->route('admin.settings')
             ->with('success', 'Mode maintenance mis a jour.');
+    }
+
+    public function updateStatistics(UpdateSettingsRequest $request): RedirectResponse
+    {
+        $settings = Setting::main();
+
+        $settings->fill([
+            'message_direction_doctorants' => $request->validated('message_direction_doctorants'),
+            'message_direction_equipes' => $request->validated('message_direction_equipes'),
+            'message_direction_theses' => $request->validated('message_direction_theses'),
+        ])->save();
+
+        return redirect()->route('admin.settings')
+            ->with('success', 'Statistiques mises a jour.');
     }
 
     public function updateMedia(UpdateSettingsMediaRequest $request): RedirectResponse

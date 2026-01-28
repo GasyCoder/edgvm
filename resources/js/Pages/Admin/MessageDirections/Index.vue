@@ -31,7 +31,7 @@ const deleteMessage = (message) => {
             <PageHeader
                 badge="Communication"
                 title="Messages direction"
-                description="Gerer les messages et statistiques."
+                description="Gerer les messages."
             />
 
             <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
