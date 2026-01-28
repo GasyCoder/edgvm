@@ -121,19 +121,7 @@ const submit = () => {
                         Redigez le contenu, configurez la publication et selectionnez vos medias.
                     </p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button
-                        type="button"
-                        class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-ed-secondary disabled:cursor-not-allowed disabled:opacity-60"
-                        :disabled="form.processing"
-                        @click="submit"
-                    >
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
-                        </svg>
-                        Creer
-                    </button>
-                </div>
+                <div></div>
             </div>
         </template>
 
@@ -149,9 +137,22 @@ const submit = () => {
                     <li>/</li>
                     <li class="font-semibold text-slate-900">Nouvelle</li>
                 </ol>
-                <Link :href="route('admin.actualites.index')" class="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
-                    Retour
-                </Link>
+                <div class="flex items-center gap-2">
+                    <Link :href="route('admin.actualites.index')" class="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                        Retour
+                    </Link>
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-ed-secondary disabled:cursor-not-allowed disabled:opacity-60"
+                        :disabled="form.processing"
+                        @click="submit"
+                    >
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
+                        </svg>
+                        Creer
+                    </button>
+                </div>
             </nav>
 
             <form class="grid grid-cols-1 gap-6 lg:grid-cols-12" @submit.prevent="submit">

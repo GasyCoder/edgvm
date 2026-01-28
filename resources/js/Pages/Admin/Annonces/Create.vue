@@ -119,14 +119,7 @@ const submit = () => {
                     <h2 class="text-lg font-semibold text-slate-900 md:text-xl">Nouvelle annonce</h2>
                     <p class="mt-1 text-xs text-slate-500 md:text-sm">Rédigez une annonce et planifiez l'envoi.</p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-ed-secondary" :disabled="form.processing" @click="submit">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
-                        </svg>
-                        Creer
-                    </button>
-                </div>
+                <div></div>
             </div>
         </template>
 
@@ -142,9 +135,17 @@ const submit = () => {
                     <li>/</li>
                     <li class="font-semibold text-slate-900">Nouvelle</li>
                 </ol>
-                <Link :href="route('admin.annonces.index')" class="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
-                    Retour
-                </Link>
+                <div class="flex items-center gap-2">
+                    <Link :href="route('admin.annonces.index')" class="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                        Retour
+                    </Link>
+                    <button type="button" class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-ed-secondary" :disabled="form.processing" @click="submit">
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
+                        </svg>
+                        Creer
+                    </button>
+                </div>
             </nav>
             <form class="grid grid-cols-1 gap-6 lg:grid-cols-12" @submit.prevent="submit">
                 <div class="space-y-6 lg:col-span-8">
