@@ -19,6 +19,7 @@ const editorId = 'actualite-create-editor';
 
 const form = useForm({
     titre: '',
+    resume: '',
     contenu: '',
     category_ids: [],
     selectedTags: [],
@@ -124,19 +125,19 @@ const submit = () => {
                     <Link :href="route('admin.actualites.index')" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
                         Retour
                     </Link>
-                <button
-                    type="button"
-                    class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-ed-secondary disabled:cursor-not-allowed disabled:opacity-60"
-                    :disabled="form.processing"
-                    @click="submit"
-                >
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
-                    </svg>
-                    Creer
-                </button>
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-ed-secondary disabled:cursor-not-allowed disabled:opacity-60"
+                        :disabled="form.processing"
+                        @click="submit"
+                    >
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
+                        </svg>
+                        Creer
+                    </button>
+                </div>
             </div>
-        </div>
         </template>
 
         <Head title="Nouvelle actualite" />
@@ -171,6 +172,25 @@ const submit = () => {
                                 placeholder="Titre de l'actualite"
                             />
                             <p v-if="form.errors.titre" class="mt-2 text-xs text-red-600">{{ form.errors.titre }}</p>
+                        </div>
+                    </section>
+
+                    <section class="rounded-2xl border border-slate-100 bg-white p-6">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <h3 class="text-sm font-semibold text-slate-900">Resume / Intro</h3>
+                                <p class="mt-1 text-xs text-slate-500">Court texte d'introduction (optionnel).</p>
+                            </div>
+                            <span class="text-xs text-slate-400">Optionnel</span>
+                        </div>
+                        <div class="mt-4">
+                            <textarea
+                                v-model="form.resume"
+                                rows="3"
+                                class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20"
+                                placeholder="Resume de l'actualite..."
+                            ></textarea>
+                            <p v-if="form.errors.resume" class="mt-2 text-xs text-red-600">{{ form.errors.resume }}</p>
                         </div>
                     </section>
 

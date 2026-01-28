@@ -13,6 +13,7 @@ class Actualite extends Model
 
     protected $fillable = [
         'titre',
+        'resume',
         'contenu',
         'auteur_id',
         'category_id',

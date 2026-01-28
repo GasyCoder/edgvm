@@ -47,12 +47,14 @@ class ActualiteController extends Controller
             ->paginate($view === 'list' ? 10 : 9)
             ->withQueryString()
             ->through(function (Actualite $actualite): array {
+                $resume = $actualite->resume ?: $this->extractText($actualite->contenu, 110);
+
                 return [
                     'id' => $actualite->id,
                     'titre' => $actualite->titre,
                     'slug' => $actualite->slug,
-                    'contenu_extrait' => $this->extractText($actualite->contenu, 250),
-                    'resume' => $this->extractText($actualite->contenu, 110),
+                    'contenu_extrait' => $actualite->resume ?: $this->extractText($actualite->contenu, 250),
+                    'resume' => $resume,
                     'reading_time' => $this->readingTime($actualite->contenu),
                     'date_publication' => $actualite->date_publication?->translatedFormat('d M Y'),
                     'vues_formatted' => $actualite->vues_formatted,

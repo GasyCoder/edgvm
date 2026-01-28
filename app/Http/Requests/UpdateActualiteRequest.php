@@ -15,6 +15,7 @@ class UpdateActualiteRequest extends FormRequest
     {
         return [
             'titre' => ['required', 'string', 'max:255'],
+            'resume' => ['nullable', 'string', 'max:500'],
             'contenu' => ['required', 'string'],
             'category_ids' => ['nullable', 'array'],
             'category_ids.*' => ['exists:categories,id'],

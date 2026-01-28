@@ -19,6 +19,7 @@ const editorId = 'actualite-edit-editor';
 
 const form = useForm({
     titre: props.actualite?.titre ?? '',
+    resume: props.actualite?.resume ?? '',
     contenu: props.actualite?.contenu ?? '',
     category_ids: props.actualite?.category_ids ?? [],
     selectedTags: props.actualite?.selectedTags ?? [],
@@ -160,6 +161,16 @@ const submit = () => {
                         class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20"
                     />
                     <p v-if="form.errors.titre" class="mt-2 text-xs text-red-600">{{ form.errors.titre }}</p>
+                </section>
+
+                <section class="rounded-2xl border border-slate-100 bg-white p-6">
+                    <label class="text-xs font-semibold text-slate-700">Resume / Intro</label>
+                    <textarea
+                        v-model="form.resume"
+                        rows="3"
+                        class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20"
+                    ></textarea>
+                    <p v-if="form.errors.resume" class="mt-2 text-xs text-red-600">{{ form.errors.resume }}</p>
                 </section>
 
                 <section class="rounded-2xl border border-slate-100 bg-white p-6">
