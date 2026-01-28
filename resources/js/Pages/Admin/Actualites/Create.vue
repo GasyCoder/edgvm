@@ -122,9 +122,6 @@ const submit = () => {
                     </p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <Link :href="route('admin.actualites.index')" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-                        Retour
-                    </Link>
                     <button
                         type="button"
                         class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-ed-secondary disabled:cursor-not-allowed disabled:opacity-60"
@@ -144,7 +141,7 @@ const submit = () => {
         <FlashMessage />
 
         <div class="space-y-6">
-            <nav class="text-xs text-slate-500">
+            <nav class="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
                 <ol class="flex flex-wrap items-center gap-2">
                     <li><Link :href="route('admin.dashboard')" class="hover:text-ed-primary">Dashboard</Link></li>
                     <li>/</li>
@@ -152,6 +149,9 @@ const submit = () => {
                     <li>/</li>
                     <li class="font-semibold text-slate-900">Nouvelle</li>
                 </ol>
+                <Link :href="route('admin.actualites.index')" class="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                    Retour
+                </Link>
             </nav>
 
             <form class="grid grid-cols-1 gap-6 lg:grid-cols-12" @submit.prevent="submit">

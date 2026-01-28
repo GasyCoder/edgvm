@@ -120,7 +120,6 @@ const submit = () => {
                     <p class="mt-1 text-xs text-slate-500 md:text-sm">Rédigez une annonce et planifiez l'envoi.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <Link :href="route('admin.annonces.index')" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">Retour</Link>
                     <button type="button" class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-ed-secondary" :disabled="form.processing" @click="submit">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
@@ -135,6 +134,18 @@ const submit = () => {
         <FlashMessage />
 
         <div class="space-y-6">
+            <nav class="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+                <ol class="flex flex-wrap items-center gap-2">
+                    <li><Link :href="route('admin.dashboard')" class="hover:text-ed-primary">Dashboard</Link></li>
+                    <li>/</li>
+                    <li><Link :href="route('admin.annonces.index')" class="hover:text-ed-primary">Annonces</Link></li>
+                    <li>/</li>
+                    <li class="font-semibold text-slate-900">Nouvelle</li>
+                </ol>
+                <Link :href="route('admin.annonces.index')" class="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                    Retour
+                </Link>
+            </nav>
             <form class="grid grid-cols-1 gap-6 lg:grid-cols-12" @submit.prevent="submit">
                 <div class="space-y-6 lg:col-span-8">
                     <section class="rounded-2xl border border-slate-100 bg-white p-6">
