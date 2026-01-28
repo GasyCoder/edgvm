@@ -112,25 +112,7 @@ onBeforeUnmount(() => {
                         Planifiez un rendez-vous et partagez-le avec la communaute.
                     </p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <Link
-                        :href="route('admin.evenements.index')"
-                        class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                    >
-                        Retour
-                    </Link>
-                    <button
-                        type="button"
-                        class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-ed-secondary disabled:cursor-not-allowed disabled:opacity-60"
-                        :disabled="form.processing"
-                        @click="submit"
-                    >
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
-                        </svg>
-                        Creer
-                    </button>
-                </div>
+                <div></div>
             </div>
         </template>
 
@@ -138,7 +120,7 @@ onBeforeUnmount(() => {
         <FlashMessage />
 
         <div class="space-y-6">
-            <nav class="text-xs text-slate-500">
+            <nav class="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
                 <ol class="flex flex-wrap items-center gap-2">
                     <li><Link :href="route('admin.dashboard')" class="hover:text-ed-primary">Dashboard</Link></li>
                     <li>/</li>
@@ -146,6 +128,22 @@ onBeforeUnmount(() => {
                     <li>/</li>
                     <li class="font-semibold text-slate-900">Nouveau</li>
                 </ol>
+                <div class="flex items-center gap-2">
+                    <Link :href="route('admin.evenements.index')" class="rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                        Retour
+                    </Link>
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-ed-secondary disabled:cursor-not-allowed disabled:opacity-60"
+                        :disabled="form.processing"
+                        @click="submit"
+                    >
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
+                        </svg>
+                        Creer
+                    </button>
+                </div>
             </nav>
 
             <form class="grid grid-cols-1 gap-6 lg:grid-cols-12" @submit.prevent="submit">
@@ -359,21 +357,5 @@ onBeforeUnmount(() => {
             </form>
         </div>
 
-        <div class="sticky bottom-4 z-20 mt-8">
-            <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-lg backdrop-blur">
-                <p class="text-xs text-slate-500">Finalisez l'evenement avant publication.</p>
-                <div class="flex items-center gap-2">
-                    <Link :href="route('admin.evenements.index')" class="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
-                        Annuler
-                    </Link>
-                    <button type="button" class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-4 py-2 text-xs font-semibold text-white hover:bg-ed-secondary" :disabled="form.processing" @click="submit">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                        Creer l'evenement
-                    </button>
-                </div>
-            </div>
-        </div>
     </AdminLayout>
 </template>
