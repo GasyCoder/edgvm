@@ -173,6 +173,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             ->name('newsletter.subscribers');
         Route::post('/newsletter/subscribers', [AdminNewsletterSubscriberController::class, 'store'])
             ->name('newsletter.subscribers.store');
+        Route::post('/newsletter/subscribers/bulk', [AdminNewsletterSubscriberController::class, 'bulkStore'])
+            ->name('newsletter.subscribers.bulk');
         Route::put('/newsletter/subscribers/{subscriber}', [AdminNewsletterSubscriberController::class, 'update'])
             ->name('newsletter.subscribers.update');
         Route::delete('/newsletter/subscribers/{subscriber}', [AdminNewsletterSubscriberController::class, 'destroy'])

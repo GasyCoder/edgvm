@@ -6,10 +6,12 @@ use App\Exports\NewsletterSubscribersExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ImportNewsletterSubscribersRequest;
 use App\Http\Requests\StoreNewsletterSubscriberRequest;
+use App\Http\Requests\StoreNewsletterSubscribersBulkRequest;
 use App\Http\Requests\UpdateNewsletterSubscriberRequest;
 use App\Models\NewsletterSubscriber;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Maatwebsite\Excel\Facades\Excel;
@@ -140,5 +142,62 @@ class NewsletterSubscriberController extends Controller
 
         return redirect()->route('admin.newsletter.subscribers')
             ->with('success', 'Import termine avec succes.');
+    }
+
+    public function bulkStore(StoreNewsletterSubscribersBulkRequest $request): RedirectResponse
+    {
+        $emailsRaw = (string) $request->validated('emails');
+        $type = $request->validated('type') ?? 'autre';
+        $actif = $request->boolean('actif', true);
+
+        $emails = collect(preg_split('/[\s,;]+/', $emailsRaw, -1, PREG_SPLIT_NO_EMPTY))
+            ->map(fn ($email) => strtolower(trim((string) $email)))
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($emails->isEmpty()) {
+            return back()->withErrors([
+                'emails' => 'Veuillez saisir au moins un email valide.',
+            ]);
+        }
+
+        $invalidEmails = $emails->filter(fn ($email) => ! filter_var($email, FILTER_VALIDATE_EMAIL));
+        if ($invalidEmails->isNotEmpty()) {
+            return back()->withErrors([
+                'emails' => 'Emails invalides: '.mb_strimwidth($invalidEmails->join(', '), 0, 160, '...'),
+            ]);
+        }
+
+        $existing = NewsletterSubscriber::query()
+            ->whereIn('email', $emails)
+            ->get(['email', 'abonne_le', 'desabonne_le', 'token'])
+            ->keyBy('email');
+
+        $now = now();
+        $data = $emails->map(function (string $email) use ($existing, $type, $actif, $now) {
+            $current = $existing->get($email);
+
+            return [
+                'email' => $email,
+                'nom' => null,
+                'type' => $type,
+                'actif' => $actif,
+                'abonne_le' => $current?->abonne_le ?? $now,
+                'desabonne_le' => $actif ? null : ($current?->desabonne_le ?? $now),
+                'token' => $current?->token ?? Str::random(32),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        })->all();
+
+        NewsletterSubscriber::upsert(
+            $data,
+            ['email'],
+            ['nom', 'type', 'actif', 'abonne_le', 'desabonne_le', 'updated_at']
+        );
+
+        return redirect()->route('admin.newsletter.subscribers')
+            ->with('success', 'Abonnes ajoutes avec succes.');
     }
 }

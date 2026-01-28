@@ -30,6 +30,12 @@ const importForm = useForm({
     importFile: null,
 });
 
+const bulkForm = useForm({
+    emails: '',
+    type: 'autre',
+    actif: true,
+});
+
 const importInput = ref(null);
 const importDragging = ref(false);
 
@@ -138,6 +144,17 @@ const submitImport = () => {
         preserveScroll: true,
         onSuccess: () => {
             importForm.reset();
+        },
+    });
+};
+
+const submitBulk = () => {
+    bulkForm.post(route('admin.newsletter.subscribers.bulk'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            bulkForm.reset();
+            bulkForm.type = 'autre';
+            bulkForm.actif = true;
         },
     });
 };
@@ -250,23 +267,35 @@ const submitImport = () => {
                             <td class="px-4 py-4 text-xs text-slate-500">{{ subscriber.created_at }}</td>
                             <td class="px-4 py-4 text-right">
                                 <div class="flex flex-wrap justify-end gap-2">
-                                    <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-white" @click="toggleActif(subscriber)">
-                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button
+                                        type="button"
+                                        class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-ed-primary hover:bg-ed-primary/5 hover:text-ed-primary"
+                                        :title="subscriber.actif ? 'Desactiver' : 'Activer'"
+                                        @click="toggleActif(subscriber)"
+                                    >
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v8m0 0l-3-3m3 3l3-3M4 12v6a2 2 0 002 2h12a2 2 0 002-2v-6" />
                                         </svg>
-                                        {{ subscriber.actif ? 'Desactiver' : 'Activer' }}
                                     </button>
-                                    <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-white" @click="openEdit(subscriber)">
-                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button
+                                        type="button"
+                                        class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-ed-primary hover:bg-ed-primary/5 hover:text-ed-primary"
+                                        title="Modifier"
+                                        @click="openEdit(subscriber)"
+                                    >
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6.232-6.232a2.5 2.5 0 113.536 3.536L12.536 16.536A4 4 0 0110 17H7v-3a4 4 0 011-2.536z" />
                                         </svg>
-                                        Modifier
                                     </button>
-                                    <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50" @click="deleteSubscriber(subscriber)">
-                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button
+                                        type="button"
+                                        class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-red-200 text-red-600 transition hover:bg-red-50"
+                                        title="Supprimer"
+                                        @click="deleteSubscriber(subscriber)"
+                                    >
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0a1 1 0 011-1h4a1 1 0 011 1m-7 0h8" />
                                         </svg>
-                                        Supprimer
                                     </button>
                                 </div>
                             </td>
@@ -280,6 +309,52 @@ const submitImport = () => {
             </div>
 
             <Pagination v-if="subscribers.links" :links="subscribers.links" />
+
+            <div class="rounded-2xl border border-slate-100 bg-white p-6">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-900">Ajouter des emails en masse</h3>
+                        <p class="mt-1 text-xs text-slate-500">Un email par ligne, separateur virgule ou point-virgule.</p>
+                    </div>
+                    <button
+                        type="button"
+                        class="rounded-xl bg-ed-primary px-4 py-2 text-xs font-semibold text-white hover:bg-ed-secondary disabled:cursor-not-allowed disabled:opacity-60"
+                        :disabled="bulkForm.processing || !bulkForm.emails"
+                        @click="submitBulk"
+                    >
+                        Ajouter
+                    </button>
+                </div>
+
+                <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+                    <div class="lg:col-span-2">
+                        <textarea
+                            v-model="bulkForm.emails"
+                            rows="5"
+                            class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-ed-primary focus:ring-ed-primary/20"
+                            placeholder="email1@exemple.com&#10;email2@exemple.com"
+                        ></textarea>
+                        <p v-if="bulkForm.errors.emails" class="mt-2 text-xs text-red-600">{{ bulkForm.errors.emails }}</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs font-semibold text-slate-700">Type</label>
+                            <select v-model="bulkForm.type" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20">
+                                <option value="doctorant">Doctorant</option>
+                                <option value="encadrant">Encadrant</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
+                        <label class="flex items-start gap-3 text-sm">
+                            <input v-model="bulkForm.actif" type="checkbox" class="mt-0.5 rounded border-slate-300 text-ed-primary focus:ring-ed-primary/20" />
+                            <span>
+                                <span class="font-semibold text-slate-800">Actif</span>
+                                <span class="block text-xs text-slate-500">Abonnes actifs.</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
 
             <div class="rounded-2xl border border-slate-100 bg-white p-6">
                 <div class="flex flex-wrap items-start justify-between gap-3">
