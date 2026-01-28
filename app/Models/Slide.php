@@ -23,6 +23,8 @@ class Slide extends Model
         'badge_texte',
         'badge_icon',
         'couleur_fond',
+        'couleur_texte_titre',
+        'couleur_cta',
         'actualite_id',
     ];
 
@@ -57,15 +59,15 @@ class Slide extends Model
     {
         $titre = '';
         if ($this->titre_ligne1) {
-            $titre .= $this->titre_ligne1 . ' ';
+            $titre .= $this->titre_ligne1.' ';
         }
         $titre .= $this->titre_highlight;
         if ($this->titre_ligne2) {
-            $titre .= ' ' . $this->titre_ligne2;
+            $titre .= ' '.$this->titre_ligne2;
         }
+
         return $titre;
     }
-
 
     /**
      * Retourne l'URL finale du CTA :

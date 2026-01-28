@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSlideRequest;
 use App\Http\Requests\UpdateSlideOrderRequest;
 use App\Http\Requests\UpdateSlideRequest;
+use App\Models\Actualite;
 use App\Models\Media;
 use App\Models\Slide;
 use App\Models\Slider;
@@ -58,11 +59,22 @@ class SlideController extends Controller
 
     public function create(Slider $slider): Response
     {
+        $actualites = Actualite::query()
+            ->published()
+            ->orderBy('date_publication', 'desc')
+            ->get(['id', 'titre', 'date_publication'])
+            ->map(fn ($a) => [
+                'id' => $a->id,
+                'titre' => $a->titre,
+                'date' => $a->date_publication?->format('d/m/Y'),
+            ]);
+
         return Inertia::render('Admin/Slides/Create', [
             'slider' => [
                 'id' => $slider->id,
                 'nom' => $slider->nom,
             ],
+            'actualites' => $actualites,
             'defaults' => [
                 'ordre' => ($slider->slides()->max('ordre') ?? 0) + 1,
                 'visible' => true,
@@ -96,11 +108,13 @@ class SlideController extends Controller
             'slider_id' => $slider->id,
             'titre_highlight' => $data['titre'],
             'description' => $data['description'] ?? null,
-            'lien_cta' => $data['lien_cta'] ?? null,
+            'actualite_id' => $data['actualite_id'] ?? null,
             'texte_cta' => $data['texte_cta'] ?? null,
             'ordre' => $data['ordre'] ?? 1,
             'visible' => $data['visible'] ?? true,
             'image_id' => $imageId,
+            'couleur_texte_titre' => $data['couleur_texte_titre'] ?? '#FFFFFF',
+            'couleur_cta' => $data['couleur_cta'] ?? '#FFFFFF',
         ]);
 
         return redirect()->route('admin.slides.index', $slider)
@@ -111,20 +125,33 @@ class SlideController extends Controller
     {
         $this->ensureSlideBelongsToSlider($slider, $slide);
 
+        $actualites = Actualite::query()
+            ->published()
+            ->orderBy('date_publication', 'desc')
+            ->get(['id', 'titre', 'date_publication'])
+            ->map(fn ($a) => [
+                'id' => $a->id,
+                'titre' => $a->titre,
+                'date' => $a->date_publication?->format('d/m/Y'),
+            ]);
+
         return Inertia::render('Admin/Slides/Edit', [
             'slider' => [
                 'id' => $slider->id,
                 'nom' => $slider->nom,
             ],
+            'actualites' => $actualites,
             'slide' => [
                 'id' => $slide->id,
                 'titre' => $slide->titre_highlight,
                 'description' => $slide->description,
                 'image_url' => $slide->image?->url,
-                'lien_cta' => $slide->lien_cta,
+                'actualite_id' => $slide->actualite_id,
                 'texte_cta' => $slide->texte_cta,
                 'ordre' => $slide->ordre,
                 'visible' => $slide->visible,
+                'couleur_texte_titre' => $slide->couleur_texte_titre ?? '#FFFFFF',
+                'couleur_cta' => $slide->couleur_cta ?? '#FFFFFF',
             ],
         ]);
     }
@@ -155,11 +182,13 @@ class SlideController extends Controller
         $slide->update([
             'titre_highlight' => $data['titre'],
             'description' => $data['description'] ?? null,
-            'lien_cta' => $data['lien_cta'] ?? null,
+            'actualite_id' => $data['actualite_id'] ?? null,
             'texte_cta' => $data['texte_cta'] ?? null,
             'ordre' => $data['ordre'] ?? $slide->ordre,
             'visible' => $data['visible'] ?? $slide->visible,
             'image_id' => $imageId,
+            'couleur_texte_titre' => $data['couleur_texte_titre'] ?? $slide->couleur_texte_titre,
+            'couleur_cta' => $data['couleur_cta'] ?? $slide->couleur_cta,
         ]);
 
         return redirect()->route('admin.slides.index', $slider)

@@ -17,10 +17,12 @@ class UpdateSlideRequest extends FormRequest
             'titre' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:500'],
             'new_image' => ['nullable', 'image', 'max:5120'],
-            'lien_cta' => ['nullable', 'string', 'max:255'],
+            'actualite_id' => ['nullable', 'integer', 'exists:actualites,id'],
             'texte_cta' => ['nullable', 'string', 'max:255'],
             'ordre' => ['required', 'integer', 'min:1'],
             'visible' => ['boolean'],
+            'couleur_texte_titre' => ['nullable', 'string', 'max:7', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'couleur_cta' => ['nullable', 'string', 'max:7', 'regex:/^#[0-9A-Fa-f]{6}$/'],
         ];
     }
 

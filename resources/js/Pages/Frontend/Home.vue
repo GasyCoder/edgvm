@@ -82,6 +82,16 @@ const truncateText = (text, length = 140) => {
     return stripped.length > length ? stripped.substring(0, length) + '...' : stripped;
 };
 
+const getContrastColor = (hexColor) => {
+    if (!hexColor) return '#1f2937';
+    const hex = hexColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.5 ? '#1f2937' : '#FFFFFF';
+};
+
 onMounted(() => {
     if (hasMultipleSlides.value) {
         startAutoplay();
@@ -166,9 +176,9 @@ defineOptions({
 
                                 <!-- Title -->
                                 <h2 class="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-[1.12] md:leading-[1.12] drop-shadow-[0_6px_18px_rgba(0,0,0,0.28)]">
-                                    <span v-if="slide.titre_ligne1">{{ slide.titre_ligne1 }} </span>
-                                    <span v-if="slide.titre_highlight" class="text-ed-yellow">{{ slide.titre_highlight }}</span>
-                                    <span v-if="slide.titre_ligne2"> {{ slide.titre_ligne2 }}</span>
+                                    <span v-if="slide.titre_ligne1" :style="{ color: slide.couleur_texte_titre || '#FFFFFF' }">{{ slide.titre_ligne1 }} </span>
+                                    <span v-if="slide.titre_highlight" :style="{ color: slide.couleur_texte_titre || '#FFFFFF' }">{{ slide.titre_highlight }}</span>
+                                    <span v-if="slide.titre_ligne2" :style="{ color: slide.couleur_texte_titre || '#FFFFFF' }"> {{ slide.titre_ligne2 }}</span>
                                 </h2>
 
                                 <!-- Description -->
@@ -184,7 +194,11 @@ defineOptions({
                                     <a
                                         v-if="slide.lien_cta && slide.texte_cta"
                                         :href="slide.lien_cta"
-                                        class="inline-flex items-center px-6 py-3 rounded-xl bg-ed-yellow text-gray-900 text-sm font-semibold shadow-lg shadow-black/20 hover:brightness-[0.98] hover:-translate-y-[1px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ed-yellow/60 focus:ring-offset-1 focus:ring-offset-transparent"
+                                        class="inline-flex items-center px-6 py-3 rounded-xl text-sm font-semibold shadow-lg shadow-black/20 hover:brightness-[0.98] hover:-translate-y-[1px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-transparent"
+                                        :style="{
+                                            backgroundColor: slide.couleur_cta || '#FFFFFF',
+                                            color: getContrastColor(slide.couleur_cta)
+                                        }"
                                     >
                                         <span>{{ slide.texte_cta }}</span>
                                         <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

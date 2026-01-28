@@ -6,6 +6,7 @@ import FlashMessage from '@/Components/Common/FlashMessage.vue';
 
 const props = defineProps({
     slider: Object,
+    actualites: Array,
     defaults: Object,
 });
 
@@ -16,10 +17,12 @@ const form = useForm({
     titre: '',
     description: '',
     new_image: null,
-    lien_cta: '',
+    actualite_id: null,
     texte_cta: 'En savoir plus',
     ordre: props.defaults?.ordre ?? 1,
     visible: props.defaults?.visible ?? true,
+    couleur_texte_titre: '#FFFFFF',
+    couleur_cta: '#FFFFFF',
 });
 
 const setNewImage = (event) => {
@@ -148,19 +151,23 @@ onBeforeUnmount(() => {
                         <div class="flex items-start justify-between gap-4">
                             <div>
                                 <h3 class="text-sm font-semibold text-slate-900">Lien (CTA)</h3>
-                                <p class="mt-1 text-xs text-slate-500">Bouton d'action sur le slide.</p>
+                                <p class="mt-1 text-xs text-slate-500">Liez le bouton a une actualite.</p>
                             </div>
                             <span class="text-xs text-slate-400">Optionnel</span>
                         </div>
                         <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div>
-                                <label class="text-xs font-semibold text-slate-700">URL du lien</label>
-                                <input
-                                    v-model="form.lien_cta"
-                                    type="text"
+                                <label class="text-xs font-semibold text-slate-700">Actualite liee</label>
+                                <select
+                                    v-model="form.actualite_id"
                                     class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20"
-                                    placeholder="https://..."
-                                />
+                                >
+                                    <option :value="null">-- Aucune actualite --</option>
+                                    <option v-for="actualite in actualites" :key="actualite.id" :value="actualite.id">
+                                        {{ actualite.titre }} ({{ actualite.date }})
+                                    </option>
+                                </select>
+                                <p v-if="form.errors.actualite_id" class="mt-2 text-xs text-red-600">{{ form.errors.actualite_id }}</p>
                             </div>
                             <div>
                                 <label class="text-xs font-semibold text-slate-700">Texte du bouton</label>
@@ -197,6 +204,45 @@ onBeforeUnmount(() => {
                                     <span class="block text-xs text-slate-500">Afficher ce slide sur le site.</span>
                                 </span>
                             </label>
+                        </div>
+                    </section>
+
+                    <section class="rounded-2xl border border-slate-100 bg-white p-6">
+                        <h3 class="text-sm font-semibold text-slate-900">Couleurs</h3>
+                        <p class="mt-1 text-xs text-slate-500">Personnalisez les couleurs du texte.</p>
+                        <div class="mt-4 space-y-4">
+                            <div>
+                                <label class="text-xs font-semibold text-slate-700">Couleur du titre</label>
+                                <div class="mt-2 flex items-center gap-3">
+                                    <input
+                                        v-model="form.couleur_texte_titre"
+                                        type="color"
+                                        class="h-10 w-14 cursor-pointer rounded-lg border border-slate-200"
+                                    />
+                                    <input
+                                        v-model="form.couleur_texte_titre"
+                                        type="text"
+                                        class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm uppercase focus:border-ed-primary focus:ring-ed-primary/20"
+                                        placeholder="#FFFFFF"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-slate-700">Couleur du bouton CTA</label>
+                                <div class="mt-2 flex items-center gap-3">
+                                    <input
+                                        v-model="form.couleur_cta"
+                                        type="color"
+                                        class="h-10 w-14 cursor-pointer rounded-lg border border-slate-200"
+                                    />
+                                    <input
+                                        v-model="form.couleur_cta"
+                                        type="text"
+                                        class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm uppercase focus:border-ed-primary focus:ring-ed-primary/20"
+                                        placeholder="#FFFFFF"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </section>
 
