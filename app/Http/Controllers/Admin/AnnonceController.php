@@ -10,6 +10,7 @@ use App\Models\Annonce;
 use App\Models\Media;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -80,6 +81,10 @@ class AnnonceController extends Controller
 
         $data['auteur_id'] = Auth::id();
 
+        if ($request->hasFile('media_file')) {
+            $data['media_id'] = $this->storeUploadedMedia($request->file('media_file'))->id;
+        }
+
         if ($data['est_publie'] ?? false) {
             $data['publie_at'] = now();
         } else {
@@ -123,6 +128,10 @@ class AnnonceController extends Controller
     {
         $data = $request->validated();
         $data['auteur_id'] = Auth::id();
+
+        if ($request->hasFile('media_file')) {
+            $data['media_id'] = $this->storeUploadedMedia($request->file('media_file'))->id;
+        }
 
         if ($data['est_publie'] ?? false) {
             $data['publie_at'] = $annonce->publie_at ?? now();
@@ -190,5 +199,60 @@ class AnnonceController extends Controller
                 'url' => $media->url,
             ])
             ->toArray();
+    }
+
+    private function storeUploadedMedia(UploadedFile $file): Media
+    {
+        $mimeType = $file->getMimeType();
+        $type = $this->getTypeFromMimeType($mimeType);
+        $filename = time().'_'.uniqid().'_'.$file->getClientOriginalName();
+
+        $folder = match ($type) {
+            'image' => 'images',
+            'document' => 'documents',
+            'video' => 'videos',
+            default => 'others',
+        };
+
+        $path = $file->storeAs($folder, $filename, 'public');
+
+        return Media::create([
+            'nom_original' => $file->getClientOriginalName(),
+            'nom_fichier' => $filename,
+            'chemin' => $path,
+            'type' => $type,
+            'taille_bytes' => $file->getSize(),
+            'mime_type' => $mimeType,
+            'uploader_id' => Auth::id(),
+        ]);
+    }
+
+    private function getTypeFromMimeType(?string $mimeType): string
+    {
+        if (! $mimeType) {
+            return 'others';
+        }
+
+        if (str_starts_with($mimeType, 'image/')) {
+            return 'image';
+        }
+
+        if (str_starts_with($mimeType, 'video/')) {
+            return 'video';
+        }
+
+        if (in_array($mimeType, [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        ], true)) {
+            return 'document';
+        }
+
+        return 'others';
     }
 }

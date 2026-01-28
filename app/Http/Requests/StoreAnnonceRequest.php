@@ -18,6 +18,7 @@ class StoreAnnonceRequest extends FormRequest
             'contenu_html' => ['nullable', 'string'],
             'cible' => ['required', 'in:doctorant,encadrant,both'],
             'media_id' => ['nullable', 'integer', 'exists:media,id'],
+            'media_file' => ['nullable', 'file', 'max:10240'],
             'est_publie' => ['boolean'],
             'envoyer_email' => ['boolean'],
             'email_cible' => ['nullable', 'required_if:envoyer_email,true', 'in:doctorant,encadrant,both'],
