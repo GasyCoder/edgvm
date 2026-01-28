@@ -297,7 +297,8 @@ it('renders annonces, newsletter, partenaires, settings, and message directions'
 
     $this->actingAs($admin)
         ->get(route('admin.message-directions.edit', $message))
-        ->assertSuccessful();
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page) => $page->component('Admin/MessageDirections/Edit'));
 });
 
 it('renders research admin pages', function (): void {

@@ -21,16 +21,40 @@ const form = useForm({
 });
 
 const photoPreviewUrl = ref(null);
+const photoInput = ref(null);
+const photoDragging = ref(false);
 
-const setPhoto = (event) => {
-    const file = event.target.files?.[0] ?? null;
+const handlePhoto = (file) => {
+    if (!file || !file.type.startsWith('image/')) {
+        return;
+    }
+
     form.photo = file;
 
     if (photoPreviewUrl.value) {
         URL.revokeObjectURL(photoPreviewUrl.value);
     }
 
-    photoPreviewUrl.value = file ? URL.createObjectURL(file) : null;
+    photoPreviewUrl.value = URL.createObjectURL(file);
+};
+
+const setPhoto = (event) => handlePhoto(event.target.files?.[0] ?? null);
+
+const onDrop = (event) => {
+    event.preventDefault();
+    photoDragging.value = false;
+    handlePhoto(event.dataTransfer?.files?.[0] ?? null);
+};
+
+const clearPhoto = () => {
+    form.photo = null;
+    if (photoPreviewUrl.value) {
+        URL.revokeObjectURL(photoPreviewUrl.value);
+    }
+    photoPreviewUrl.value = null;
+    if (photoInput.value) {
+        photoInput.value.value = '';
+    }
 };
 
 onBeforeUnmount(() => {
@@ -133,13 +157,53 @@ const submit = () => {
                     <section class="rounded-2xl border border-slate-100 bg-white p-6">
                         <h3 class="text-sm font-semibold text-slate-900">Photo</h3>
                         <div class="mt-4 space-y-3">
-                            <div v-if="message.photo_url" class="overflow-hidden rounded-xl border border-slate-200">
-                                <img :src="message.photo_url" alt="" class="h-40 w-full object-cover" />
+                            <div
+                                class="relative rounded-xl border-2 border-dashed transition-all duration-200"
+                                :class="photoDragging ? 'border-ed-primary bg-ed-primary/5' : 'border-slate-200 hover:border-slate-300'"
+                                @dragover.prevent="photoDragging = true"
+                                @dragleave.prevent="photoDragging = false"
+                                @drop="onDrop"
+                            >
+                                <div v-if="photoPreviewUrl || message.photo_url" class="p-4">
+                                    <div class="space-y-3">
+                                        <div class="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                            <img :src="photoPreviewUrl || message.photo_url" alt="" class="h-40 w-full object-cover" />
+                                        </div>
+                                        <div class="flex items-center justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <p class="text-sm font-medium text-slate-700 truncate">
+                                                    {{ photoPreviewUrl ? 'Nouvelle photo selectionnee' : 'Photo actuelle' }}
+                                                </p>
+                                                <p class="text-xs text-slate-500">Cliquez ou deposez pour remplacer</p>
+                                            </div>
+                                            <button
+                                                v-if="photoPreviewUrl"
+                                                type="button"
+                                                class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-500"
+                                                @click="clearPhoto"
+                                            >
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-else class="p-6 text-center">
+                                    <svg class="mx-auto h-10 w-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="mt-2 text-sm font-medium text-slate-600">Deposez la photo ici</p>
+                                    <p class="text-xs text-slate-400">PNG, JPG, WEBP · 2MB max</p>
+                                </div>
+                                <input
+                                    ref="photoInput"
+                                    type="file"
+                                    accept="image/*"
+                                    class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                                    @change="setPhoto"
+                                />
                             </div>
-                            <div v-if="photoPreviewUrl" class="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                                <img :src="photoPreviewUrl" alt="" class="h-40 w-full object-cover" />
-                            </div>
-                            <input type="file" accept="image/*" class="text-sm" @change="setPhoto" />
                             <p v-if="form.errors.photo" class="text-xs text-red-600">{{ form.errors.photo }}</p>
                         </div>
                     </section>
