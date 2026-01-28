@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreEvenementRequest extends FormRequest
 {
@@ -15,6 +16,7 @@ class StoreEvenementRequest extends FormRequest
     {
         return [
             'titre' => ['required', 'string', 'max:255'],
+            'slug' => ['nullable', 'string', 'max:255', Rule::unique('evenements', 'slug')],
             'description' => ['nullable', 'string'],
             'date_debut' => ['required', 'date'],
             'heure_debut' => ['nullable', 'date_format:H:i'],
@@ -43,6 +45,7 @@ class StoreEvenementRequest extends FormRequest
             'lien_inscription.url' => "Le lien d'inscription doit etre une URL valide.",
             'cover_image.image' => "L'image de couverture doit etre une image.",
             'document_media_id.exists' => 'Le document selectionne est invalide.',
+            'slug.unique' => 'Ce slug existe deja.',
         ];
     }
 }

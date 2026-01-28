@@ -187,6 +187,7 @@ class EvenementController extends Controller
             'evenement' => [
                 'id' => $evenement->id,
                 'titre' => $evenement->titre,
+                'slug' => $evenement->slug,
                 'description' => $evenement->description,
                 'date_debut' => $evenement->date_debut?->format('Y-m-d'),
                 'heure_debut' => $evenement->heure_debut?->format('H:i'),

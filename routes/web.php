@@ -87,7 +87,7 @@ Route::middleware(['frontend.maintenance'])->group(function () {
 
     // Événements
     Route::get('/evenements', [EvenementController::class, 'index'])->name('evenements.index');
-    Route::get('/evenements/{evenement}', [EvenementController::class, 'show'])->name('evenements.show');
+    Route::get('/evenements/{evenement:slug}', [EvenementController::class, 'show'])->name('evenements.show');
 
     // Pages dynamiques
     Route::get('/page/{slug}', [PageController::class, 'show'])->name('pages.show');

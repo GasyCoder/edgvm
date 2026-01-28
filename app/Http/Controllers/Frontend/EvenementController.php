@@ -27,6 +27,7 @@ class EvenementController extends Controller
                 return [
                     'id' => $evenement->id,
                     'titre' => $evenement->titre,
+                    'slug' => $evenement->slug,
                     'description' => $evenement->description,
                     'lieu' => $evenement->lieu,
                     'type' => $evenement->type,

@@ -109,7 +109,7 @@ it('renders frontend index pages', function (): void {
 
 it('renders frontend detail pages', function (): void {
     $this->get(route('actualites.show', $this->actualite))->assertSuccessful();
-    $this->get(route('evenements.show', $this->evenement))->assertSuccessful();
+    $this->get(route('evenements.show', $this->evenement->slug))->assertSuccessful();
     $this->get(route('pages.show', $this->page->slug))->assertSuccessful();
     $this->get(route('programmes.show', $this->specialite))->assertSuccessful();
     $this->get(route('ead.show', $this->ead))->assertSuccessful();

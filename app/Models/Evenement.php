@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class Evenement extends Model
 {
@@ -15,6 +16,7 @@ class Evenement extends Model
 
     protected $fillable = [
         'titre',
+        'slug',
         'description',
         'date_debut',
         'heure_debut',
@@ -31,15 +33,15 @@ class Evenement extends Model
     ];
 
     protected $casts = [
-        'date_debut'    => 'date',
-        'date_fin'      => 'date',
-        'heure_debut'   => 'datetime:H:i',
-        'heure_fin'     => 'datetime:H:i',
+        'date_debut' => 'date',
+        'date_fin' => 'date',
+        'heure_debut' => 'datetime:H:i',
+        'heure_fin' => 'datetime:H:i',
         'est_important' => 'boolean',
-        'est_publie'    => 'boolean',
-        'est_archive'   => 'boolean',
-        'image_id'      => 'integer',
-        'document_id'   => 'integer',
+        'est_publie' => 'boolean',
+        'est_archive' => 'boolean',
+        'image_id' => 'integer',
+        'document_id' => 'integer',
     ];
 
     /* ------------------------
@@ -55,7 +57,6 @@ class Evenement extends Model
     {
         return $this->belongsTo(Media::class, 'document_id');
     }
-    
 
     /* ------------------------
        Scopes
@@ -99,6 +100,7 @@ class Evenement extends Model
             return '';
         }
         setlocale(LC_TIME, 'fr_FR.UTF-8');
+
         return $date->isoFormat('D MMMM YYYY');
     }
 
@@ -114,6 +116,7 @@ class Evenement extends Model
         }
         $mois = Carbon::parse($this->date_debut)->locale('fr')->isoFormat('MMM');
         $mois = ucfirst(str_replace('.', '', $mois));
+
         return $mois;
     }
 
@@ -121,10 +124,10 @@ class Evenement extends Model
     {
         return match ($this->type) {
             'soutenance' => 'bg-purple-600 text-white',
-            'seminaire'  => 'bg-blue-600 text-white',
+            'seminaire' => 'bg-blue-600 text-white',
             'conference' => 'bg-green-600 text-white',
-            'atelier'    => 'bg-orange-500 text-white',
-            default      => 'bg-gray-400 text-white',
+            'atelier' => 'bg-orange-500 text-white',
+            default => 'bg-gray-400 text-white',
         };
     }
 
@@ -132,10 +135,10 @@ class Evenement extends Model
     {
         return match ($this->type) {
             'soutenance' => 'Soutenance',
-            'seminaire'  => 'Séminaire',
+            'seminaire' => 'Séminaire',
             'conference' => 'Conférence',
-            'atelier'    => 'Atelier',
-            default      => 'Autre',
+            'atelier' => 'Atelier',
+            default => 'Autre',
         };
     }
 
@@ -147,10 +150,10 @@ class Evenement extends Model
     public function getPeriodeAffAttribute(): string
     {
         $debut = $this->date_debut ? Carbon::parse($this->date_debut)->isoFormat('D MMM YYYY') : '';
-        $fin   = $this->date_fin ? Carbon::parse($this->date_fin)->isoFormat('D MMM YYYY') : null;
+        $fin = $this->date_fin ? Carbon::parse($this->date_fin)->isoFormat('D MMM YYYY') : null;
 
         if ($fin && $fin !== $debut) {
-            return $debut . ' — ' . $fin;
+            return $debut.' — '.$fin;
         }
 
         return $debut;
@@ -188,5 +191,47 @@ class Evenement extends Model
         }
 
         return $dateFin->lt(now());
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $evenement): void {
+            if (empty($evenement->slug) && ! empty($evenement->titre)) {
+                $evenement->slug = self::generateUniqueSlug($evenement->titre);
+            }
+        });
+
+        static::updating(function (self $evenement): void {
+            if ($evenement->isDirty('titre') && empty($evenement->slug)) {
+                $evenement->slug = self::generateUniqueSlug($evenement->titre, $evenement->id);
+            }
+        });
+    }
+
+    private static function generateUniqueSlug(string $titre, ?int $ignoreId = null): string
+    {
+        $slug = Str::slug($titre);
+        $originalSlug = $slug;
+        $count = 1;
+
+        $query = self::query()->where('slug', $slug);
+        if ($ignoreId) {
+            $query->where('id', '!=', $ignoreId);
+        }
+
+        while ($slug !== '' && $query->exists()) {
+            $slug = $originalSlug.'-'.$count;
+            $count++;
+            $query = self::query()->where('slug', $slug);
+            if ($ignoreId) {
+                $query->where('id', '!=', $ignoreId);
+            }
+        }
+
+        if ($slug === '') {
+            $slug = 'evenement';
+        }
+
+        return $slug;
     }
 }
