@@ -365,21 +365,5 @@ const submit = () => {
             </div>
         </div>
 
-        <div class="sticky bottom-4 z-20 mt-8">
-            <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-lg backdrop-blur">
-                <p class="text-xs text-slate-500">Assurez-vous de sauvegarder vos changements.</p>
-                <div class="flex items-center gap-2">
-                    <Link :href="route('admin.actualites.index')" class="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
-                        Annuler
-                    </Link>
-                    <button type="button" class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-4 py-2 text-xs font-semibold text-white hover:bg-ed-secondary" :disabled="form.processing" @click="submit">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                        Creer l'actualite
-                    </button>
-                </div>
-            </div>
-        </div>
     </AdminLayout>
 </template>
