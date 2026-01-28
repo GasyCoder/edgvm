@@ -279,7 +279,8 @@ it('renders annonces, newsletter, partenaires, settings, and message directions'
 
     $this->actingAs($admin)
         ->get(route('admin.partenaires.create'))
-        ->assertSuccessful();
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page) => $page->component('Admin/Partenaires/Create'));
 
     $this->actingAs($admin)
         ->get(route('admin.partenaires.edit', $partenaire))

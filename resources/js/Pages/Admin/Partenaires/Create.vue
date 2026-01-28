@@ -18,16 +18,40 @@ const form = useForm({
 });
 
 const logoPreviewUrl = ref(null);
+const logoInput = ref(null);
+const logoDragging = ref(false);
 
-const setLogo = (event) => {
-    const file = event.target.files?.[0] ?? null;
+const handleLogo = (file) => {
+    if (!file || !file.type.startsWith('image/')) {
+        return;
+    }
+
     form.logo = file;
 
     if (logoPreviewUrl.value) {
         URL.revokeObjectURL(logoPreviewUrl.value);
     }
 
-    logoPreviewUrl.value = file ? URL.createObjectURL(file) : null;
+    logoPreviewUrl.value = URL.createObjectURL(file);
+};
+
+const setLogo = (event) => handleLogo(event.target.files?.[0] ?? null);
+
+const onDrop = (event) => {
+    event.preventDefault();
+    logoDragging.value = false;
+    handleLogo(event.dataTransfer?.files?.[0] ?? null);
+};
+
+const clearLogo = () => {
+    form.logo = null;
+    if (logoPreviewUrl.value) {
+        URL.revokeObjectURL(logoPreviewUrl.value);
+    }
+    logoPreviewUrl.value = null;
+    if (logoInput.value) {
+        logoInput.value.value = '';
+    }
 };
 
 onBeforeUnmount(() => {
@@ -99,10 +123,50 @@ const submit = () => {
                         <div>
                             <label class="text-xs font-semibold text-slate-700">Logo</label>
                             <p class="mt-1 text-xs text-slate-500">Ajoutez un logo pour l'affichage public.</p>
-                            <div v-if="logoPreviewUrl" class="mt-3 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                                <img :src="logoPreviewUrl" alt="" class="h-32 w-full object-contain" />
+                            <div
+                                class="mt-3 relative rounded-xl border-2 border-dashed transition-all duration-200"
+                                :class="logoDragging ? 'border-ed-primary bg-ed-primary/5' : 'border-slate-200 hover:border-slate-300'"
+                                @dragover.prevent="logoDragging = true"
+                                @dragleave.prevent="logoDragging = false"
+                                @drop="onDrop"
+                            >
+                                <div v-if="logoPreviewUrl" class="p-4">
+                                    <div class="space-y-3">
+                                        <div class="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                            <img :src="logoPreviewUrl" alt="" class="h-32 w-full object-contain" />
+                                        </div>
+                                        <div class="flex items-center justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <p class="text-sm font-medium text-slate-700 truncate">Logo selectionne</p>
+                                                <p class="text-xs text-slate-500">Cliquez ou deposez pour remplacer</p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-500"
+                                                @click="clearLogo"
+                                            >
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-else class="p-6 text-center">
+                                    <svg class="mx-auto h-10 w-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="mt-2 text-sm font-medium text-slate-600">Deposez votre logo ici</p>
+                                    <p class="text-xs text-slate-400">PNG, JPG, WEBP · 2MB max</p>
+                                </div>
+                                <input
+                                    ref="logoInput"
+                                    type="file"
+                                    accept="image/*"
+                                    class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                                    @change="setLogo"
+                                />
                             </div>
-                            <input type="file" accept="image/*" class="mt-2 text-sm" @change="setLogo" />
                             <p v-if="form.errors.logo" class="mt-2 text-xs text-red-600">{{ form.errors.logo }}</p>
                         </div>
                     </section>
