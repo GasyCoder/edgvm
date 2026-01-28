@@ -14,6 +14,7 @@ const props = defineProps({
 const pdfSearch = ref(props.filters?.pdfSearch ?? '');
 const imagePreviewUrl = ref(null);
 const coverInput = ref(null);
+const coverDragging = ref(false);
 const selectedDocument = ref(null);
 
 const form = useForm({
@@ -54,15 +55,25 @@ watch(pdfSearch, () => {
     }, 300);
 });
 
-const setCoverImage = (event) => {
-    const file = event.target.files?.[0] ?? null;
+const handleCoverFile = (file) => {
+    if (!file) {
+        return;
+    }
     form.cover_image = file;
-
     if (imagePreviewUrl.value) {
         URL.revokeObjectURL(imagePreviewUrl.value);
     }
+    imagePreviewUrl.value = URL.createObjectURL(file);
+};
 
-    imagePreviewUrl.value = file ? URL.createObjectURL(file) : null;
+const setCoverImage = (event) => {
+    handleCoverFile(event.target.files?.[0] ?? null);
+};
+
+const onCoverDrop = (event) => {
+    event.preventDefault();
+    coverDragging.value = false;
+    handleCoverFile(event.dataTransfer?.files?.[0] ?? null);
 };
 
 const removeCoverImage = () => {
@@ -237,18 +248,49 @@ onBeforeUnmount(() => {
                             </div>
                         </div>
                         <div class="mt-4">
-                            <div v-if="imagePreviewUrl" class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                                <img :src="imagePreviewUrl" alt="" class="h-48 w-full object-cover" />
-                                <button type="button" class="absolute right-2 top-2 rounded-xl border border-slate-200 bg-white/90 p-2 text-slate-700" @click="removeCoverImage">
-                                    Retirer
-                                </button>
-                            </div>
-                            <div v-else class="flex items-center justify-between gap-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6">
-                                <div>
-                                    <p class="text-sm font-semibold text-slate-700">Ajouter une image</p>
-                                    <p class="mt-1 text-xs text-slate-500">PNG, JPG jusqu'a 2MB.</p>
+                            <div
+                                class="relative rounded-xl border-2 border-dashed transition-all duration-200"
+                                :class="coverDragging ? 'border-ed-primary bg-ed-primary/5' : 'border-slate-200 hover:border-slate-300'"
+                                @dragover.prevent="coverDragging = true"
+                                @dragleave.prevent="coverDragging = false"
+                                @drop="onCoverDrop"
+                            >
+                                <div class="p-4">
+                                    <div v-if="imagePreviewUrl" class="space-y-3">
+                                        <div class="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                            <img :src="imagePreviewUrl" alt="" class="h-48 w-full object-cover" />
+                                        </div>
+                                        <div class="flex items-center justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <p class="text-sm font-medium text-slate-700 truncate">{{ form.cover_image?.name }}</p>
+                                                <p class="text-xs text-slate-500">Cliquez ou deposez pour remplacer</p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-500"
+                                                @click="removeCoverImage"
+                                            >
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div v-else class="text-center">
+                                        <svg class="mx-auto h-9 w-9 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <p class="mt-2 text-sm font-medium text-slate-600">Deposez une image ici</p>
+                                        <p class="text-xs text-slate-400">PNG, JPG jusqu'a 2MB</p>
+                                    </div>
                                 </div>
-                                <input ref="coverInput" type="file" accept="image/*" class="text-sm" @change="setCoverImage" />
+                                <input
+                                    ref="coverInput"
+                                    type="file"
+                                    accept="image/*"
+                                    class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                                    @change="setCoverImage"
+                                />
                             </div>
                             <p v-if="form.errors.cover_image" class="mt-2 text-xs text-red-600">{{ form.errors.cover_image }}</p>
                         </div>
@@ -310,7 +352,7 @@ onBeforeUnmount(() => {
                                 <button type="button" class="mt-2 text-xs font-semibold text-emerald-700" @click="clearDocument">Retirer</button>
                             </div>
 
-                            <div class="max-h-56 space-y-2 overflow-y-auto rounded-xl border border-slate-200 p-2 text-sm">
+                            <div v-if="pdfSearch" class="max-h-56 space-y-2 overflow-y-auto rounded-xl border border-slate-200 p-2 text-sm">
                                 <button
                                     v-for="document in documents"
                                     :key="document.id"
@@ -321,7 +363,10 @@ onBeforeUnmount(() => {
                                     <span class="text-slate-700">{{ document.nom }}</span>
                                     <span class="text-xs text-slate-400">PDF</span>
                                 </button>
-                                <p v-if="!documents.length" class="py-6 text-center text-xs text-slate-400">Aucun document disponible.</p>
+                                <p v-if="!documents.length" class="py-6 text-center text-xs text-slate-400">Aucun resultat.</p>
+                            </div>
+                            <div v-else class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-xs text-slate-500">
+                                Tapez pour rechercher un fichier PDF.
                             </div>
                             <p v-if="form.errors.document_media_id" class="text-xs text-red-600">{{ form.errors.document_media_id }}</p>
                         </div>
