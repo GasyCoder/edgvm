@@ -22,7 +22,6 @@ const typeLabels = {
 
 const newsletterForm = useForm({
     email: '',
-    nom: '',
     type: 'autre',
 });
 
@@ -36,7 +35,7 @@ const submitNewsletter = () => {
     newsletterForm.post(route('newsletter.subscribe'), {
         preserveScroll: true,
         onSuccess: () => {
-            newsletterForm.reset('email', 'nom');
+            newsletterForm.reset('email');
         },
     });
 };
@@ -322,13 +321,6 @@ defineOptions({
                                         placeholder="Votre adresse email"
                                         class="w-full px-3 py-2.5 text-sm rounded-lg bg-white/20 backdrop-blur-md border border-white/30 text-white placeholder-white/70 focus:ring-2 focus:ring-white focus:outline-none transition"
                                         required
-                                    >
-
-                                    <input
-                                        v-model="newsletterForm.nom"
-                                        type="text"
-                                        placeholder="Nom (optionnel)"
-                                        class="w-full px-3 py-2.5 text-sm rounded-lg bg-white/20 backdrop-blur-md border border-white/30 text-white placeholder-white/70 focus:ring-2 focus:ring-white focus:outline-none transition"
                                     >
 
                                     <button type="submit" class="w-full px-4 py-2.5 bg-white text-ed-primary rounded-lg font-bold hover:bg-ed-yellow transition shadow-lg text-sm" :disabled="newsletterForm.processing">
