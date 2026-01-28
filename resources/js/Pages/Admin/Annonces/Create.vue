@@ -156,10 +156,46 @@ const submit = () => {
                 <aside class="space-y-6 lg:col-span-4">
                     <section class="rounded-2xl border border-slate-100 bg-white p-6">
                         <h3 class="text-sm font-semibold text-slate-900">Cible</h3>
-                        <div class="mt-4 space-y-3">
-                            <label class="text-sm"><input v-model="form.cible" type="radio" value="doctorant" class="mr-2" />Doctorants</label>
-                            <label class="text-sm"><input v-model="form.cible" type="radio" value="encadrant" class="mr-2" />Encadrants</label>
-                            <label class="text-sm"><input v-model="form.cible" type="radio" value="both" class="mr-2" />Tous</label>
+                        <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                            <label class="group flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-ed-primary/40 hover:bg-ed-primary/5">
+                                <input v-model="form.cible" type="radio" value="doctorant" class="peer sr-only" />
+                                <span class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-500 transition group-hover:border-ed-primary/30 group-hover:text-ed-primary peer-checked:border-ed-primary peer-checked:bg-ed-primary/10 peer-checked:text-ed-primary">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0120 17.5c0 2.485-3.582 4.5-8 4.5s-8-2.015-8-4.5c0-2.02 2.315-3.76 5.84-4.578L12 14z" />
+                                    </svg>
+                                </span>
+                                <span class="flex flex-col">
+                                    <span class="text-sm font-semibold">Doctorants</span>
+                                    <span class="text-xs text-slate-500">Tous les doctorants</span>
+                                </span>
+                            </label>
+                            <label class="group flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-ed-primary/40 hover:bg-ed-primary/5">
+                                <input v-model="form.cible" type="radio" value="encadrant" class="peer sr-only" />
+                                <span class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-500 transition group-hover:border-ed-primary/30 group-hover:text-ed-primary peer-checked:border-ed-primary peer-checked:bg-ed-primary/10 peer-checked:text-ed-primary">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-4-4h-1" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20H4v-2a4 4 0 014-4h1" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </span>
+                                <span class="flex flex-col">
+                                    <span class="text-sm font-semibold">Encadrants</span>
+                                    <span class="text-xs text-slate-500">Tous les encadrants</span>
+                                </span>
+                            </label>
+                            <label class="group flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-ed-primary/40 hover:bg-ed-primary/5">
+                                <input v-model="form.cible" type="radio" value="both" class="peer sr-only" />
+                                <span class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-500 transition group-hover:border-ed-primary/30 group-hover:text-ed-primary peer-checked:border-ed-primary peer-checked:bg-ed-primary/10 peer-checked:text-ed-primary">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
+                                    </svg>
+                                </span>
+                                <span class="flex flex-col">
+                                    <span class="text-sm font-semibold">Tous</span>
+                                    <span class="text-xs text-slate-500">Doctorants et encadrants</span>
+                                </span>
+                            </label>
                         </div>
                     </section>
 
