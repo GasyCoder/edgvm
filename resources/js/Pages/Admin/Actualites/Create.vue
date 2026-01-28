@@ -221,13 +221,14 @@ const submit = () => {
                         <h3 class="text-sm font-semibold text-slate-900">Parametres</h3>
                         <div class="mt-4 space-y-4">
                             <div>
-                                <label class="text-xs font-semibold text-slate-700">Categories *</label>
-                                <select v-model="form.category_ids" multiple class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20">
-                                    <option v-for="category in categories" :key="category.id" :value="category.id">
-                                        {{ category.nom }}
-                                    </option>
-                                </select>
-                                <p class="mt-2 text-xs text-slate-500">Selection multiple possible.</p>
+                                <label class="text-xs font-semibold text-slate-700">Categories</label>
+                                <div class="mt-3 max-h-48 space-y-1 overflow-y-auto rounded-xl border border-slate-200 p-2">
+                                    <label v-for="category in categories" :key="category.id" class="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-slate-50">
+                                        <input v-model="form.category_ids" type="checkbox" :value="category.id" class="rounded border-slate-300 text-ed-primary focus:ring-ed-primary/20" />
+                                        <span class="text-slate-700">{{ category.nom }}</span>
+                                    </label>
+                                </div>
+                                <p class="mt-2 text-xs text-slate-500">Optionnel pour filtrer.</p>
                                 <p v-if="form.errors.category_ids" class="mt-2 text-xs text-red-600">{{ form.errors.category_ids }}</p>
                             </div>
 

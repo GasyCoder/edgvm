@@ -159,7 +159,13 @@ const deleteActualite = () => {
                                 <div class="mt-1 text-xs text-slate-500">{{ actualite.extrait }}</div>
                             </td>
                             <td class="px-5 py-4">
-                                <span v-if="actualite.category" class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-800">
+                                <div v-if="actualite.categories?.length" class="flex flex-wrap items-center gap-2">
+                                    <span v-for="category in actualite.categories" :key="category.id" class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-800">
+                                        <span class="h-2 w-2 rounded-full" :style="{ backgroundColor: category.couleur }"></span>
+                                        {{ category.nom }}
+                                    </span>
+                                </div>
+                                <span v-else-if="actualite.category" class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-800">
                                     <span class="h-2 w-2 rounded-full" :style="{ backgroundColor: actualite.category.couleur }"></span>
                                     {{ actualite.category.nom }}
                                 </span>

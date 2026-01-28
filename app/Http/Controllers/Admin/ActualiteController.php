@@ -55,6 +55,11 @@ class ActualiteController extends Controller
                 'visible' => $actualite->visible,
                 'vues_formatted' => $actualite->vues_formatted,
                 'image_url' => $actualite->image?->url,
+                'categories' => $actualite->categories->map(fn (Category $category) => [
+                    'id' => $category->id,
+                    'nom' => $category->nom,
+                    'couleur' => $category->couleur,
+                ])->toArray(),
                 'category' => $actualite->category ? [
                     'id' => $actualite->category->id,
                     'nom' => $actualite->category->nom,
@@ -120,9 +125,7 @@ class ActualiteController extends Controller
             'auteur_id' => Auth::id(),
         ]);
 
-        if (! empty($categoryIds)) {
-            $actualite->categories()->sync($categoryIds);
-        }
+        $actualite->categories()->sync($categoryIds);
 
         if (! empty($selectedTags)) {
             $actualite->tags()->attach($selectedTags);
