@@ -352,7 +352,7 @@ onBeforeUnmount(() => {
                                 <button type="button" class="mt-2 text-xs font-semibold text-emerald-700" @click="clearDocument">Retirer</button>
                             </div>
 
-                            <div v-if="pdfSearch" class="max-h-56 space-y-2 overflow-y-auto rounded-xl border border-slate-200 p-2 text-sm">
+                            <div v-if="pdfSearch && !selectedDocument" class="max-h-56 space-y-2 overflow-y-auto rounded-xl border border-slate-200 p-2 text-sm">
                                 <button
                                     v-for="document in documents"
                                     :key="document.id"
