@@ -185,7 +185,7 @@ defineOptions({
         <section class="py-14 bg-gradient-to-b from-gray-50 via-white to-gray-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                    <aside class="lg:col-span-1 space-y-6">
+                    <aside class="lg:col-span-1 lg:order-2 space-y-6">
                         <div class="bg-white/90 backdrop-blur rounded-2xl p-5 border border-gray-200 shadow-sm">
                             <h3 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
                                 <span class="inline-flex w-5 h-5 items-center justify-center rounded-full bg-ed-primary/10 text-ed-primary">
@@ -310,7 +310,7 @@ defineOptions({
                         </div>
                     </aside>
 
-                    <main class="lg:col-span-3">
+                    <main class="lg:col-span-3 lg:order-1">
                         <div v-if="!actualites?.data?.length" class="text-center py-20">
                             <svg class="mx-auto h-20 w-20 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"

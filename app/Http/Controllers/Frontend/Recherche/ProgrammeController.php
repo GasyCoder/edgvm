@@ -3,85 +3,27 @@
 namespace App\Http\Controllers\Frontend\Recherche;
 
 use App\Http\Controllers\Controller;
-use App\Models\EAD;
 use App\Models\Specialite;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ProgrammeController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(): Response
     {
-        $ead = $request->string('ead')->toString();
-        $search = trim($request->string('search')->toString());
-        $view = $request->string('view')->toString();
-
-        if (! in_array($view, ['grid', 'list'], true)) {
-            $view = 'grid';
-        }
-
-        $query = Specialite::with(['ead.responsable'])
+        $specialites = Specialite::with(['ead'])
             ->active()
-            ->withCount([
-                'theses as theses_en_cours' => function ($q) {
-                    $q->enCours();
-                },
-                'theses as theses_soutenues' => function ($q) {
-                    $q->soutendue();
-                },
-            ]);
-
-        if ($ead !== '') {
-            $query->whereHas('ead', function ($q) use ($ead) {
-                $q->where('slug', $ead);
-            });
-        }
-
-        if ($search !== '') {
-            $query->where(function ($q) use ($search) {
-                $q->where('nom', 'like', '%'.$search.'%')
-                    ->orWhere('description', 'like', '%'.$search.'%')
-                    ->orWhereHas('ead', function ($sub) use ($search) {
-                        $sub->where('nom', 'like', '%'.$search.'%');
-                    });
-            });
-        }
-
-        $specialites = $query->orderBy('nom')->get()->map(fn (Specialite $specialite) => [
-            'id' => $specialite->id,
-            'slug' => $specialite->slug,
-            'nom' => $specialite->nom,
-            'description' => $specialite->description,
-            'theses_en_cours' => $specialite->theses_en_cours,
-            'theses_soutenues' => $specialite->theses_soutenues,
-            'ead' => $specialite->ead ? [
-                'id' => $specialite->ead->id,
-                'slug' => $specialite->ead->slug,
-                'nom' => $specialite->ead->nom,
-            ] : null,
-        ])->toArray();
-
-        $eads = EAD::active()
-            ->withCount('specialites')
             ->orderBy('nom')
             ->get()
-            ->map(fn (EAD $eadItem) => [
-                'id' => $eadItem->id,
-                'slug' => $eadItem->slug,
-                'nom' => $eadItem->nom,
-                'specialites_count' => $eadItem->specialites_count,
+            ->map(fn (Specialite $specialite) => [
+                'id' => $specialite->id,
+                'nom' => $specialite->nom,
+                'ead' => $specialite->ead?->nom,
             ])
             ->toArray();
 
         return Inertia::render('Frontend/Recherche/Programmes/Index', [
-            'filters' => [
-                'ead' => $ead,
-                'search' => $search,
-                'view' => $view,
-            ],
             'specialites' => $specialites,
-            'eads' => $eads,
         ]);
     }
 

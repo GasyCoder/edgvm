@@ -1,81 +1,26 @@
 <script setup>
-import { computed, onBeforeUnmount, ref, watch } from 'vue';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { onBeforeUnmount, ref } from 'vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import FlashMessage from '@/Components/Common/FlashMessage.vue';
 
 const props = defineProps({
     slider: Object,
-    images: Array,
-    actualiteResults: Array,
-    filters: Object,
     defaults: Object,
 });
 
-const actualiteSearch = ref(props.filters?.actualiteSearch ?? '');
 const imagePreviewUrl = ref(null);
 const imageInput = ref(null);
-const selectedActualite = ref(null);
-
-const backgroundOptions = [
-    { value: 'from-ed-primary/95 via-ed-secondary/90 to-teal-800/95', label: 'Principal' },
-    { value: 'from-slate-900/95 via-slate-800 to-slate-700/95', label: 'Nocturne' },
-    { value: 'from-emerald-500/90 via-teal-600/90 to-cyan-700/90', label: 'Ocean' },
-    { value: 'from-amber-500/90 via-orange-500/90 to-rose-600/90', label: 'Solaire' },
-];
 
 const form = useForm({
-    titre_ligne1: '',
-    titre_highlight: '',
-    titre_ligne2: '',
+    titre: '',
     description: '',
-    image_id: null,
     new_image: null,
     lien_cta: '',
-    actualite_id: null,
-    texte_cta: '',
+    texte_cta: 'En savoir plus',
     ordre: props.defaults?.ordre ?? 1,
     visible: props.defaults?.visible ?? true,
-    badge_texte: '',
-    badge_icon: props.defaults?.badge_icon ?? 'university',
-    couleur_fond: props.defaults?.couleur_fond ?? backgroundOptions[0].value,
 });
-
-const selectedImage = computed(() => {
-    return props.images?.find((image) => image.id === form.image_id) ?? null;
-});
-
-const applySearch = () => {
-    router.get(route('admin.slides.create', props.slider.id), {
-        actualiteSearch: actualiteSearch.value || undefined,
-    }, {
-        preserveState: true,
-        preserveScroll: true,
-        replace: true,
-        only: ['actualiteResults', 'filters'],
-    });
-};
-
-let searchTimeout = null;
-watch(actualiteSearch, () => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-        applySearch();
-    }, 300);
-});
-
-const selectActualite = (actualite) => {
-    form.actualite_id = actualite.id;
-    form.lien_cta = route('actualites.show', actualite.slug);
-    selectedActualite.value = actualite;
-    actualiteSearch.value = '';
-};
-
-const clearActualite = () => {
-    form.actualite_id = null;
-    selectedActualite.value = null;
-    form.lien_cta = '';
-};
 
 const setNewImage = (event) => {
     const file = event.target.files?.[0] ?? null;
@@ -101,10 +46,6 @@ const clearNewImage = () => {
     }
 };
 
-const selectImage = (image) => {
-    form.image_id = image.id;
-};
-
 const submit = () => {
     form.post(route('admin.slides.store', props.slider.id), {
         preserveScroll: true,
@@ -125,11 +66,23 @@ onBeforeUnmount(() => {
             <div class="flex flex-wrap items-end justify-between gap-4">
                 <div>
                     <h2 class="text-lg font-semibold text-slate-900 md:text-xl">Nouveau slide</h2>
-                    <p class="mt-1 text-xs text-slate-500 md:text-sm">Slider: {{ slider.nom }}</p>
+                    <p class="mt-1 text-xs text-slate-500 md:text-sm">Slider : {{ slider.nom }}</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <Link :href="route('admin.slides.index', slider.id)" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">Retour</Link>
-                    <button type="button" class="rounded-xl bg-ed-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-ed-secondary" :disabled="form.processing" @click="submit">Creer</button>
+                    <Link :href="route('admin.slides.index', slider.id)" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                        Retour
+                    </Link>
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-ed-secondary disabled:cursor-not-allowed disabled:opacity-60"
+                        :disabled="form.processing"
+                        @click="submit"
+                    >
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
+                        </svg>
+                        Creer
+                    </button>
                 </div>
             </div>
         </template>
@@ -138,150 +91,173 @@ onBeforeUnmount(() => {
         <FlashMessage />
 
         <div class="space-y-6">
+            <nav class="text-xs text-slate-500">
+                <ol class="flex flex-wrap items-center gap-2">
+                    <li><Link :href="route('admin.dashboard')" class="hover:text-ed-primary">Dashboard</Link></li>
+                    <li>/</li>
+                    <li><Link :href="route('admin.sliders.index')" class="hover:text-ed-primary">Sliders</Link></li>
+                    <li>/</li>
+                    <li><Link :href="route('admin.slides.index', slider.id)" class="hover:text-ed-primary">{{ slider.nom }}</Link></li>
+                    <li>/</li>
+                    <li class="font-semibold text-slate-900">Nouveau slide</li>
+                </ol>
+            </nav>
+
             <form class="grid grid-cols-1 gap-6 lg:grid-cols-12" @submit.prevent="submit">
+                <!-- Contenu principal -->
                 <div class="space-y-6 lg:col-span-8">
                     <section class="rounded-2xl border border-slate-100 bg-white p-6">
-                        <h3 class="text-sm font-semibold text-slate-900">Contenu</h3>
-                        <div class="mt-4 space-y-4">
+                        <div class="flex items-start justify-between gap-4">
                             <div>
-                                <label class="text-xs font-semibold text-slate-700">Titre highlight *</label>
-                                <input v-model="form.titre_highlight" type="text" class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20" />
-                                <p v-if="form.errors.titre_highlight" class="mt-2 text-xs text-red-600">{{ form.errors.titre_highlight }}</p>
+                                <h3 class="text-sm font-semibold text-slate-900">Titre</h3>
+                                <p class="mt-1 text-xs text-slate-500">Le titre principal du slide.</p>
                             </div>
-                            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                <div>
-                                    <label class="text-xs font-semibold text-slate-700">Titre ligne 1</label>
-                                    <input v-model="form.titre_ligne1" type="text" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" />
-                                </div>
-                                <div>
-                                    <label class="text-xs font-semibold text-slate-700">Titre ligne 2</label>
-                                    <input v-model="form.titre_ligne2" type="text" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" />
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold text-slate-700">Description</label>
-                                <textarea v-model="form.description" rows="4" class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20"></textarea>
-                            </div>
+                            <span class="text-xs text-slate-400">Obligatoire</span>
+                        </div>
+                        <div class="mt-4">
+                            <input
+                                v-model="form.titre"
+                                type="text"
+                                class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20"
+                                placeholder="Ex: Bienvenue a l'Ecole Doctorale"
+                            />
+                            <p v-if="form.errors.titre" class="mt-2 text-xs text-red-600">{{ form.errors.titre }}</p>
                         </div>
                     </section>
 
                     <section class="rounded-2xl border border-slate-100 bg-white p-6">
-                        <h3 class="text-sm font-semibold text-slate-900">Visuel</h3>
-                        <div class="mt-4 space-y-4">
-                            <div v-if="imagePreviewUrl" class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                                <img :src="imagePreviewUrl" alt="" class="h-48 w-full object-cover" />
-                                <button type="button" class="absolute right-2 top-2 rounded-xl border border-slate-200 bg-white/90 p-2 text-slate-700" @click="clearNewImage">Retirer</button>
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <h3 class="text-sm font-semibold text-slate-900">Description</h3>
+                                <p class="mt-1 text-xs text-slate-500">Texte descriptif affiche sous le titre.</p>
                             </div>
-                            <div v-else-if="selectedImage" class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                                <img :src="selectedImage.url" alt="" class="h-48 w-full object-cover" />
-                            </div>
-                            <div class="flex items-center justify-between gap-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6">
-                                <div>
-                                    <p class="text-sm font-semibold text-slate-700">Uploader une image</p>
-                                    <p class="mt-1 text-xs text-slate-500">PNG, JPG jusqu'a 5MB.</p>
-                                </div>
-                                <input ref="imageInput" type="file" accept="image/*" class="text-sm" @change="setNewImage" />
-                            </div>
-                            <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                                <button
-                                    v-for="image in images"
-                                    :key="image.id"
-                                    type="button"
-                                    class="group relative overflow-hidden rounded-xl border border-slate-200"
-                                    @click="selectImage(image)"
-                                >
-                                    <img :src="image.url" alt="" class="h-24 w-full object-cover" />
-                                    <div v-if="form.image_id === image.id" class="absolute inset-0 bg-ed-primary/30"></div>
-                                </button>
-                            </div>
+                            <span class="text-xs text-slate-400">Optionnel</span>
+                        </div>
+                        <div class="mt-4">
+                            <textarea
+                                v-model="form.description"
+                                rows="4"
+                                class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20"
+                                placeholder="Description du slide..."
+                            ></textarea>
+                            <p v-if="form.errors.description" class="mt-2 text-xs text-red-600">{{ form.errors.description }}</p>
                         </div>
                     </section>
 
                     <section class="rounded-2xl border border-slate-100 bg-white p-6">
-                        <h3 class="text-sm font-semibold text-slate-900">CTA & actualite</h3>
-                        <div class="mt-4 space-y-4">
+                        <div class="flex items-start justify-between gap-4">
                             <div>
-                                <label class="text-xs font-semibold text-slate-700">Recherche actualite</label>
-                                <input v-model="actualiteSearch" type="text" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" placeholder="Rechercher une actualite..." />
+                                <h3 class="text-sm font-semibold text-slate-900">Lien (CTA)</h3>
+                                <p class="mt-1 text-xs text-slate-500">Bouton d'action sur le slide.</p>
                             </div>
-                            <div v-if="actualiteResults.length" class="max-h-48 overflow-y-auto rounded-xl border border-slate-200 p-2 text-sm">
-                                <button
-                                    v-for="result in actualiteResults"
-                                    :key="result.id"
-                                    type="button"
-                                    class="flex w-full items-center justify-between rounded-lg px-2.5 py-2 hover:bg-slate-50"
-                                    @click="selectActualite(result)"
-                                >
-                                    <span class="text-slate-700">{{ result.titre }}</span>
-                                    <span class="text-xs text-slate-400">{{ result.date_publication }}</span>
-                                </button>
-                            </div>
-                            <div v-if="selectedActualite" class="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
-                                <p class="text-xs font-semibold text-emerald-700">Actualite selectionnee</p>
-                                <p class="mt-1 text-sm text-emerald-800">{{ selectedActualite.titre }}</p>
-                                <button type="button" class="mt-2 text-xs font-semibold text-emerald-700" @click="clearActualite">Retirer</button>
+                            <span class="text-xs text-slate-400">Optionnel</span>
+                        </div>
+                        <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div>
+                                <label class="text-xs font-semibold text-slate-700">URL du lien</label>
+                                <input
+                                    v-model="form.lien_cta"
+                                    type="text"
+                                    class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20"
+                                    placeholder="https://..."
+                                />
                             </div>
                             <div>
-                                <label class="text-xs font-semibold text-slate-700">Lien CTA</label>
-                                <input v-model="form.lien_cta" type="text" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" placeholder="https://..." />
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold text-slate-700">Texte CTA</label>
-                                <input v-model="form.texte_cta" type="text" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" placeholder="Voir plus" />
+                                <label class="text-xs font-semibold text-slate-700">Texte du bouton</label>
+                                <input
+                                    v-model="form.texte_cta"
+                                    type="text"
+                                    class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20"
+                                    placeholder="En savoir plus"
+                                />
                             </div>
                         </div>
                     </section>
                 </div>
 
+                <!-- Sidebar -->
                 <aside class="space-y-6 lg:col-span-4">
                     <section class="rounded-2xl border border-slate-100 bg-white p-6">
                         <h3 class="text-sm font-semibold text-slate-900">Parametres</h3>
                         <div class="mt-4 space-y-4">
                             <div>
-                                <label class="text-xs font-semibold text-slate-700">Ordre</label>
-                                <input v-model="form.ordre" type="number" min="1" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20" />
+                                <label class="text-xs font-semibold text-slate-700">Ordre d'affichage</label>
+                                <input
+                                    v-model="form.ordre"
+                                    type="number"
+                                    min="1"
+                                    class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20"
+                                />
                             </div>
+
                             <label class="flex items-start gap-3 text-sm">
                                 <input v-model="form.visible" type="checkbox" class="mt-0.5 rounded border-slate-300 text-ed-primary focus:ring-ed-primary/20" />
                                 <span>
                                     <span class="font-semibold text-slate-800">Visible</span>
-                                    <span class="block text-xs text-slate-500">Afficher sur le site.</span>
+                                    <span class="block text-xs text-slate-500">Afficher ce slide sur le site.</span>
                                 </span>
                             </label>
                         </div>
                     </section>
 
                     <section class="rounded-2xl border border-slate-100 bg-white p-6">
-                        <h3 class="text-sm font-semibold text-slate-900">Badge</h3>
-                        <div class="mt-4 space-y-4">
+                        <div class="flex items-center justify-between gap-4">
                             <div>
-                                <label class="text-xs font-semibold text-slate-700">Texte</label>
-                                <input v-model="form.badge_texte" type="text" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" />
+                                <h3 class="text-sm font-semibold text-slate-900">Image</h3>
+                                <p class="mt-1 text-xs text-slate-500">Image de fond du slide.</p>
                             </div>
-                            <div>
-                                <label class="text-xs font-semibold text-slate-700">Icone</label>
-                                <select v-model="form.badge_icon" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20">
-                                    <option value="university">Universite</option>
-                                    <option value="research">Recherche</option>
-                                    <option value="students">Etudiants</option>
-                                </select>
-                            </div>
+                            <button v-if="imagePreviewUrl" type="button" class="text-xs font-semibold text-red-600 hover:text-red-700" @click="clearNewImage">
+                                Retirer
+                            </button>
                         </div>
-                    </section>
-
-                    <section class="rounded-2xl border border-slate-100 bg-white p-6">
-                        <h3 class="text-sm font-semibold text-slate-900">Couleur de fond</h3>
-                        <div class="mt-4 space-y-2">
-                            <label v-for="option in backgroundOptions" :key="option.value" class="flex items-center gap-3 rounded-xl border border-slate-200 px-3 py-2 text-sm">
-                                <input v-model="form.couleur_fond" type="radio" :value="option.value" class="text-ed-primary focus:ring-ed-primary/20" />
-                                <span class="h-6 w-10 rounded-lg bg-gradient-to-r" :class="option.value"></span>
-                                <span class="text-slate-700">{{ option.label }}</span>
-                            </label>
-                            <p v-if="form.errors.couleur_fond" class="text-xs text-red-600">{{ form.errors.couleur_fond }}</p>
+                        <div class="mt-4">
+                            <div v-if="imagePreviewUrl" class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                <img :src="imagePreviewUrl" alt="Apercu" class="h-44 w-full object-cover" />
+                            </div>
+                            <div v-else class="relative">
+                                <input
+                                    ref="imageInput"
+                                    type="file"
+                                    accept="image/*"
+                                    class="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+                                    @change="setNewImage"
+                                />
+                                <div class="w-full rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-10 text-center">
+                                    <svg class="mx-auto h-10 w-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="mt-2 text-sm font-semibold text-slate-700">Choisir une image</p>
+                                    <p class="mt-1 text-xs text-slate-500">PNG, JPG jusqu'a 5 Mo</p>
+                                </div>
+                            </div>
+                            <p v-if="form.errors.new_image" class="mt-2 text-xs text-red-600">{{ form.errors.new_image }}</p>
                         </div>
                     </section>
                 </aside>
             </form>
+        </div>
+
+        <!-- Sticky bottom bar -->
+        <div class="sticky bottom-4 z-20 mt-8">
+            <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-lg backdrop-blur">
+                <p class="text-xs text-slate-500">Assurez-vous de sauvegarder vos changements.</p>
+                <div class="flex items-center gap-2">
+                    <Link :href="route('admin.slides.index', slider.id)" class="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                        Annuler
+                    </Link>
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-xl bg-ed-primary px-4 py-2 text-xs font-semibold text-white hover:bg-ed-secondary"
+                        :disabled="form.processing"
+                        @click="submit"
+                    >
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                        Creer le slide
+                    </button>
+                </div>
+            </div>
         </div>
     </AdminLayout>
 </template>

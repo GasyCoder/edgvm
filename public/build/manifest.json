@@ -1,10 +1,10 @@
 {
-  "_vendor-Dn3-JwDA.js": {
-    "file": "assets/vendor-Dn3-JwDA.js",
+  "_vendor-CCk3m37f.js": {
+    "file": "assets/vendor-CCk3m37f.js",
     "name": "vendor"
   },
   "resources/css/app.css": {
-    "file": "assets/app-CVUJI6Cb.css",
+    "file": "assets/app-vvTt8CtJ.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -13,12 +13,12 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-wU-7SJ4m.js",
+    "file": "assets/app-DetGjH_7.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-Dn3-JwDA.js"
+      "_vendor-CCk3m37f.js"
     ],
     "assets": [
       "assets/pattern-CFsavT2l.svg"
