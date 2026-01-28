@@ -195,38 +195,47 @@ const logoUrl = computed(() => {
                     </div>
 
                     <!-- Auth (desktop) -->
-                    <div class="hidden lg:flex items-center gap-3">
+                    <div class="hidden lg:flex items-center gap-2">
                         <Link
                             v-if="auth?.user"
                             :href="route('dashboard')"
-                            class="inline-flex items-center gap-2 rounded-lg bg-ed-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-ed-secondary"
+                            class="group relative inline-flex items-center justify-center h-10 w-10 rounded-xl bg-ed-primary text-white shadow-md transition hover:bg-ed-secondary hover:scale-105"
+                            title="Dashboard"
                         >
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-9 2v8m4-8v8m5-6v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6" />
                             </svg>
-                            Dashboard
+                            <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                                Dashboard
+                            </span>
                         </Link>
                         <Link
                             v-if="auth?.user"
                             :href="route('logout')"
                             method="post"
                             as="button"
-                            class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                            class="group relative inline-flex items-center justify-center h-10 w-10 rounded-xl border border-slate-200 text-slate-600 transition hover:border-red-300 hover:bg-red-50 hover:text-red-600 hover:scale-105"
+                            title="Deconnexion"
                         >
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
                             </svg>
-                            Deconnexion
+                            <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                                Deconnexion
+                            </span>
                         </Link>
                         <Link
                             v-else
                             :href="route('login')"
-                            class="inline-flex items-center gap-2 rounded-lg bg-ed-yellow px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-ed-yellow-dark"
+                            class="group relative inline-flex items-center justify-center h-10 w-10 rounded-xl bg-ed-yellow text-white shadow-md transition hover:bg-ed-yellow-dark hover:scale-105"
+                            title="Espace membres"
                         >
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
-                            Membres
+                            <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                                Espace membres
+                            </span>
                         </Link>
                     </div>
 
@@ -391,35 +400,41 @@ const logoUrl = computed(() => {
                         </Link>
 
                         <!-- Auth -->
-                        <div class="pt-2">
+                        <div class="pt-2 flex items-center justify-center gap-3">
                             <Link
                                 v-if="auth?.user"
                                 :href="route('dashboard')"
-                                class="block px-4 py-3 bg-ed-primary text-white rounded-lg text-center font-medium shadow-md hover:bg-ed-secondary transition"
+                                class="inline-flex items-center justify-center h-12 w-12 bg-ed-primary text-white rounded-xl shadow-md hover:bg-ed-secondary transition"
+                                title="Dashboard"
                                 @click="closeMobileMenu"
                             >
-                                Dashboard
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-9 2v8m4-8v8m5-6v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6" />
+                                </svg>
                             </Link>
                             <Link
                                 v-if="auth?.user"
                                 :href="route('logout')"
                                 method="post"
                                 as="button"
-                                class="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                                class="inline-flex items-center justify-center h-12 w-12 rounded-xl border border-red-200 text-red-600 transition hover:bg-red-50"
+                                title="Deconnexion"
                                 @click="closeMobileMenu"
                             >
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
                                 </svg>
-                                Deconnexion
                             </Link>
                             <Link
                                 v-else
                                 :href="route('login')"
-                                class="block px-4 py-3 bg-ed-yellow text-white rounded-lg text-center font-medium shadow-md hover:bg-ed-yellow-dark transition"
+                                class="inline-flex items-center justify-center h-12 w-12 bg-ed-yellow text-white rounded-xl shadow-md hover:bg-ed-yellow-dark transition"
+                                title="Espace membres"
                                 @click="closeMobileMenu"
                             >
-                                Membres
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
                             </Link>
                         </div>
                     </div>
