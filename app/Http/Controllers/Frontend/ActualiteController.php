@@ -23,12 +23,12 @@ class ActualiteController extends Controller
             $view = 'grid';
         }
 
-        $query = Actualite::with(['category', 'image', 'tags', 'auteur'])
+        $query = Actualite::with(['category', 'categories', 'image', 'tags', 'auteur'])
             ->withSlug()
             ->published();
 
         if ($category !== '') {
-            $query->whereHas('category', fn ($q) => $q->where('slug', $category));
+            $query->whereHas('categories', fn ($q) => $q->where('slug', $category));
         }
 
         if ($tag !== '') {
@@ -121,13 +121,18 @@ class ActualiteController extends Controller
 
         $this->incrementUniqueView($request, $actualite);
 
-        $actualite->load(['category', 'image', 'tags', 'auteur', 'galerie']);
+        $actualite->load(['category', 'categories', 'image', 'tags', 'auteur', 'galerie']);
+
+        $categoryIds = $actualite->categories->pluck('id')->values();
+        if ($categoryIds->isEmpty() && $actualite->category_id) {
+            $categoryIds = collect([$actualite->category_id]);
+        }
 
         $similaires = Actualite::with(['category', 'image'])
             ->withSlug()
             ->published()
             ->where('id', '!=', $actualite->id)
-            ->where('category_id', $actualite->category_id)
+            ->whereHas('categories', fn ($q) => $q->whereIn('categories.id', $categoryIds))
             ->limit(3)
             ->get();
 

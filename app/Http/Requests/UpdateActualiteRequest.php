@@ -16,7 +16,8 @@ class UpdateActualiteRequest extends FormRequest
         return [
             'titre' => ['required', 'string', 'max:255'],
             'contenu' => ['required', 'string'],
-            'category_id' => ['required', 'exists:categories,id'],
+            'category_ids' => ['required', 'array', 'min:1'],
+            'category_ids.*' => ['exists:categories,id'],
             'selectedTags' => ['nullable', 'array'],
             'selectedTags.*' => ['exists:tags,id'],
             'image_id' => ['nullable', 'exists:media,id'],
@@ -33,7 +34,7 @@ class UpdateActualiteRequest extends FormRequest
         return [
             'titre.required' => 'Le titre est obligatoire.',
             'contenu.required' => 'Le contenu est obligatoire.',
-            'category_id.required' => 'La categorie est obligatoire.',
+            'category_ids.required' => 'La categorie est obligatoire.',
         ];
     }
 }

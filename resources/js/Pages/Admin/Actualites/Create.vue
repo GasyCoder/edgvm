@@ -20,7 +20,7 @@ const editorId = 'actualite-create-editor';
 const form = useForm({
     titre: '',
     contenu: '',
-    category_id: '',
+    category_ids: [],
     selectedTags: [],
     image_id: null,
     galerieImages: [],
@@ -221,14 +221,14 @@ const submit = () => {
                         <h3 class="text-sm font-semibold text-slate-900">Parametres</h3>
                         <div class="mt-4 space-y-4">
                             <div>
-                                <label class="text-xs font-semibold text-slate-700">Categorie *</label>
-                                <select v-model="form.category_id" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20">
-                                    <option value="">Selectionner</option>
+                                <label class="text-xs font-semibold text-slate-700">Categories *</label>
+                                <select v-model="form.category_ids" multiple class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20">
                                     <option v-for="category in categories" :key="category.id" :value="category.id">
                                         {{ category.nom }}
                                     </option>
                                 </select>
-                                <p v-if="form.errors.category_id" class="mt-2 text-xs text-red-600">{{ form.errors.category_id }}</p>
+                                <p class="mt-2 text-xs text-slate-500">Selection multiple possible.</p>
+                                <p v-if="form.errors.category_ids" class="mt-2 text-xs text-red-600">{{ form.errors.category_ids }}</p>
                             </div>
 
                             <div>

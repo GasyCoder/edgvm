@@ -106,16 +106,23 @@ class ActualiteController extends Controller
     public function store(StoreActualiteRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $categoryIds = array_values($data['category_ids'] ?? []);
         $selectedTags = $data['selectedTags'] ?? [];
         $galerieImages = $data['galerieImages'] ?? [];
         $notify = (bool) ($data['notifier_abonnes'] ?? false);
 
-        unset($data['selectedTags'], $data['galerieImages'], $data['notifier_abonnes']);
+        unset($data['category_ids'], $data['selectedTags'], $data['galerieImages'], $data['notifier_abonnes']);
+
+        $data['category_id'] = $categoryIds[0] ?? null;
 
         $actualite = Actualite::create([
             ...$data,
             'auteur_id' => Auth::id(),
         ]);
+
+        if (! empty($categoryIds)) {
+            $actualite->categories()->sync($categoryIds);
+        }
 
         if (! empty($selectedTags)) {
             $actualite->tags()->attach($selectedTags);
@@ -140,7 +147,11 @@ class ActualiteController extends Controller
 
     public function edit(Request $request, Actualite $actualite): Response
     {
-        $actualite->load(['tags', 'image', 'galerie', 'category']);
+        $actualite->load(['tags', 'image', 'galerie', 'category', 'categories']);
+        $categoryIds = $actualite->categories->pluck('id')->values();
+        if ($categoryIds->isEmpty() && $actualite->category_id) {
+            $categoryIds = collect([$actualite->category_id]);
+        }
 
         return Inertia::render('Admin/Actualites/Edit', [
             'actualite' => [
@@ -148,7 +159,7 @@ class ActualiteController extends Controller
                 'slug' => $actualite->slug,
                 'titre' => $actualite->titre,
                 'contenu' => $actualite->contenu,
-                'category_id' => $actualite->category_id,
+                'category_ids' => $categoryIds->values()->toArray(),
                 'image_id' => $actualite->image_id,
                 'image_url' => $actualite->image?->url,
                 'date_publication' => $actualite->date_publication?->format('Y-m-d'),
@@ -177,13 +188,17 @@ class ActualiteController extends Controller
     public function update(UpdateActualiteRequest $request, Actualite $actualite): RedirectResponse
     {
         $data = $request->validated();
+        $categoryIds = array_values($data['category_ids'] ?? []);
         $selectedTags = $data['selectedTags'] ?? [];
         $galerieImages = $data['galerieImages'] ?? [];
 
-        unset($data['selectedTags'], $data['galerieImages']);
+        unset($data['category_ids'], $data['selectedTags'], $data['galerieImages']);
+
+        $data['category_id'] = $categoryIds[0] ?? null;
 
         $actualite->update($data);
 
+        $actualite->categories()->sync($categoryIds);
         $actualite->tags()->sync($selectedTags);
 
         $galerieData = [];

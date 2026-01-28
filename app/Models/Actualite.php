@@ -65,6 +65,11 @@ class Actualite extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'actualite_category')->withTimestamps();
+    }
+
     public function image()
     {
         return $this->belongsTo(Media::class, 'image_id');
@@ -101,7 +106,9 @@ class Actualite extends Model
 
     public function scopeByCategory($query, $categoryId)
     {
-        return $query->where('category_id', $categoryId);
+        return $query->whereHas('categories', function ($q) use ($categoryId) {
+            $q->where('categories.id', $categoryId);
+        });
     }
 
     public function scopeByTag($query, $tagId)

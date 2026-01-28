@@ -43,7 +43,7 @@ class Category extends Model
     // Relations
     public function actualites()
     {
-        return $this->hasMany(Actualite::class);
+        return $this->belongsToMany(Actualite::class, 'actualite_category')->withTimestamps();
     }
 
     // Scopes
