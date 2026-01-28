@@ -216,7 +216,7 @@ defineOptions({
                                 </div>
 
                                 <div class="border-t border-gray-100 px-4 sm:px-5 py-3 flex items-center justify-between">
-                                    <Link :href="route('evenements.show', event.id)" class="inline-flex items-center gap-1.5 text-[12px] font-semibold text-ed-primary hover:text-ed-secondary">
+                                    <Link :href="route('evenements.show', event.slug)" class="inline-flex items-center gap-1.5 text-[12px] font-semibold text-ed-primary hover:text-ed-secondary">
                                         <span>Voir le detail</span>
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1" d="M9 5l7 7-7 7"></path>

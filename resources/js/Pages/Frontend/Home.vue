@@ -1065,7 +1065,7 @@ defineOptions({
 
                                         <!-- Content -->
                                         <div class="min-w-0 flex-1">
-                                            <Link :href="route('evenements.show', evenement.id)" class="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ed-primary/40 rounded">
+                                            <Link :href="route('evenements.show', evenement.slug)" class="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ed-primary/40 rounded">
                                                 <div class="flex items-start justify-between gap-2">
                                                     <h4 class="text-[13px] font-semibold text-gray-900 line-clamp-2 group-hover:text-ed-primary">
                                                         {{ evenement.titre }}
@@ -1101,7 +1101,7 @@ defineOptions({
                                             <!-- Actions -->
                                             <div class="mt-2 flex items-center justify-between">
                                                 <Link
-                                                    :href="route('evenements.show', evenement.id)"
+                                                    :href="route('evenements.show', evenement.slug)"
                                                     class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-ed-primary hover:text-ed-secondary"
                                                 >
                                                     <span>Details</span>

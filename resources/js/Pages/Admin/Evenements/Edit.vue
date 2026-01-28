@@ -16,9 +16,11 @@ const pdfSearch = ref(props.filters?.pdfSearch ?? '');
 const imagePreviewUrl = ref(null);
 const coverInput = ref(null);
 const selectedDocument = ref(props.selectedDocument ?? null);
+const slugTouched = ref(Boolean(props.evenement?.slug));
 
 const form = useForm({
     titre: props.evenement?.titre ?? '',
+    slug: props.evenement?.slug ?? '',
     description: props.evenement?.description ?? '',
     date_debut: props.evenement?.date_debut ?? '',
     heure_debut: props.evenement?.heure_debut ?? '',
@@ -51,6 +53,25 @@ watch(pdfSearch, () => {
         applyPdfSearch();
     }, 300);
 });
+
+const slugify = (value) => {
+    return value
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+};
+
+watch(() => form.titre, (value) => {
+    if (!slugTouched.value) {
+        form.slug = slugify(value || '');
+    }
+});
+
+const onSlugInput = () => {
+    slugTouched.value = true;
+};
 
 const setCoverImage = (event) => {
     const file = event.target.files?.[0] ?? null;
@@ -166,6 +187,18 @@ onBeforeUnmount(() => {
                                     placeholder="Titre de l'evenement"
                                 />
                                 <p v-if="form.errors.titre" class="mt-2 text-xs text-red-600">{{ form.errors.titre }}</p>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-slate-700">Slug</label>
+                                <input
+                                    v-model="form.slug"
+                                    type="text"
+                                    class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-ed-primary focus:ring-ed-primary/20"
+                                    placeholder="slug-evenement"
+                                    @input="onSlugInput"
+                                />
+                                <p class="mt-1 text-xs text-slate-500">Laisse vide pour generer automatiquement.</p>
+                                <p v-if="form.errors.slug" class="mt-2 text-xs text-red-600">{{ form.errors.slug }}</p>
                             </div>
                             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div>
