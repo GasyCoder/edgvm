@@ -30,6 +30,9 @@ const importForm = useForm({
     importFile: null,
 });
 
+const importInput = ref(null);
+const importDragging = ref(false);
+
 const applyFilters = () => {
     router.get(route('admin.newsletter.subscribers'), {
         search: search.value || undefined,
@@ -107,6 +110,26 @@ const exportUrl = computed(() => {
 
 const setImportFile = (event) => {
     importForm.importFile = event.target.files?.[0] ?? null;
+};
+
+const handleImportFile = (file) => {
+    if (!file) {
+        return;
+    }
+    importForm.importFile = file;
+};
+
+const onImportDrop = (event) => {
+    event.preventDefault();
+    importDragging.value = false;
+    handleImportFile(event.dataTransfer?.files?.[0] ?? null);
+};
+
+const clearImportFile = () => {
+    importForm.importFile = null;
+    if (importInput.value) {
+        importInput.value.value = '';
+    }
 };
 
 const submitImport = () => {
@@ -259,11 +282,61 @@ const submitImport = () => {
             <Pagination v-if="subscribers.links" :links="subscribers.links" />
 
             <div class="rounded-2xl border border-slate-100 bg-white p-6">
-                <h3 class="text-sm font-semibold text-slate-900">Importer des abonnes</h3>
-                <div class="mt-4 flex flex-col gap-3 md:flex-row md:items-center">
-                    <input type="file" accept=".xlsx,.xls,.csv" class="text-sm" @change="setImportFile" />
-                    <button type="button" class="rounded-xl bg-ed-primary px-4 py-2 text-sm font-semibold text-white hover:bg-ed-secondary" :disabled="importForm.processing || !importForm.importFile" @click="submitImport">Importer</button>
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-900">Importer des abonnes</h3>
+                        <p class="mt-1 text-xs text-slate-500">Formats acceptes: CSV, XLS, XLSX.</p>
+                    </div>
+                    <button
+                        type="button"
+                        class="rounded-xl bg-ed-primary px-4 py-2 text-xs font-semibold text-white hover:bg-ed-secondary disabled:cursor-not-allowed disabled:opacity-60"
+                        :disabled="importForm.processing || !importForm.importFile"
+                        @click="submitImport"
+                    >
+                        Importer
+                    </button>
                 </div>
+
+                <div
+                    class="mt-4 relative rounded-2xl border-2 border-dashed transition-all duration-200"
+                    :class="importDragging ? 'border-ed-primary bg-ed-primary/5' : 'border-slate-200 hover:border-slate-300'"
+                    @dragover.prevent="importDragging = true"
+                    @dragleave.prevent="importDragging = false"
+                    @drop="onImportDrop"
+                >
+                    <div class="p-5">
+                        <div v-if="importForm.importFile" class="flex flex-wrap items-center justify-between gap-3">
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-slate-700 truncate">{{ importForm.importFile.name }}</p>
+                                <p class="text-xs text-slate-500">Cliquez ou deposez pour remplacer.</p>
+                            </div>
+                            <button
+                                type="button"
+                                class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-500"
+                                @click="clearImportFile"
+                            >
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div v-else class="text-center">
+                            <svg class="mx-auto h-9 w-9 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p class="mt-2 text-sm font-medium text-slate-600">Deposez un fichier ou cliquez pour choisir</p>
+                            <p class="text-xs text-slate-400">CSV, XLS, XLSX</p>
+                        </div>
+                    </div>
+                    <input
+                        ref="importInput"
+                        type="file"
+                        accept=".xlsx,.xls,.csv"
+                        class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                        @change="(e) => handleImportFile(e.target.files?.[0] ?? null)"
+                    />
+                </div>
+
                 <p v-if="importForm.errors.importFile" class="mt-2 text-xs text-red-600">{{ importForm.errors.importFile }}</p>
             </div>
         </div>
