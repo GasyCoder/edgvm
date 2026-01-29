@@ -1,6 +1,6 @@
 <script setup>
 import { onBeforeUnmount, ref } from 'vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import FlashMessage from '@/Components/Common/FlashMessage.vue';
 
@@ -8,13 +8,14 @@ const props = defineProps({
     slider: Object,
     actualites: Array,
     defaults: Object,
-    medias: Array,
+    media: Object,
 });
 
 const mediaMode = ref('library');
 const uploadPreviewUrl = ref(null);
 const libraryPreviewUrl = ref(null);
 const imageInput = ref(null);
+const showMediaSelector = ref(false);
 
 const form = useForm({
     titre: '',
@@ -56,17 +57,36 @@ const clearNewImage = () => {
     }
 };
 
-const selectMedia = () => {
+const openMediaSelector = () => {
+    mediaMode.value = 'library';
+    showMediaSelector.value = true;
+};
+
+const selectImage = (mediaItem) => {
+    form.media_id = mediaItem.id;
+    libraryPreviewUrl.value = mediaItem.url;
+    showMediaSelector.value = false;
     clearNewImage();
     mediaMode.value = 'library';
+};
 
-    if (!form.media_id) {
-        libraryPreviewUrl.value = null;
+const changeMediaPage = (link) => {
+    if (!link?.url) {
         return;
     }
 
-    const selected = props.medias?.find((media) => media.id === form.media_id);
-    libraryPreviewUrl.value = selected?.url ?? null;
+    const url = new URL(link.url);
+    const page = url.searchParams.get('media_page');
+
+    router.get(
+        route('admin.slides.create', props.slider.id),
+        { media_page: page },
+        {
+            only: ['media'],
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
 };
 
 const submit = () => {
@@ -294,22 +314,18 @@ onBeforeUnmount(() => {
                             </div>
 
                             <div v-if="mediaMode === 'library'" class="mt-4 space-y-4">
-                                <div>
-                                    <label class="text-xs font-semibold text-slate-700">Image dans la mediatheque</label>
-                                    <select v-model="form.media_id" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" @change="selectMedia">
-                                        <option :value="null">-- Aucune image --</option>
-                                        <option v-for="media in medias" :key="media.id" :value="media.id">
-                                            {{ media.nom }}
-                                        </option>
-                                    </select>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50" @click="openMediaSelector">
+                                        Selectionner dans la mediatheque
+                                    </button>
+                                    <Link :href="route('admin.media.upload')" target="_blank" class="text-xs font-semibold text-ed-primary hover:text-ed-secondary">
+                                        Uploader dans la mediatheque
+                                    </Link>
                                 </div>
                                 <div v-if="libraryPreviewUrl" class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
                                     <img :src="libraryPreviewUrl" alt="Image selectionnee" class="h-44 w-full object-cover" />
                                     <span class="absolute left-2 top-2 rounded-lg bg-slate-900/70 px-2 py-1 text-xs font-medium text-white">Selectionnee</span>
                                 </div>
-                                <Link :href="route('admin.media.upload')" target="_blank" class="text-xs font-semibold text-ed-primary hover:text-ed-secondary">
-                                    Ajouter une image a la mediatheque
-                                </Link>
                             </div>
 
                             <div v-else class="relative mt-4">
@@ -364,6 +380,44 @@ onBeforeUnmount(() => {
                         </svg>
                         Creer le slide
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="showMediaSelector" class="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <div class="absolute inset-0 bg-slate-900/40" @click="showMediaSelector = false"></div>
+            <div class="relative w-full max-w-4xl rounded-2xl bg-white p-6 shadow-xl">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <h3 class="text-lg font-semibold text-slate-900">Selectionner une image</h3>
+                    <button type="button" class="rounded-xl border border-slate-200 px-3 py-2 text-sm" @click="showMediaSelector = false">Fermer</button>
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                    <button
+                        v-for="mediaItem in media.data"
+                        :key="mediaItem.id"
+                        type="button"
+                        class="group overflow-hidden rounded-xl border border-slate-200 text-left transition hover:border-ed-primary/50"
+                        @click="selectImage(mediaItem)"
+                    >
+                        <img :src="mediaItem.url" alt="" class="h-28 w-full object-cover transition group-hover:opacity-90" />
+                        <div class="px-3 py-2 text-xs text-slate-600">
+                            {{ mediaItem.nom }}
+                        </div>
+                    </button>
+                </div>
+                <div v-if="!media.data.length" class="mt-6 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
+                    Aucune image dans la mediatheque.
+                </div>
+                <div v-if="media.links" class="mt-6 flex flex-wrap items-center justify-center gap-2">
+                    <button
+                        v-for="link in media.links"
+                        :key="link.label"
+                        type="button"
+                        class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        :disabled="!link.url"
+                        v-html="link.label"
+                        @click="changeMediaPage(link)"
+                    ></button>
                 </div>
             </div>
         </div>

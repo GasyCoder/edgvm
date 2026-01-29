@@ -57,7 +57,7 @@ class SlideController extends Controller
         ]);
     }
 
-    public function create(Slider $slider): Response
+    public function create(Request $request, Slider $slider): Response
     {
         $actualites = Actualite::query()
             ->published()
@@ -75,7 +75,7 @@ class SlideController extends Controller
                 'nom' => $slider->nom,
             ],
             'actualites' => $actualites,
-            'medias' => $this->imageOptions(),
+            'media' => $this->mediaSelector($request),
             'defaults' => [
                 'ordre' => ($slider->slides()->max('ordre') ?? 0) + 1,
                 'visible' => true,
@@ -122,7 +122,7 @@ class SlideController extends Controller
             ->with('success', 'Slide cree avec succes.');
     }
 
-    public function edit(Slider $slider, Slide $slide): Response
+    public function edit(Request $request, Slider $slider, Slide $slide): Response
     {
         $this->ensureSlideBelongsToSlider($slider, $slide);
 
@@ -142,7 +142,7 @@ class SlideController extends Controller
                 'nom' => $slider->nom,
             ],
             'actualites' => $actualites,
-            'medias' => $this->imageOptions(),
+            'media' => $this->mediaSelector($request),
             'slide' => [
                 'id' => $slide->id,
                 'titre' => $slide->titre_highlight,
@@ -237,14 +237,15 @@ class SlideController extends Controller
         }
     }
 
-    private function imageOptions(): array
+    private function mediaSelector(Request $request): array
     {
+        $mediaPage = $request->integer('media_page', 1);
+
         return Media::query()
             ->where('type', 'image')
             ->latest()
-            ->limit(80)
-            ->get()
-            ->map(fn (Media $media) => [
+            ->paginate(12, ['*'], 'media_page', $mediaPage)
+            ->through(fn (Media $media) => [
                 'id' => $media->id,
                 'nom' => $media->display_name,
                 'url' => $media->url,
