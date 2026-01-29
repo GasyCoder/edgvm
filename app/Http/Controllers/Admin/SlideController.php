@@ -76,6 +76,7 @@ class SlideController extends Controller
             ],
             'actualites' => $actualites,
             'media' => $this->mediaSelector($request),
+            'uploadedMediaId' => session()->pull('uploaded_media_id'),
             'defaults' => [
                 'ordre' => ($slider->slides()->max('ordre') ?? 0) + 1,
                 'visible' => true,
@@ -143,6 +144,7 @@ class SlideController extends Controller
             ],
             'actualites' => $actualites,
             'media' => $this->mediaSelector($request),
+            'uploadedMediaId' => session()->pull('uploaded_media_id'),
             'slide' => [
                 'id' => $slide->id,
                 'titre' => $slide->titre_highlight,

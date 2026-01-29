@@ -9,6 +9,7 @@ const props = defineProps({
     actualites: Array,
     defaults: Object,
     media: Object,
+    uploadedMediaId: Number,
 });
 
 const mediaMode = ref('library');
@@ -16,6 +17,7 @@ const uploadPreviewUrl = ref(null);
 const libraryPreviewUrl = ref(null);
 const imageInput = ref(null);
 const showMediaSelector = ref(false);
+const mediaUploadInput = ref(null);
 
 const form = useForm({
     titre: '',
@@ -28,6 +30,11 @@ const form = useForm({
     visible: props.defaults?.visible ?? true,
     couleur_texte_titre: '#FFFFFF',
     couleur_cta: '#FFFFFF',
+});
+
+const mediaUploadForm = useForm({
+    files: [],
+    redirect_to: '',
 });
 
 const setNewImage = (event) => {
@@ -55,6 +62,32 @@ const clearNewImage = () => {
     if (imageInput.value) {
         imageInput.value.value = '';
     }
+};
+
+const setMediaUploadFiles = (event) => {
+    mediaUploadForm.files = Array.from(event.target.files ?? []);
+};
+
+const clearMediaUploadFiles = () => {
+    mediaUploadForm.files = [];
+
+    if (mediaUploadInput.value) {
+        mediaUploadInput.value.value = '';
+    }
+};
+
+const submitMediaUpload = () => {
+    if (!mediaUploadForm.files.length) {
+        return;
+    }
+
+    mediaUploadForm.redirect_to = `${route('admin.slides.create', props.slider.id)}?media_page=1`;
+
+    mediaUploadForm.post(route('admin.media.store'), {
+        preserveScroll: true,
+        forceFormData: true,
+        onFinish: () => clearMediaUploadFiles(),
+    });
 };
 
 const openMediaSelector = () => {
@@ -89,12 +122,27 @@ const changeMediaPage = (link) => {
     );
 };
 
+const applyUploadedMediaSelection = () => {
+    if (!props.uploadedMediaId) {
+        return;
+    }
+
+    const selected = props.media?.data?.find((mediaItem) => mediaItem.id === props.uploadedMediaId);
+
+    form.media_id = props.uploadedMediaId;
+    libraryPreviewUrl.value = selected?.url ?? null;
+    clearNewImage();
+    mediaMode.value = 'library';
+};
+
 const submit = () => {
     form.post(route('admin.slides.store', props.slider.id), {
         preserveScroll: true,
         forceFormData: true,
     });
 };
+
+applyUploadedMediaSelection();
 
 onBeforeUnmount(() => {
     if (uploadPreviewUrl.value) {
@@ -404,6 +452,36 @@ onBeforeUnmount(() => {
                             {{ mediaItem.nom }}
                         </div>
                     </button>
+                </div>
+                <div class="mt-6 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <p class="text-sm font-semibold text-slate-700">Uploader dans la mediatheque</p>
+                            <p class="text-xs text-slate-500">Selectionnez une ou plusieurs images.</p>
+                        </div>
+                        <button
+                            type="button"
+                            class="rounded-xl bg-ed-primary px-3 py-2 text-xs font-semibold text-white hover:bg-ed-secondary disabled:cursor-not-allowed disabled:opacity-60"
+                            :disabled="mediaUploadForm.processing || !mediaUploadForm.files.length"
+                            @click="submitMediaUpload"
+                        >
+                            Uploader
+                        </button>
+                    </div>
+                    <div class="mt-3">
+                        <input
+                            ref="mediaUploadInput"
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            class="block w-full text-xs text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-100"
+                            @change="setMediaUploadFiles"
+                        />
+                        <div v-if="mediaUploadForm.files.length" class="mt-2 text-xs text-slate-500">
+                            {{ mediaUploadForm.files.map((file) => file.name).join(', ') }}
+                        </div>
+                        <p v-if="mediaUploadForm.errors.files" class="mt-2 text-xs text-red-600">{{ mediaUploadForm.errors.files }}</p>
+                    </div>
                 </div>
                 <div v-if="!media.data.length" class="mt-6 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
                     Aucune image dans la mediatheque.

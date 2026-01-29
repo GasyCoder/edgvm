@@ -82,6 +82,7 @@ class MediaController extends Controller
     {
         $uploadedCount = 0;
         $errors = [];
+        $lastMediaId = null;
 
         foreach ($request->file('files', []) as $file) {
             try {
@@ -104,7 +105,7 @@ class MediaController extends Controller
                 $path = $file->storeAs($folder, $filename, 'public');
 
                 // Créer l'enregistrement
-                Media::create([
+                $media = Media::create([
                     'nom_original' => $file->getClientOriginalName(),
                     'nom_fichier' => $filename,
                     'chemin' => $path,
@@ -115,14 +116,22 @@ class MediaController extends Controller
                 ]);
 
                 $uploadedCount++;
+                $lastMediaId = $media->id;
             } catch (\Exception $e) {
                 $errors[] = $file->getClientOriginalName().': '.$e->getMessage();
             }
         }
 
         if ($uploadedCount > 0) {
-            return redirect()->route('admin.media.index')
+            $redirectTarget = $this->resolveRedirectTarget($request);
+            $redirect = redirect()->to($redirectTarget)
                 ->with('success', "{$uploadedCount} fichier(s) uploadé(s) avec succès !");
+
+            if ($lastMediaId) {
+                $redirect->with('uploaded_media_id', $lastMediaId);
+            }
+
+            return $redirect;
         }
 
         return back()->withErrors($errors)->withInput();
@@ -159,5 +168,26 @@ class MediaController extends Controller
         }
 
         return 'other';
+    }
+
+    private function resolveRedirectTarget(Request $request): string
+    {
+        $redirectTo = $request->string('redirect_to')->toString();
+
+        if ($redirectTo !== '') {
+            if (str_starts_with($redirectTo, '/')
+                && ! str_starts_with($redirectTo, '//')
+                && ! str_contains($redirectTo, '://')) {
+                return $redirectTo;
+            }
+
+            $baseUrl = url('/');
+
+            if (str_starts_with($redirectTo, $baseUrl)) {
+                return $redirectTo;
+            }
+        }
+
+        return route('admin.media.index');
     }
 }
