@@ -78,11 +78,11 @@ class MediaController extends Controller
         return Inertia::render('Admin/Media/Upload');
     }
 
-    public function store(MediaUploadRequest $request): RedirectResponse
+    public function store(MediaUploadRequest $request): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $uploadedCount = 0;
         $errors = [];
-        $lastMediaId = null;
+        $uploadedMedia = [];
 
         foreach ($request->file('files', []) as $file) {
             try {
@@ -116,16 +116,38 @@ class MediaController extends Controller
                 ]);
 
                 $uploadedCount++;
-                $lastMediaId = $media->id;
+                $uploadedMedia[] = [
+                    'id' => $media->id,
+                    'nom' => $media->display_name,
+                    'url' => $media->url,
+                ];
             } catch (\Exception $e) {
                 $errors[] = $file->getClientOriginalName().': '.$e->getMessage();
             }
+        }
+
+        // Si c'est une requete AJAX (pour le modal), retourner du JSON
+        if ($request->boolean('ajax')) {
+            if ($uploadedCount > 0) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "{$uploadedCount} fichier(s) uploadé(s) avec succès !",
+                    'media' => $uploadedMedia,
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'errors' => $errors,
+            ], 422);
         }
 
         if ($uploadedCount > 0) {
             $redirectTarget = $this->resolveRedirectTarget($request);
             $redirect = redirect()->to($redirectTarget)
                 ->with('success', "{$uploadedCount} fichier(s) uploadé(s) avec succès !");
+
+            $lastMediaId = $uploadedMedia[count($uploadedMedia) - 1]['id'] ?? null;
 
             if ($lastMediaId) {
                 $redirect->with('uploaded_media_id', $lastMediaId);
