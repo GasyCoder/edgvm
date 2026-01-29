@@ -56,7 +56,7 @@ defineOptions({
     <Head title="Theses" />
 
     <div>
-        <section class="relative gradient-primary pt-24 md:pt-28 pb-16 md:pb-20 overflow-hidden">
+        <section class="relative gradient-primary pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 md:pb-20 overflow-hidden">
             <div class="absolute inset-0">
                 <div class="absolute inset-0 opacity-10" :style="{ backgroundImage: `url(${patternUrl})` }"></div>
                 <div class="absolute -top-10 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
@@ -161,8 +161,8 @@ defineOptions({
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    <div class="lg:col-span-3">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div class="lg:col-span-3 order-2 lg:order-1">
                         <div v-if="theses?.data?.length">
                             <div v-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                                 <Link
@@ -317,7 +317,7 @@ defineOptions({
                         </div>
                     </div>
 
-                    <aside class="lg:col-span-1 space-y-5">
+                    <aside class="lg:col-span-1 space-y-4 sm:space-y-5 order-1 lg:order-2">
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
                             <h3 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
                                 <span class="w-1.5 h-5 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></span>

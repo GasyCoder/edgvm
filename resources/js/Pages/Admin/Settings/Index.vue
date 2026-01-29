@@ -160,7 +160,7 @@ const submitSecretaire = () => {
                 description="Configuration globale du site."
             />
 
-            <section class="rounded-2xl border border-slate-100 bg-white p-6">
+            <section class="rounded-2xl border border-slate-100 bg-white p-4 sm:p-6">
                 <h3 class="text-sm font-semibold text-slate-900">Informations generales</h3>
                 <form class="mt-4 space-y-4" @submit.prevent="submitGeneral">
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -212,7 +212,7 @@ const submitSecretaire = () => {
             </section>
 
             <section class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div class="rounded-2xl border border-slate-100 bg-white p-6">
+                <div class="rounded-2xl border border-slate-100 bg-white p-4 sm:p-6">
                     <h3 class="text-sm font-semibold text-slate-900">SEO</h3>
                     <form class="mt-4 space-y-4" @submit.prevent="submitSeo">
                         <div>
@@ -235,7 +235,7 @@ const submitSecretaire = () => {
                     </form>
                 </div>
 
-                <div class="rounded-2xl border border-slate-100 bg-white p-6">
+                <div class="rounded-2xl border border-slate-100 bg-white p-4 sm:p-6">
                     <h3 class="text-sm font-semibold text-slate-900">Maintenance</h3>
                     <form class="mt-4 space-y-4" @submit.prevent="submitMaintenance">
                         <label class="flex items-start gap-3 text-sm">
@@ -254,7 +254,7 @@ const submitSecretaire = () => {
                 </div>
             </section>
 
-            <section class="rounded-2xl border border-slate-100 bg-white p-6">
+            <section class="rounded-2xl border border-slate-100 bg-white p-4 sm:p-6">
                 <h3 class="text-sm font-semibold text-slate-900">Statistiques Message Direction</h3>
                 <form class="mt-4 space-y-4" @submit.prevent="submitStats">
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -279,7 +279,7 @@ const submitSecretaire = () => {
             </section>
 
             <section class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div class="rounded-2xl border border-slate-100 bg-white p-6">
+                <div class="rounded-2xl border border-slate-100 bg-white p-4 sm:p-6">
                     <h3 class="text-sm font-semibold text-slate-900">Logo & favicon</h3>
                     <form class="mt-4 space-y-6" @submit.prevent="submitMedia">
                         <!-- Logo Upload -->
@@ -403,7 +403,7 @@ const submitSecretaire = () => {
                     </form>
                 </div>
 
-                <div class="rounded-2xl border border-slate-100 bg-white p-6">
+                <div class="rounded-2xl border border-slate-100 bg-white p-4 sm:p-6">
                     <h3 class="text-sm font-semibold text-slate-900">Securite admin</h3>
                     <form class="mt-4 space-y-4" @submit.prevent="submitSecurity">
                         <div>
@@ -423,7 +423,7 @@ const submitSecretaire = () => {
                 </div>
             </section>
 
-            <section class="rounded-2xl border border-slate-100 bg-white p-6">
+            <section class="rounded-2xl border border-slate-100 bg-white p-4 sm:p-6">
                 <h3 class="text-sm font-semibold text-slate-900">Compte secretaire</h3>
                 <form class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3" @submit.prevent="submitSecretaire">
                     <div>

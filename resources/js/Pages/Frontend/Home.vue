@@ -115,7 +115,7 @@ defineOptions({
     <!-- Hero Section with Slider -->
     <section
         v-if="slider && slides.length > 0"
-        class="relative mt-20 text-white overflow-hidden"
+        class="relative mt-16 sm:mt-20 text-white overflow-x-hidden"
     >
         <header class="sr-only">
             <h1>Ecole Doctorale Genie du Vivant et Modelisation (EDGVM) - Universite de Mahajanga</h1>
@@ -146,10 +146,10 @@ defineOptions({
             <div class="pointer-events-none absolute -bottom-28 -left-28 w-[520px] h-[520px] rounded-full bg-ed-primary/12 blur-3xl"></div>
         </div>
 
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center min-h-[360px] lg:min-h-[460px]">
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-16">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10 items-center min-h-[280px] sm:min-h-[360px] lg:min-h-[460px]">
                 <!-- Left column: Text content -->
-                <div class="relative flex flex-col justify-center min-h-[240px] pr-2 sm:pr-4 lg:pr-10">
+                <div class="relative flex flex-col justify-center min-h-[200px] sm:min-h-[240px] pr-2 sm:pr-4 lg:pr-10">
                     <template v-for="(slide, index) in slides" :key="slide.id">
                         <Transition
                             enter-active-class="transition ease-out duration-700"
@@ -161,12 +161,12 @@ defineOptions({
                         >
                             <div
                                 v-show="currentSlide === index"
-                                class="absolute inset-0 flex flex-col justify-center space-y-4"
+                                class="absolute inset-0 flex flex-col justify-center space-y-2 sm:space-y-4"
                             >
-                                <!-- Badge -->
+                                <!-- Badge - hidden on mobile -->
                                 <div
                                     v-if="slide.badge_texte"
-                                    class="inline-flex items-center gap-2 mb-1 w-fit px-3 py-1.5 rounded-full bg-white/10 ring-1 ring-white/15 backdrop-blur"
+                                    class="hidden sm:inline-flex items-center gap-2 mb-1 w-fit px-3 py-1.5 rounded-full bg-white/10 ring-1 ring-white/15 backdrop-blur"
                                 >
                                     <span class="w-2 h-2 rounded-full bg-ed-yellow"></span>
                                     <span class="text-[11px] font-semibold tracking-[0.18em] uppercase text-white/90">
@@ -175,26 +175,26 @@ defineOptions({
                                 </div>
 
                                 <!-- Title -->
-                                <h2 class="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-[1.12] md:leading-[1.12] drop-shadow-[0_6px_18px_rgba(0,0,0,0.28)]">
+                                <h2 class="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-[1.2] sm:leading-[1.12] drop-shadow-[0_6px_18px_rgba(0,0,0,0.28)]">
                                     <span v-if="slide.titre_ligne1" :style="{ color: slide.couleur_texte_titre || '#FFFFFF' }">{{ slide.titre_ligne1 }} </span>
                                     <span v-if="slide.titre_highlight" :style="{ color: slide.couleur_texte_titre || '#FFFFFF' }">{{ slide.titre_highlight }}</span>
                                     <span v-if="slide.titre_ligne2" :style="{ color: slide.couleur_texte_titre || '#FFFFFF' }"> {{ slide.titre_ligne2 }}</span>
                                 </h2>
 
-                                <!-- Description -->
+                                <!-- Description - hidden on mobile -->
                                 <p
                                     v-if="slide.description"
-                                    class="text-sm md:text-base text-white/85 leading-relaxed max-w-xl"
+                                    class="hidden sm:block text-sm md:text-base text-white/85 leading-relaxed max-w-xl"
                                 >
                                     {{ slide.description }}
                                 </p>
 
                                 <!-- CTA -->
-                                <div class="mt-4 flex flex-wrap gap-3">
+                                <div class="mt-2 sm:mt-4 flex flex-wrap gap-2 sm:gap-3">
                                     <a
                                         v-if="slide.lien_cta && slide.texte_cta"
                                         :href="slide.lien_cta"
-                                        class="inline-flex items-center px-6 py-3 rounded-xl text-sm font-semibold shadow-lg shadow-black/20 hover:brightness-[0.98] hover:-translate-y-[1px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-transparent"
+                                        class="inline-flex items-center px-4 py-2 sm:px-6 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold shadow-lg shadow-black/20 hover:brightness-[0.98] hover:-translate-y-[1px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-transparent"
                                         :style="{
                                             backgroundColor: slide.couleur_cta || '#FFFFFF',
                                             color: getContrastColor(slide.couleur_cta)
@@ -209,14 +209,14 @@ defineOptions({
                                     <Link
                                         v-if="index === 0"
                                         :href="route('pages.show', 'a-propos')"
-                                        class="inline-flex items-center px-6 py-3 rounded-xl border border-white/30 text-sm font-semibold text-white/90 hover:bg-white/10 hover:border-white/40 hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-1 focus:ring-offset-transparent"
+                                        class="hidden sm:inline-flex items-center px-6 py-3 rounded-xl border border-white/30 text-sm font-semibold text-white/90 hover:bg-white/10 hover:border-white/40 hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-1 focus:ring-offset-transparent"
                                     >
                                         <span>Decouvrir l'Ecole</span>
                                     </Link>
                                 </div>
 
-                                <!-- Micro-infos -->
-                                <div class="pt-2 flex flex-wrap gap-2 text-[11px] text-white/75">
+                                <!-- Micro-infos - hidden on mobile -->
+                                <div class="hidden md:flex pt-2 flex-wrap gap-2 text-[11px] text-white/75">
                                     <span class="inline-flex items-center gap-2 rounded-full bg-black/10 px-3 py-1 ring-1 ring-white/10">
                                         <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
                                         Universite de Mahajanga
@@ -231,7 +231,7 @@ defineOptions({
                 </div>
 
                 <!-- Right column: Image -->
-                <div class="relative min-h-[260px] sm:min-h-[320px] lg:min-h-[420px] flex items-center justify-center">
+                <div class="relative min-h-[200px] sm:min-h-[280px] md:min-h-[320px] lg:min-h-[420px] flex items-center justify-center">
                     <template v-for="(slide, index) in slides" :key="'img-' + slide.id">
                         <Transition
                             enter-active-class="transition ease-out duration-700"
@@ -630,7 +630,7 @@ defineOptions({
                             <img
                                 :src="messageDirection.photo_url || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&q=80'"
                                 :alt="messageDirection.nom"
-                                class="w-full h-80 md:h-[420px] lg:h-[520px] object-cover object-top"
+                                class="w-full h-64 sm:h-80 md:h-[420px] lg:h-[520px] object-cover object-top"
                                 loading="lazy"
                                 decoding="async"
                             >

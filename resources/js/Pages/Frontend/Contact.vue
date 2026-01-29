@@ -62,8 +62,8 @@ defineOptions({
 <template>
     <Head title="Contact" />
 
-    <div class="mt-20 lg:mt-24">
-        <section class="relative pt-20 pb-10 bg-white border-b border-gray-100 overflow-hidden">
+    <div class="mt-16 sm:mt-20 lg:mt-24">
+        <section class="relative pt-12 sm:pt-16 md:pt-20 pb-8 sm:pb-10 bg-white border-b border-gray-100 overflow-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                     <div class="space-y-4">
@@ -90,9 +90,9 @@ defineOptions({
 
         <section class="bg-gray-50 py-14">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10">
                     <main class="lg:col-span-2">
-                        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm px-5 py-7 md:px-8 md:py-8">
+                        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm px-4 py-5 sm:px-5 sm:py-7 md:px-8 md:py-8">
                             <div class="mt-6 mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                                 <div>
                                     <h2 class="text-lg md:text-xl font-semibold text-gray-900">
@@ -207,8 +207,8 @@ defineOptions({
                                         Verification anti-robot <span class="text-red-500">*</span>
                                     </label>
 
-                                    <div class="flex flex-wrap items-center gap-3">
-                                        <div class="relative inline-flex items-center justify-center px-4 py-2 rounded-xl border border-ed-primary/40 bg-slate-900 text-amber-200 font-mono text-sm shadow-inner overflow-hidden">
+                                    <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                                        <div class="relative inline-flex items-center justify-center px-3 sm:px-4 py-2 rounded-xl border border-ed-primary/40 bg-slate-900 text-amber-200 font-mono text-xs sm:text-sm shadow-inner overflow-hidden">
                                             <div class="pointer-events-none absolute inset-0 opacity-25 bg-[radial-gradient(circle_at_1px_1px,#ffffff_0.6px,transparent_0)] [background-size:6px_6px]"></div>
                                             <div class="pointer-events-none absolute inset-0 opacity-30 mix-blend-soft-light bg-[repeating-linear-gradient(135deg,rgba(255,255,255,0.35)_0,rgba(255,255,255,0.35)_1px,transparent_1px,transparent_5px)]"></div>
 
@@ -231,13 +231,13 @@ defineOptions({
                                         <input
                                             v-model="form.captchaAnswer"
                                             type="number"
-                                            class="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:bg-white focus:border-ed-primary focus:ring-1 focus:ring-ed-primary/60"
+                                            class="w-20 sm:w-auto rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 focus:bg-white focus:border-ed-primary focus:ring-1 focus:ring-ed-primary/60"
                                             placeholder="Reponse"
                                         >
 
                                         <button
                                             type="button"
-                                            class="inline-flex items-center gap-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-600 hover:border-ed-primary/60 hover:text-ed-primary transition-colors"
+                                            class="inline-flex items-center justify-center gap-1 rounded-xl border border-gray-200 bg-white min-w-[44px] min-h-[44px] px-3 py-2 text-xs font-medium text-gray-600 hover:border-ed-primary/60 hover:text-ed-primary transition-colors"
                                             @click="refreshCaptcha"
                                         >
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -251,8 +251,8 @@ defineOptions({
                                     <p v-if="form.errors.captchaAnswer" class="mt-1 text-xs text-red-500">{{ form.errors.captchaAnswer }}</p>
                                 </div>
 
-                                <div class="pt-1 flex justify-end">
-                                    <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-ed-primary text-white font-semibold hover:bg-ed-secondary shadow-sm" :disabled="form.processing">
+                                <div class="pt-3 sm:pt-1 flex justify-end">
+                                    <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:py-3 rounded-xl bg-ed-primary text-white font-semibold hover:bg-ed-secondary shadow-sm" :disabled="form.processing">
                                         Envoyer le message
                                     </button>
                                 </div>
@@ -260,8 +260,8 @@ defineOptions({
                         </div>
                     </main>
 
-                    <aside class="lg:col-span-1 space-y-6">
-                        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-6">
+                    <aside class="lg:col-span-1 space-y-4 sm:space-y-6">
+                        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-4 sm:p-6">
                             <h3 class="text-sm font-semibold text-gray-900 mb-3">Besoin d'une reponse rapide ?</h3>
                             <p class="text-xs text-gray-500 mb-4">
                                 Vous pouvez aussi nous joindre par email ou telephone.

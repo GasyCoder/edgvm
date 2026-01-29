@@ -2,11 +2,22 @@
 import { Link, usePage } from '@inertiajs/vue3';
 
 const page = usePage();
+
+defineProps({
+    showHeader: {
+        type: Boolean,
+        default: true,
+    },
+    mainClass: {
+        type: String,
+        default: '',
+    },
+});
 </script>
 
 <template>
     <div class="min-h-screen bg-slate-50 text-slate-900">
-        <header class="border-b border-slate-200 bg-white">
+        <header v-if="showHeader" class="border-b border-slate-200 bg-white">
             <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
                 <div class="flex items-center gap-3">
                     <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-ed-primary text-white text-xs font-semibold">
@@ -25,7 +36,7 @@ const page = usePage();
             </div>
         </header>
 
-        <main class="mx-auto max-w-6xl px-6 py-8">
+        <main class="mx-auto w-full max-w-6xl px-6 py-8" :class="mainClass">
             <slot />
         </main>
     </div>

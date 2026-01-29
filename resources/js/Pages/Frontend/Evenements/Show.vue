@@ -15,7 +15,7 @@ defineOptions({
     <Head :title="evenement?.titre || 'Evenement'" />
 
     <div>
-        <section class="relative pt-24 md:pt-28 pb-10 overflow-hidden">
+        <section class="relative pt-20 sm:pt-24 md:pt-28 pb-8 sm:pb-10 overflow-hidden">
             <div v-if="evenement?.image_url" class="absolute inset-0">
                 <img :src="evenement.image_url" alt="Image de l'evenement" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/75 to-black/80"></div>
@@ -115,9 +115,9 @@ defineOptions({
 
         <section class="py-10 md:py-14 bg-gradient-to-b from-gray-50 via-white to-gray-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
                     <div class="lg:col-span-2">
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 lg:p-7 space-y-6">
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 md:p-6 lg:p-7 space-y-5 sm:space-y-6">
                             <div>
                                 <h2 class="text-sm font-semibold text-gray-800 mb-2">Description</h2>
                                 <div v-if="evenement?.description" class="text-sm text-gray-700 leading-relaxed space-y-3" v-html="evenement.description.replace(/\n/g, '<br>')"></div>
@@ -127,7 +127,7 @@ defineOptions({
                             <div v-if="evenement?.image_url" class="pt-2">
                                 <h3 class="text-sm font-semibold text-gray-800 mb-2">Visuel de l'evenement</h3>
                                 <div class="relative w-full rounded-2xl overflow-hidden border border-gray-200 bg-gray-50 shadow-sm">
-                                    <img :src="evenement.image_url" alt="Visuel de l'evenement" class="w-full h-64 md:h-72 object-cover">
+                                    <img :src="evenement.image_url" alt="Visuel de l'evenement" class="w-full h-48 sm:h-56 md:h-72 object-cover">
                                 </div>
                             </div>
 
@@ -172,7 +172,7 @@ defineOptions({
                         </div>
                     </div>
 
-                    <aside class="lg:col-span-1 space-y-6">
+                    <aside class="lg:col-span-1 space-y-4 sm:space-y-6">
                         <div class="bg-white rounded-2xl shadow-xl p-6 border-2 border-blue-100">
                             <h3 class="text-lg font-bold text-gray-900 mb-3">Contactez-nous</h3>
                             <p class="text-sm text-gray-600 mb-4">

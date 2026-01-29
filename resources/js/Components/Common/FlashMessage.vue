@@ -75,11 +75,11 @@ watch(flash, (newFlash) => {
     >
         <div
             v-if="visible && currentMessage"
-            class="fixed bottom-6 right-6 z-50 w-full max-w-sm px-4"
+            class="fixed bottom-4 left-4 right-4 z-50 sm:left-auto sm:right-6 sm:bottom-6 w-auto sm:w-full max-w-sm"
         >
             <div
                 :class="[classes.bg, classes.border, classes.text]"
-                class="rounded-lg border p-4 shadow-lg"
+                class="rounded-lg border px-3 py-2 shadow-lg sm:p-4"
             >
                 <div class="flex items-start">
                     <div class="flex-shrink-0">

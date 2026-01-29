@@ -110,31 +110,33 @@ const hasFilters = computed(() => search.value || statut.value || ead.value);
                 </div>
             </div>
 
-            <div class="flex flex-wrap items-end gap-3 rounded-2xl border border-slate-200 bg-white p-4">
-                <div class="flex-1 min-w-[200px]">
-                    <label class="text-xs font-semibold text-slate-600">Recherche</label>
-                    <input v-model="search" type="text" placeholder="Nom ou matricule" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" />
-                </div>
-                <div class="min-w-[160px]">
-                    <label class="text-xs font-semibold text-slate-600">Statut</label>
-                    <select v-model="statut" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
-                        <option value="">Tous</option>
-                        <option value="actif">Actif</option>
-                        <option value="diplome">Diplome</option>
-                        <option value="suspendu">Suspendu</option>
-                        <option value="abandonne">Abandonne</option>
-                    </select>
-                </div>
-                <div class="min-w-[180px]">
-                    <label class="text-xs font-semibold text-slate-600">EAD</label>
-                    <select v-model="ead" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
-                        <option value="">Tous</option>
-                        <option v-for="item in eads" :key="item.id" :value="item.id">{{ item.nom }}</option>
-                    </select>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white" @click="updateFilters">Filtrer</button>
-                    <button v-if="hasFilters" type="button" class="rounded-xl border border-slate-200 px-3 py-2 text-sm" @click="clearFilters">Reinitialiser</button>
+            <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:flex-wrap lg:items-end">
+                    <div class="sm:col-span-2 lg:flex-1 lg:min-w-[200px]">
+                        <label class="text-xs font-semibold text-slate-600">Recherche</label>
+                        <input v-model="search" type="text" placeholder="Nom ou matricule" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" />
+                    </div>
+                    <div class="w-full sm:w-auto">
+                        <label class="text-xs font-semibold text-slate-600">Statut</label>
+                        <select v-model="statut" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                            <option value="">Tous</option>
+                            <option value="actif">Actif</option>
+                            <option value="diplome">Diplome</option>
+                            <option value="suspendu">Suspendu</option>
+                            <option value="abandonne">Abandonne</option>
+                        </select>
+                    </div>
+                    <div class="w-full sm:w-auto">
+                        <label class="text-xs font-semibold text-slate-600">EAD</label>
+                        <select v-model="ead" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                            <option value="">Tous</option>
+                            <option v-for="item in eads" :key="item.id" :value="item.id">{{ item.nom }}</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2 sm:col-span-2 lg:col-span-1">
+                        <button type="button" class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white" @click="updateFilters">Filtrer</button>
+                        <button v-if="hasFilters" type="button" class="rounded-xl border border-slate-200 px-3 py-2 text-sm" @click="clearFilters">Reinitialiser</button>
+                    </div>
                 </div>
             </div>
 

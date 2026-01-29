@@ -41,7 +41,7 @@ defineOptions({
     <Head :title="ead?.nom || 'EAD'" />
 
     <div>
-        <section class="relative gradient-primary pt-24 md:pt-28 pb-16 md:pb-20 overflow-hidden">
+        <section class="relative gradient-primary pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 md:pb-20 overflow-hidden">
             <div class="absolute inset-0 opacity-10">
                 <div class="absolute top-10 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
             </div>
@@ -97,9 +97,9 @@ defineOptions({
 
         <section class="py-12 bg-gradient-to-b from-gray-50 to-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2 space-y-8">
-                        <div class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                    <div class="lg:col-span-2 space-y-6 lg:space-y-8">
+                        <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
                             <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -112,7 +112,7 @@ defineOptions({
                             </div>
                         </div>
 
-                        <div v-if="specialites?.length" class="bg-white rounded-2xl shadow-xl p-8">
+                        <div v-if="specialites?.length" class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
                             <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -152,7 +152,7 @@ defineOptions({
                             </div>
                         </div>
 
-                        <div v-if="theses?.length" class="bg-white rounded-2xl shadow-xl p-8">
+                        <div v-if="theses?.length" class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                                 <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
                                     <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -251,8 +251,8 @@ defineOptions({
                     </div>
 
                     <aside class="lg:col-span-1">
-                        <div class="lg:sticky lg:top-24 space-y-6">
-                            <div v-if="ead?.responsable" class="bg-white rounded-2xl shadow-xl p-6">
+                        <div class="lg:sticky lg:top-24 space-y-4 sm:space-y-6">
+                            <div v-if="ead?.responsable" class="bg-white rounded-2xl shadow-xl p-4 sm:p-6">
                                 <h3 class="text-lg font-bold text-gray-900 mb-4">Responsable</h3>
                                 <div class="flex items-start gap-4">
                                     <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
@@ -271,7 +271,7 @@ defineOptions({
                                 </div>
                             </div>
 
-                            <div class="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-xl p-6 text-white">
+                            <div class="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-xl p-4 sm:p-6 text-white">
                                 <h3 class="text-lg font-bold mb-4"> Statistiques</h3>
                                 <div class="space-y-4">
                                     <div class="flex justify-between items-center pb-3 border-b border-white/20">
@@ -289,7 +289,7 @@ defineOptions({
                                 </div>
                             </div>
 
-                            <div class="bg-white rounded-2xl shadow-xl p-6 border-2 border-blue-100">
+                            <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-blue-100">
                                 <h3 class="text-lg font-bold text-gray-900 mb-3">Contactez-nous</h3>
                                 <p class="text-sm text-gray-600 mb-4">Pour plus d'informations sur cette equipe d'accueil doctoral.</p>
                                 <a href="mailto:contact@edgvm.mg" class="block text-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-semibold text-sm">

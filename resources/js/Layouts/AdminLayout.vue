@@ -1,11 +1,23 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 
 const page = usePage();
 const currentRoute = computed(() => page.props.currentRouteName || '');
 const auth = computed(() => page.props.auth);
 const isActive = (name) => currentRoute.value === name || currentRoute.value.startsWith(`${name}.`);
+
+// Mobile sidebar state
+const sidebarOpen = ref(false);
+
+const closeSidebar = () => {
+    sidebarOpen.value = false;
+};
+
+// Close sidebar on route change
+watch(currentRoute, () => {
+    closeSidebar();
+});
 
 const openCommunication = ref(
     [
@@ -37,9 +49,27 @@ const openAcademique = ref(
 
 <template>
     <div class="min-h-screen bg-slate-100 font-poppins text-slate-900">
+        <!-- Mobile sidebar overlay -->
+        <Transition
+            enter-active-class="transition-opacity ease-out duration-300"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition-opacity ease-in duration-200"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+        >
+            <div
+                v-if="sidebarOpen"
+                class="fixed inset-0 z-40 bg-black/50 md:hidden"
+                @click="closeSidebar"
+            ></div>
+        </Transition>
+
         <div class="flex min-h-screen">
+            <!-- Sidebar -->
             <aside
-                class="relative w-64 flex-shrink-0 overflow-hidden bg-gradient-to-b from-slate-900 via-slate-900 to-emerald-950 text-white shadow-2xl"
+                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+                class="fixed inset-y-0 left-0 z-50 w-64 flex-shrink-0 overflow-hidden bg-gradient-to-b from-slate-900 via-slate-900 to-emerald-950 text-white shadow-2xl transition-transform duration-300 ease-in-out md:relative md:translate-x-0"
             >
                 <div class="pointer-events-none absolute inset-0">
                     <div class="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-emerald-500/10 blur-3xl"></div>
@@ -121,7 +151,7 @@ const openAcademique = ref(
                                 </svg>
                             </button>
 
-                            <div v-show="openCommunication" class="mt-2 space-y-1 pl-10 pr-4 text-sm">
+                            <div v-show="openCommunication" class="mt-2 space-y-1 pl-4 pr-4 text-sm md:pl-10">
                                 <Link
                                     :href="route('admin.message-directions.index')"
                                     class="flex items-center gap-2 rounded-md px-3 py-2 transition-all duration-150 hover:bg-emerald-500/10 hover:pl-4"
@@ -230,7 +260,7 @@ const openAcademique = ref(
                                 </svg>
                             </button>
 
-                            <div v-show="openAcademique" class="mt-2 space-y-1 pl-10 pr-4 text-sm">
+                            <div v-show="openAcademique" class="mt-2 space-y-1 pl-4 pr-4 text-sm md:pl-10">
                                 <Link
                                     :href="route('admin.ead.index')"
                                     class="flex items-center gap-2 rounded-md px-3 py-2 transition-all duration-150 hover:bg-emerald-500/10 hover:pl-4"
@@ -308,13 +338,25 @@ const openAcademique = ref(
                 </div>
             </aside>
 
-            <div class="flex flex-1 flex-col">
-                <header class="border-b border-slate-200 bg-white px-6 py-4 shadow-sm">
-                    <div class="flex items-center justify-between gap-4">
+            <div class="flex flex-1 flex-col md:ml-0">
+                <header class="border-b border-slate-200 bg-white px-3 py-3 shadow-sm md:px-6 md:py-4">
+                    <div class="flex items-center justify-between gap-2 md:gap-4">
+                        <!-- Mobile menu button -->
+                        <button
+                            type="button"
+                            class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition hover:bg-slate-50 md:hidden"
+                            @click="sidebarOpen = !sidebarOpen"
+                            aria-label="Ouvrir le menu"
+                        >
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+
                         <slot name="header">
-                            <h1 class="text-lg font-semibold text-slate-900">Administration</h1>
+                            <h1 class="text-base font-semibold text-slate-900 md:text-lg">Administration</h1>
                         </slot>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1 md:gap-2">
                             <Link
                                 :href="route('home')"
                                 target="_blank"
@@ -357,7 +399,7 @@ const openAcademique = ref(
                         </div>
                     </div>
                 </header>
-                <main class="flex-1 px-6 py-6">
+                <main class="flex-1 px-3 py-4 md:px-6 md:py-6">
                     <slot />
                 </main>
             </div>

@@ -55,7 +55,7 @@ defineOptions({
     <Head :title="actualite?.titre || 'Actualite'" />
 
     <div>
-        <section class="relative h-[60vh] min-h-[450px] overflow-hidden">
+        <section class="relative h-[50vh] sm:h-[55vh] md:h-[60vh] min-h-[350px] sm:min-h-[400px] md:min-h-[450px] overflow-hidden">
             <div v-if="actualite?.image_url" class="absolute inset-0">
                 <div
                     class="absolute inset-0 bg-center bg-cover"
@@ -99,8 +99,8 @@ defineOptions({
                         {{ actualite?.titre }}
                     </h1>
 
-                    <div class="flex flex-wrap items-center gap-3 text-white text-sm relative z-10">
-                        <div class="flex items-center gap-2 px-2 py-1 bg-black/30 rounded backdrop-blur-sm">
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-white text-xs sm:text-sm relative z-10">
+                        <div class="flex flex-wrap items-center gap-2 px-2 py-1.5 bg-black/30 rounded backdrop-blur-sm">
                             <template v-if="actualite?.auteur">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -174,7 +174,7 @@ defineOptions({
                                         <button
                                             v-if="gallery.length > 1"
                                             type="button"
-                                            class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition opacity-0 group-hover:opacity-100 flex items-center justify-center"
+                                            class="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-10 sm:h-10 bg-white/90 sm:bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition sm:opacity-0 sm:group-hover:opacity-100 flex items-center justify-center"
                                             @click="prevGallery"
                                         >
                                             <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -185,7 +185,7 @@ defineOptions({
                                         <button
                                             v-if="gallery.length > 1"
                                             type="button"
-                                            class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition opacity-0 group-hover:opacity-100 flex items-center justify-center"
+                                            class="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-10 sm:h-10 bg-white/90 sm:bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition sm:opacity-0 sm:group-hover:opacity-100 flex items-center justify-center"
                                             @click="nextGallery"
                                         >
                                             <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,7 +198,7 @@ defineOptions({
                                         </div>
                                     </div>
 
-                                    <div class="grid grid-cols-5 sm:grid-cols-7 gap-2">
+                                    <div class="grid grid-cols-4 gap-2 sm:grid-cols-5 md:grid-cols-7">
                                         <button
                                             v-for="(photo, index) in gallery"
                                             :key="photo.id"
@@ -227,9 +227,9 @@ defineOptions({
                                 </div>
                             </div>
 
-                            <div class="px-6 md:px-10 pb-6">
+                            <div class="px-4 sm:px-6 md:px-10 pb-6">
                                 <h4 class="text-sm font-bold text-gray-600 uppercase mb-3">Partager</h4>
-                                <div class="flex flex-wrap gap-2">
+                                <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
                                     <a :href="shareLinks.facebook" target="_blank" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>

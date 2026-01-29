@@ -12,7 +12,7 @@ const currentYear = new Date().getFullYear();
         <div class="absolute inset-x-0 -top-px h-[2px] bg-gradient-to-r from-ed-yellow via-white/70 to-ed-secondary opacity-90"></div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12">
+            <div class="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-10 lg:gap-12">
                 <!-- Bloc A propos -->
                 <div class="md:col-span-5">
                     <div class="flex items-center space-x-3 mb-5">
@@ -39,7 +39,7 @@ const currentYear = new Date().getFullYear();
                             :href="appSettings.facebook_url"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="w-9 h-9 rounded-full border border-white/25 flex items-center justify-center text-white/80 hover:text-ed-primary hover:bg-ed-yellow transition-colors duration-200"
+                            class="w-10 h-10 rounded-full border border-white/25 flex items-center justify-center text-white/80 hover:text-ed-primary hover:bg-ed-yellow transition-colors duration-200 sm:w-9 sm:h-9"
                         >
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M24 12.073C24 5.403 18.627 0 12 0S0 5.403 0 12.073C0 18.09 4.388 22.953 10.125 24v-8.385H7.078v-3.542h3.047V9.356c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.513c-1.491 0-1.956.925-1.956 1.874v2.24h3.328l-.532 3.542h-2.796V24C19.612 22.953 24 18.09 24 12.073z"/>
@@ -51,7 +51,7 @@ const currentYear = new Date().getFullYear();
                             :href="appSettings.linkedin_url"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="w-9 h-9 rounded-full border border-white/25 flex items-center justify-center text-white/80 hover:text-ed-primary hover:bg-ed-yellow transition-colors duration-200"
+                            class="w-10 h-10 rounded-full border border-white/25 flex items-center justify-center text-white/80 hover:text-ed-primary hover:bg-ed-yellow transition-colors duration-200 sm:w-9 sm:h-9"
                         >
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.026-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.047c.476-.9 1.636-1.851 3.369-1.851 3.602 0 4.266 2.372 4.266 5.456v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zM6.97 20.452H3.701V9H6.97v11.452z"/>

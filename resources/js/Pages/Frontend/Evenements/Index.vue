@@ -73,8 +73,8 @@ defineOptions({
 
         <section class="py-12 bg-gradient-to-b from-gray-50 to-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <main class="lg:col-span-8 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+                    <main class="lg:col-span-8 space-y-4 sm:space-y-6">
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
                             <div>
                                 <p class="text-sm text-gray-800 font-medium">
@@ -119,7 +119,7 @@ defineOptions({
                                 :key="event.id"
                                 class="group bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-ed-primary/40 hover:-translate-y-0.5 transition-all duration-200 flex flex-col h-full overflow-hidden"
                             >
-                                <div class="relative h-32 sm:h-40 overflow-hidden">
+                                <div class="relative h-36 sm:h-40 overflow-hidden">
                                     <div v-if="event.image_url" class="absolute inset-0">
                                         <img
                                             :src="event.image_url"
@@ -244,7 +244,7 @@ defineOptions({
                         </div>
                     </main>
 
-                    <aside class="lg:col-span-4 space-y-6">
+                    <aside class="lg:col-span-4 space-y-4 sm:space-y-6">
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
                             <h3 class="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
                                 <span class="inline-flex w-7 h-7 items-center justify-center rounded-full bg-ed-primary/10 text-ed-primary">

@@ -61,7 +61,7 @@ defineOptions({
     <Head title="Equipes d'accueil doctorales" />
 
     <div>
-        <section class="relative gradient-primary pt-24 md:pt-28 pb-16 md:pb-20 overflow-hidden">
+        <section class="relative gradient-primary pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 md:pb-20 overflow-hidden">
             <div class="absolute inset-0 opacity-15 pointer-events-none">
                 <div class="absolute -top-10 right-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
                 <div class="absolute bottom-0 -left-10 w-40 h-40 bg-ed-yellow rounded-full blur-3xl"></div>
@@ -84,7 +84,7 @@ defineOptions({
         </section>
 
         <section class="py-12 bg-gradient-to-b from-gray-50 to-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 lg:p-6 space-y-4">
                     <div>
                         <div class="relative max-w-2xl">
@@ -223,7 +223,7 @@ defineOptions({
                         </article>
                     </div>
 
-                    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                         <article v-for="ead in eads" :key="ead.id" class="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full">
                             <div class="px-6 pt-5 pb-4 border-b border-gray-100">
                                 <div class="flex items-center justify-between gap-3">

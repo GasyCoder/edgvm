@@ -239,7 +239,9 @@ const submitBulk = () => {
             </div>
 
             <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-                <table class="w-full text-sm">
+                <div class="overflow-x-auto -mx-px">
+                    <div class="inline-block min-w-full align-middle">
+                        <table class="min-w-full text-sm">
                     <thead class="border-b border-slate-100 text-left text-xs uppercase tracking-[0.16em] text-slate-400">
                         <tr>
                             <th class="px-4 py-3">Email</th>
@@ -301,7 +303,9 @@ const submitBulk = () => {
                             </td>
                         </tr>
                     </tbody>
-                </table>
+                        </table>
+                    </div>
+                </div>
 
                 <div v-if="!subscribers.data.length" class="px-6 py-10 text-center text-sm text-slate-500">
                     Aucun abonne trouve.

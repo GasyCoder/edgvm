@@ -19,7 +19,7 @@ defineOptions({
     <Head :title="these?.sujet_these || 'These'" />
 
     <div>
-        <section class="relative gradient-primary pt-20 md:pt-24 pb-14 md:pb-16 overflow-hidden">
+        <section class="relative gradient-primary pt-16 sm:pt-20 md:pt-24 pb-10 sm:pb-14 md:pb-16 overflow-hidden">
             <div class="absolute inset-0">
                 <div class="absolute inset-0 opacity-10" :style="{ backgroundImage: `url(${patternUrl})` }"></div>
                 <div class="absolute -top-10 right-0 w-72 h-72 bg-white/15 rounded-full blur-3xl"></div>
@@ -126,10 +126,10 @@ defineOptions({
             </div>
         </section>
 
-        <section class="py-12 md:py-16 bg-gradient-to-b from-slate-50 to-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div class="lg:col-span-9 space-y-6">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+        <section class="py-8 sm:py-12 md:py-16 bg-gradient-to-b from-slate-50 to-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+                <div class="lg:col-span-9 space-y-4 sm:space-y-6">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 md:p-8">
                         <h2 class="text-lg md:text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
                             <span class="w-1.5 h-6 bg-gradient-to-b from-emerald-600 to-teal-600 rounded-full"></span>
                             Resume de la these

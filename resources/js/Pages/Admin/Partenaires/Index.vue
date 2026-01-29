@@ -77,7 +77,9 @@ const deletePartenaire = (partenaire) => {
             </div>
 
             <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-                <table class="w-full text-sm">
+                <div class="overflow-x-auto -mx-px">
+                    <div class="inline-block min-w-full align-middle">
+                        <table class="min-w-full text-sm">
                     <thead class="border-b border-slate-100 text-left text-xs uppercase tracking-[0.16em] text-slate-400">
                         <tr>
                             <th class="px-4 py-3">Partenaire</th>
@@ -109,7 +111,7 @@ const deletePartenaire = (partenaire) => {
                                 </span>
                             </td>
                             <td class="px-4 py-4 text-right">
-                                <div class="flex flex-wrap justify-end gap-2">
+                                            <div class="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:justify-end sm:gap-2">
                                     <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-white" @click="toggleVisibility(partenaire)">
                                         <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -133,7 +135,9 @@ const deletePartenaire = (partenaire) => {
                             </td>
                         </tr>
                     </tbody>
-                </table>
+                        </table>
+                    </div>
+                </div>
 
                 <div v-if="!partenaires.data.length" class="px-6 py-10 text-center text-sm text-slate-500">
                     Aucun partenaire disponible.

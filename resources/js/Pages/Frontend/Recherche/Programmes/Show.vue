@@ -16,7 +16,7 @@ defineOptions({
     <Head :title="specialite?.nom || 'Programme'" />
 
     <div>
-        <section class="relative gradient-primary pt-24 md:pt-28 pb-16 md:pb-20 overflow-hidden">
+        <section class="relative gradient-primary pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 md:pb-20 overflow-hidden">
             <div class="absolute inset-0 opacity-10">
                 <div class="absolute top-10 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
             </div>
@@ -68,9 +68,9 @@ defineOptions({
 
         <section class="py-12 bg-gradient-to-b from-gray-50 to-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
                     <div class="lg:col-span-2">
-                        <div class="bg-white rounded-2xl shadow-xl p-8">
+                        <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
                             <div class="prose prose-gray max-w-none mb-8">
                                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Presentation</h2>
                                 <p class="text-gray-700 leading-relaxed">{{ specialite?.description }}</p>

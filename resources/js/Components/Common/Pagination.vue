@@ -16,7 +16,7 @@ defineProps({
 <template>
     <nav
         v-if="links.length > 3"
-        :class="['flex items-center justify-center gap-1', $props.class]"
+        :class="['flex flex-wrap items-center justify-center gap-1', $props.class]"
         aria-label="Pagination"
     >
         <template v-for="(link, index) in links" :key="index">
@@ -25,7 +25,7 @@ defineProps({
                 v-if="index === 0"
                 :href="link.url || '#'"
                 :class="[
-                    'relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200',
+                    'relative inline-flex items-center justify-center min-w-[44px] min-h-[44px] px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200',
                     link.url
                         ? 'text-ed-gray hover:bg-teal-50 hover:text-ed-primary'
                         : 'text-gray-300 cursor-not-allowed pointer-events-none'
@@ -44,7 +44,7 @@ defineProps({
                 v-else-if="index === links.length - 1"
                 :href="link.url || '#'"
                 :class="[
-                    'relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200',
+                    'relative inline-flex items-center justify-center min-w-[44px] min-h-[44px] px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200',
                     link.url
                         ? 'text-ed-gray hover:bg-teal-50 hover:text-ed-primary'
                         : 'text-gray-300 cursor-not-allowed pointer-events-none'
@@ -61,22 +61,22 @@ defineProps({
             <!-- Ellipsis -->
             <span
                 v-else-if="link.label === '...'"
-                class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-400"
+                class="relative hidden items-center px-2 py-2 text-sm font-medium text-gray-400 sm:inline-flex"
             >
                 ...
             </span>
 
-            <!-- Page numbers -->
+            <!-- Page numbers (hidden on mobile except current) -->
             <Link
                 v-else
                 :href="link.url || '#'"
                 :class="[
-                    'relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200',
+                    'relative items-center justify-center min-w-[44px] min-h-[44px] px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200',
                     link.active
-                        ? 'bg-ed-primary text-white shadow-md'
+                        ? 'inline-flex bg-ed-primary text-white shadow-md'
                         : link.url
-                            ? 'text-ed-gray hover:bg-teal-50 hover:text-ed-primary'
-                            : 'text-gray-300 cursor-not-allowed pointer-events-none'
+                            ? 'hidden sm:inline-flex text-ed-gray hover:bg-teal-50 hover:text-ed-primary'
+                            : 'hidden sm:inline-flex text-gray-300 cursor-not-allowed pointer-events-none'
                 ]"
                 preserve-scroll
                 :aria-current="link.active ? 'page' : undefined"

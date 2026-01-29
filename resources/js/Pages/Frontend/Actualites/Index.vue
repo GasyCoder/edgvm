@@ -184,8 +184,8 @@ defineOptions({
 
         <section class="py-14 bg-gradient-to-b from-gray-50 via-white to-gray-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                    <aside class="lg:col-span-1 lg:order-2 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+                    <aside class="lg:col-span-1 lg:order-2 space-y-4 sm:space-y-6">
                         <div class="bg-white/90 backdrop-blur rounded-2xl p-5 border border-gray-200 shadow-sm">
                             <h3 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
                                 <span class="inline-flex w-5 h-5 items-center justify-center rounded-full bg-ed-primary/10 text-ed-primary">
@@ -332,7 +332,7 @@ defineOptions({
                         <div v-else>
                             <div v-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                                 <article v-for="actualite in actualites.data" :key="actualite.id" class="group bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-400 overflow-hidden border border-gray-100 hover:-translate-y-1">
-                                    <div class="relative h-48 overflow-hidden">
+                                    <div class="relative h-40 sm:h-48 overflow-hidden">
                                         <img
                                             v-if="actualite.image_url"
                                             :src="actualite.image_url"
@@ -420,7 +420,7 @@ defineOptions({
                             <div v-else class="space-y-6">
                                 <article v-for="actualite in actualites.data" :key="actualite.id" class="group bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-400 overflow-hidden border border-gray-100">
                                     <div class="flex flex-col md:flex-row">
-                                        <div class="relative md:w-80 h-64 md:h-auto overflow-hidden flex-shrink-0">
+                                        <div class="relative md:w-80 h-48 sm:h-56 md:h-auto overflow-hidden flex-shrink-0">
                                             <img
                                                 v-if="actualite.image_url"
                                                 :src="actualite.image_url"
@@ -445,7 +445,7 @@ defineOptions({
                                             </div>
                                         </div>
 
-                                        <div class="flex-1 p-6 md:p-8">
+                                        <div class="flex-1 p-4 sm:p-6 md:p-8">
                                             <div class="flex items-start justify-between gap-4 mb-4">
                                                 <h3 class="text-2xl font-bold text-gray-900 line-clamp-2">
                                                     <Link :href="route('actualites.show', actualite.slug)" class="block group-hover:text-ed-primary transition-colors">

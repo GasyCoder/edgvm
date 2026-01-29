@@ -100,7 +100,9 @@ const deleteSlider = () => {
             </div>
 
             <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-                <table class="w-full text-sm">
+                <div class="overflow-x-auto -mx-px">
+                    <div class="inline-block min-w-full align-middle">
+                        <table class="min-w-full text-sm">
                     <thead class="border-b border-slate-100 text-left text-xs uppercase tracking-[0.16em] text-slate-400">
                         <tr>
                             <th class="px-4 py-3">Slider</th>
@@ -126,7 +128,7 @@ const deleteSlider = () => {
                                 </span>
                             </td>
                             <td class="px-4 py-4 text-right">
-                                <div class="flex flex-wrap justify-end gap-2">
+                                            <div class="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:justify-end sm:gap-2">
                                     <Link
                                         :href="route('admin.slides.index', slider.id)"
                                         class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-white"
@@ -170,7 +172,9 @@ const deleteSlider = () => {
                             </td>
                         </tr>
                     </tbody>
-                </table>
+                        </table>
+                    </div>
+                </div>
 
                 <div v-if="!sliders.data.length" class="px-6 py-10 text-center text-sm text-slate-500">
                     Aucun slider disponible.
