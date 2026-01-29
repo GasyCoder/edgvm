@@ -39,33 +39,57 @@ defineOptions({
         </section>
 
         <!-- Liste des programmes -->
-        <section class="py-12 bg-gradient-to-b from-gray-50 to-white">
+        <section class="py-12 sm:py-16 bg-gradient-to-b from-gray-50 to-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <!-- En-tete -->
-                <div class="flex items-center justify-between gap-4 pb-3 sm:pb-4 mb-4 sm:mb-6 border-b-2 border-gray-300">
-                    <span class="text-sm sm:text-base font-bold text-gray-700 uppercase tracking-wide">Nom</span>
-                    <span class="text-sm sm:text-base font-bold text-gray-700 uppercase tracking-wide hidden sm:block">EAD</span>
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
+                    <div class="max-w-2xl space-y-2">
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">
+                            Les programmes disponibles
+                        </h2>
+                        <p class="text-sm sm:text-base text-gray-600">
+                            Chaque specialite est associee a une equipe d'accueil doctorale (EAD).
+                        </p>
+                    </div>
+                    <div class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs sm:text-sm font-semibold text-gray-700 shadow-sm">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-full bg-ed-primary/10 text-ed-primary">
+                            {{ specialites?.length || 0 }}
+                        </span>
+                        Programmes disponibles
+                    </div>
                 </div>
 
                 <div v-if="!specialites?.length" class="text-center py-16">
                     <p class="text-lg text-gray-500">Aucun programme disponible.</p>
                 </div>
 
-                <ul v-else class="space-y-3 sm:space-y-4">
-                    <li
+                <div v-else class="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2 mt-8">
+                    <article
                         v-for="specialite in specialites"
                         :key="specialite.id"
-                        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 py-2 sm:py-0 border-b border-gray-100 sm:border-0"
+                        class="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-ed-primary/40 hover:shadow-md"
                     >
-                        <span class="flex items-center gap-2 sm:gap-3 text-sm sm:text-lg text-gray-900">
-                            <span class="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-ed-primary flex-shrink-0"></span>
-                            {{ specialite.nom }}
-                        </span>
-                        <span v-if="specialite.ead" class="text-xs sm:text-base text-gray-600 sm:text-right flex-shrink-0 pl-4 sm:pl-0">
-                            {{ specialite.ead }}
-                        </span>
-                    </li>
-                </ul>
+                        <div class="flex flex-col gap-4">
+                            <div class="flex items-start gap-3">
+                                <span class="mt-1.5 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-ed-primary"></span>
+                                <div class="flex min-w-0 flex-col gap-2">
+                                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 break-words">
+                                        {{ specialite.nom }}
+                                    </h3>
+                                    <div class="flex flex-col gap-1 text-sm text-gray-600">
+                                        <span class="text-xs font-semibold uppercase tracking-wide text-gray-400">EAD</span>
+                                        <span class="break-words">
+                                            {{ specialite.ead?.nom || specialite.ead || 'Non renseignee' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-gray-500">
+                                <span class="h-1.5 w-1.5 rounded-full bg-ed-yellow"></span>
+                                Programme de recherche doctorale
+                            </div>
+                        </div>
+                    </article>
+                </div>
             </div>
         </section>
     </div>

@@ -118,3 +118,16 @@ it('renders frontend detail pages', function (): void {
     $this->get(route('doctorants.show', $this->doctorant))->assertSuccessful();
     $this->get(route('theses.show', $this->these))->assertSuccessful();
 });
+
+it('lists EADs without specialites on the index page', function (): void {
+    $eadSansSpecialite = EAD::query()->create([
+        'nom' => 'EAD Sans Programme',
+        'slug' => 'ead-sans-programme',
+        'description' => 'EAD sans specialites.',
+        'domaine' => 'Test',
+    ]);
+
+    $this->get(route('ead.index'))
+        ->assertSuccessful()
+        ->assertSee($eadSansSpecialite->nom);
+});

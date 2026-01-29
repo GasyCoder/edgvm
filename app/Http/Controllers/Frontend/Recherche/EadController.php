@@ -21,7 +21,7 @@ class EadController extends Controller
             $view = 'grid';
         }
 
-        $baseQuery = EAD::query()->active();
+        $baseQuery = EAD::query();
 
         $domaines = (clone $baseQuery)
             ->whereNotNull('domaine')
