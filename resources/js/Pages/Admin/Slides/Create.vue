@@ -76,18 +76,53 @@ const clearMediaUploadFiles = () => {
     }
 };
 
-const submitMediaUpload = () => {
-    if (!mediaUploadForm.files.length) {
+const mediaUploadError = ref(null);
+const mediaUploadSuccess = ref(null);
+
+const submitMediaUpload = async () => {
+    if (!mediaUploadForm.files.length || mediaUploadForm.processing) {
         return;
     }
 
-    mediaUploadForm.redirect_to = `${route('admin.slides.create', props.slider.id)}?media_page=1`;
+    mediaUploadForm.processing = true;
+    mediaUploadError.value = null;
+    mediaUploadSuccess.value = null;
 
-    mediaUploadForm.post(route('admin.media.store'), {
-        preserveScroll: true,
-        forceFormData: true,
-        onFinish: () => clearMediaUploadFiles(),
+    const formData = new FormData();
+    mediaUploadForm.files.forEach((file) => {
+        formData.append('files[]', file);
     });
+    formData.append('ajax', '1');
+
+    try {
+        const response = await fetch(route('admin.media.store'), {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                Accept: 'application/json',
+            },
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.media?.length > 0) {
+            mediaUploadSuccess.value = data.message;
+            clearMediaUploadFiles();
+
+            // Ajouter les medias uploades au debut de la liste
+            props.media.data = [...data.media, ...props.media.data];
+
+            // Auto-selectionner le premier media uploade
+            selectImage(data.media[0]);
+        } else {
+            mediaUploadError.value = data.errors?.join(', ') || 'Erreur lors de l\'upload';
+        }
+    } catch {
+        mediaUploadError.value = 'Erreur de connexion';
+    } finally {
+        mediaUploadForm.processing = false;
+    }
 };
 
 const openMediaSelector = () => {
@@ -465,7 +500,8 @@ onBeforeUnmount(() => {
                             :disabled="mediaUploadForm.processing || !mediaUploadForm.files.length"
                             @click="submitMediaUpload"
                         >
-                            Uploader
+                            <span v-if="mediaUploadForm.processing">Envoi...</span>
+                            <span v-else>Uploader</span>
                         </button>
                     </div>
                     <div class="mt-3">
@@ -480,7 +516,8 @@ onBeforeUnmount(() => {
                         <div v-if="mediaUploadForm.files.length" class="mt-2 text-xs text-slate-500">
                             {{ mediaUploadForm.files.map((file) => file.name).join(', ') }}
                         </div>
-                        <p v-if="mediaUploadForm.errors.files" class="mt-2 text-xs text-red-600">{{ mediaUploadForm.errors.files }}</p>
+                        <p v-if="mediaUploadError" class="mt-2 text-xs text-red-600">{{ mediaUploadError }}</p>
+                        <p v-if="mediaUploadSuccess" class="mt-2 text-xs text-emerald-600">{{ mediaUploadSuccess }}</p>
                     </div>
                 </div>
                 <div v-if="!media.data.length" class="mt-6 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
