@@ -12,20 +12,13 @@ it('renders auth screens for guests', function () {
         ->assertSuccessful()
         ->assertInertia(fn (Assert $page) => $page->component('Auth/Login'));
 
-    $this->get(route('register'))
-        ->assertSuccessful()
-        ->assertInertia(fn (Assert $page) => $page->component('Auth/Register'));
+    $this->get('/register')->assertNotFound();
 
-    $this->get(route('password.request'))
-        ->assertSuccessful()
-        ->assertInertia(fn (Assert $page) => $page->component('Auth/ForgotPassword'));
+    $this->get('/forgot-password')->assertNotFound();
 
-    $this->get(route('password.reset', ['token' => 'test-token', 'email' => 'user@example.com']))
-        ->assertSuccessful()
-        ->assertInertia(fn (Assert $page) => $page->component('Auth/ResetPassword'));
+    $this->get('/reset-password/test-token?email=user@example.com')->assertNotFound();
 
-    $this->get(route('two-factor.login'))
-        ->assertRedirect(route('login'));
+    $this->get('/two-factor-challenge')->assertNotFound();
 });
 
 it('renders confirm password screen for authenticated users', function () {
@@ -34,9 +27,8 @@ it('renders confirm password screen for authenticated users', function () {
     ]);
 
     $this->actingAs($user)
-        ->get(route('password.confirm'))
-        ->assertSuccessful()
-        ->assertInertia(fn (Assert $page) => $page->component('Auth/ConfirmPassword'));
+        ->get('/user/confirm-password')
+        ->assertNotFound();
 });
 
 it('renders verification notice for authenticated users', function () {
@@ -46,9 +38,8 @@ it('renders verification notice for authenticated users', function () {
     ]);
 
     $this->actingAs($user)
-        ->get(route('verification.notice'))
-        ->assertSuccessful()
-        ->assertInertia(fn (Assert $page) => $page->component('Auth/VerifyEmail'));
+        ->get('/email/verify')
+        ->assertNotFound();
 });
 
 it('authenticates a user', function () {

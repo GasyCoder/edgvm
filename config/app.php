@@ -56,6 +56,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Domains
+    |--------------------------------------------------------------------------
+    |
+    | These values allow you to restrict routes to specific domains. Provide
+    | only the host without scheme, path, or port.
+    |
+    */
+
+    'frontend_domain' => env('FRONTEND_DOMAIN'),
+
+    'admin_domain' => env('ADMIN_DOMAIN'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
