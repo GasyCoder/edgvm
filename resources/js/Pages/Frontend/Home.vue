@@ -149,7 +149,7 @@ defineOptions({
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-16">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10 items-center min-h-[280px] sm:min-h-[360px] lg:min-h-[460px]">
                 <!-- Left column: Text content -->
-                <div class="relative flex flex-col justify-center min-h-[200px] sm:min-h-[240px] pr-2 sm:pr-4 lg:pr-10">
+                <div class="relative flex flex-col justify-center min-h-[200px] sm:min-h-[240px] pr-2 sm:pr-4 lg:pr-10 min-w-0">
                     <template v-for="(slide, index) in slides" :key="slide.id">
                         <Transition
                             enter-active-class="transition ease-out duration-700"
@@ -175,7 +175,7 @@ defineOptions({
                                 </div>
 
                                 <!-- Title -->
-                                <h2 class="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-[1.2] sm:leading-[1.12] drop-shadow-[0_6px_18px_rgba(0,0,0,0.28)]">
+                                <h2 class="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-[1.2] sm:leading-[1.12] drop-shadow-[0_6px_18px_rgba(0,0,0,0.28)] break-words">
                                     <span v-if="slide.titre_ligne1" :style="{ color: slide.couleur_texte_titre || '#FFFFFF' }">{{ slide.titre_ligne1 }} </span>
                                     <span v-if="slide.titre_highlight" :style="{ color: slide.couleur_texte_titre || '#FFFFFF' }">{{ slide.titre_highlight }}</span>
                                     <span v-if="slide.titre_ligne2" :style="{ color: slide.couleur_texte_titre || '#FFFFFF' }"> {{ slide.titre_ligne2 }}</span>
@@ -184,7 +184,7 @@ defineOptions({
                                 <!-- Description - hidden on mobile -->
                                 <p
                                     v-if="slide.description"
-                                    class="hidden sm:block text-sm md:text-base text-white/85 leading-relaxed max-w-xl"
+                                    class="hidden sm:block text-sm md:text-base text-white/85 leading-relaxed max-w-xl break-words"
                                 >
                                     {{ slide.description }}
                                 </p>
@@ -231,7 +231,7 @@ defineOptions({
                 </div>
 
                 <!-- Right column: Image -->
-                <div class="relative min-h-[200px] sm:min-h-[280px] md:min-h-[320px] lg:min-h-[420px] flex items-center justify-center">
+                <div class="relative min-h-[200px] sm:min-h-[280px] md:min-h-[320px] lg:min-h-[420px] flex items-center justify-center min-w-0">
                     <template v-for="(slide, index) in slides" :key="'img-' + slide.id">
                         <Transition
                             enter-active-class="transition ease-out duration-700"
