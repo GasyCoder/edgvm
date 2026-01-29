@@ -7,10 +7,13 @@ import FlashMessage from '@/Components/Common/FlashMessage.vue';
 const props = defineProps({
     slider: Object,
     actualites: Array,
+    medias: Array,
     slide: Object,
 });
 
-const imagePreviewUrl = ref(null);
+const mediaMode = ref('library');
+const uploadPreviewUrl = ref(null);
+const libraryPreviewUrl = ref(props.slide.image_url ?? null);
 const imageInput = ref(null);
 const currentImageUrl = ref(props.slide.image_url);
 
@@ -19,6 +22,7 @@ const form = useForm({
     titre: props.slide.titre || '',
     description: props.slide.description || '',
     new_image: null,
+    media_id: props.slide.image_id ?? null,
     actualite_id: props.slide.actualite_id || null,
     texte_cta: props.slide.texte_cta || 'En savoir plus',
     ordre: props.slide.ordre ?? 1,
@@ -30,25 +34,40 @@ const form = useForm({
 const setNewImage = (event) => {
     const file = event.target.files?.[0] ?? null;
     form.new_image = file;
+    form.media_id = null;
+    mediaMode.value = 'upload';
 
-    if (imagePreviewUrl.value) {
-        URL.revokeObjectURL(imagePreviewUrl.value);
+    if (uploadPreviewUrl.value) {
+        URL.revokeObjectURL(uploadPreviewUrl.value);
     }
 
-    imagePreviewUrl.value = file ? URL.createObjectURL(file) : null;
+    uploadPreviewUrl.value = file ? URL.createObjectURL(file) : null;
 };
 
 const clearNewImage = () => {
-    if (imagePreviewUrl.value) {
-        URL.revokeObjectURL(imagePreviewUrl.value);
+    if (uploadPreviewUrl.value) {
+        URL.revokeObjectURL(uploadPreviewUrl.value);
     }
 
-    imagePreviewUrl.value = null;
+    uploadPreviewUrl.value = null;
     form.new_image = null;
 
     if (imageInput.value) {
         imageInput.value.value = '';
     }
+};
+
+const selectMedia = () => {
+    clearNewImage();
+    mediaMode.value = 'library';
+
+    if (!form.media_id) {
+        libraryPreviewUrl.value = null;
+        return;
+    }
+
+    const selected = props.medias?.find((media) => media.id === form.media_id);
+    libraryPreviewUrl.value = selected?.url ?? null;
 };
 
 const submit = () => {
@@ -59,8 +78,8 @@ const submit = () => {
 };
 
 onBeforeUnmount(() => {
-    if (imagePreviewUrl.value) {
-        URL.revokeObjectURL(imagePreviewUrl.value);
+    if (uploadPreviewUrl.value) {
+        URL.revokeObjectURL(uploadPreviewUrl.value);
     }
 });
 </script>
@@ -254,39 +273,79 @@ onBeforeUnmount(() => {
                                 <h3 class="text-sm font-semibold text-slate-900">Image</h3>
                                 <p class="mt-1 text-xs text-slate-500">Image de fond du slide.</p>
                             </div>
-                            <button v-if="imagePreviewUrl" type="button" class="text-xs font-semibold text-red-600 hover:text-red-700" @click="clearNewImage">
-                                Retirer
-                            </button>
                         </div>
                         <div class="mt-4">
-                            <!-- Nouvelle image uploadee -->
-                            <div v-if="imagePreviewUrl" class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                                <img :src="imagePreviewUrl" alt="Apercu" class="h-44 w-full object-cover" />
-                                <span class="absolute left-2 top-2 rounded-lg bg-emerald-600 px-2 py-1 text-xs font-medium text-white">Nouvelle</span>
+                            <div class="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1 text-xs font-semibold text-slate-600">
+                                <button
+                                    type="button"
+                                    class="rounded-lg px-3 py-1.5 transition"
+                                    :class="mediaMode === 'library' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'"
+                                    @click="mediaMode = 'library'"
+                                >
+                                    Mediatheque
+                                </button>
+                                <button
+                                    type="button"
+                                    class="rounded-lg px-3 py-1.5 transition"
+                                    :class="mediaMode === 'upload' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'"
+                                    @click="mediaMode = 'upload'"
+                                >
+                                    Uploader
+                                </button>
                             </div>
-                            <!-- Image actuelle -->
-                            <div v-else-if="currentImageUrl" class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                                <img :src="currentImageUrl" alt="Image actuelle" class="h-44 w-full object-cover" />
-                                <span class="absolute left-2 top-2 rounded-lg bg-slate-900/70 px-2 py-1 text-xs font-medium text-white">Actuelle</span>
+
+                            <div v-if="mediaMode === 'library'" class="mt-4 space-y-4">
+                                <div>
+                                    <label class="text-xs font-semibold text-slate-700">Image dans la mediatheque</label>
+                                    <select v-model="form.media_id" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-ed-primary focus:ring-ed-primary/20" @change="selectMedia">
+                                        <option :value="null">-- Aucune image --</option>
+                                        <option v-for="media in medias" :key="media.id" :value="media.id">
+                                            {{ media.nom }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div v-if="libraryPreviewUrl" class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                    <img :src="libraryPreviewUrl" alt="Image selectionnee" class="h-44 w-full object-cover" />
+                                    <span class="absolute left-2 top-2 rounded-lg bg-slate-900/70 px-2 py-1 text-xs font-medium text-white">
+                                        {{ form.media_id === props.slide.image_id ? 'Actuelle' : 'Selectionnee' }}
+                                    </span>
+                                </div>
+                                <Link :href="route('admin.media.upload')" target="_blank" class="text-xs font-semibold text-ed-primary hover:text-ed-secondary">
+                                    Ajouter une image a la mediatheque
+                                </Link>
                             </div>
-                            <!-- Upload zone -->
-                            <div class="relative mt-3">
-                                <input
-                                    ref="imageInput"
-                                    type="file"
-                                    accept="image/*"
-                                    class="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
-                                    @change="setNewImage"
-                                />
-                                <div class="w-full rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center">
-                                    <svg class="mx-auto h-8 w-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                    <p class="mt-2 text-sm font-semibold text-slate-700">{{ currentImageUrl ? 'Changer l\'image' : 'Choisir une image' }}</p>
-                                    <p class="mt-1 text-xs text-slate-500">PNG, JPG jusqu'a 5 Mo</p>
+
+                            <div v-else class="relative mt-4">
+                                <button v-if="uploadPreviewUrl" type="button" class="mb-3 text-xs font-semibold text-red-600 hover:text-red-700" @click="clearNewImage">
+                                    Retirer
+                                </button>
+                                <div v-if="uploadPreviewUrl" class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                    <img :src="uploadPreviewUrl" alt="Apercu" class="h-44 w-full object-cover" />
+                                    <span class="absolute left-2 top-2 rounded-lg bg-emerald-600 px-2 py-1 text-xs font-medium text-white">Nouvelle</span>
+                                </div>
+                                <div v-else-if="currentImageUrl" class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                    <img :src="currentImageUrl" alt="Image actuelle" class="h-44 w-full object-cover" />
+                                    <span class="absolute left-2 top-2 rounded-lg bg-slate-900/70 px-2 py-1 text-xs font-medium text-white">Actuelle</span>
+                                </div>
+                                <div class="relative mt-3">
+                                    <input
+                                        ref="imageInput"
+                                        type="file"
+                                        accept="image/*"
+                                        class="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+                                        @change="setNewImage"
+                                    />
+                                    <div class="w-full rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center">
+                                        <svg class="mx-auto h-8 w-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <p class="mt-2 text-sm font-semibold text-slate-700">{{ currentImageUrl ? 'Changer l\'image' : 'Choisir une image' }}</p>
+                                        <p class="mt-1 text-xs text-slate-500">PNG, JPG jusqu'a 5 Mo</p>
+                                    </div>
                                 </div>
                             </div>
                             <p v-if="form.errors.new_image" class="mt-2 text-xs text-red-600">{{ form.errors.new_image }}</p>
+                            <p v-if="form.errors.media_id" class="mt-2 text-xs text-red-600">{{ form.errors.media_id }}</p>
                         </div>
                     </section>
                 </aside>

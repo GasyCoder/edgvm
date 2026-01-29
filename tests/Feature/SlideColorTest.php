@@ -82,6 +82,45 @@ it('uses default colors when not provided', function () {
     ]);
 });
 
+it('can store a slide using a media library image', function () {
+    $admin = User::factory()->create([
+        'role' => 'admin',
+        'email_verified_at' => now(),
+        'active' => true,
+    ]);
+
+    $slider = Slider::query()->create([
+        'nom' => 'Homepage',
+        'position' => 'homepage',
+        'visible' => true,
+    ]);
+
+    $media = Media::query()->create([
+        'nom_original' => 'library.jpg',
+        'nom_fichier' => 'library.jpg',
+        'chemin' => 'images/library.jpg',
+        'type' => 'image',
+        'taille_bytes' => 2048,
+        'mime_type' => 'image/jpeg',
+        'uploader_id' => $admin->id,
+    ]);
+
+    $this->actingAs($admin)
+        ->post(route('admin.slides.store', $slider), [
+            'titre' => 'Media Slide',
+            'media_id' => $media->id,
+            'ordre' => 1,
+            'visible' => true,
+        ])
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('slides', [
+        'slider_id' => $slider->id,
+        'titre_highlight' => 'Media Slide',
+        'image_id' => $media->id,
+    ]);
+});
+
 it('can update slide colors', function () {
     $admin = User::factory()->create([
         'role' => 'admin',
@@ -133,6 +172,64 @@ it('can update slide colors', function () {
     ]);
 });
 
+it('can update slide image using the media library', function () {
+    $admin = User::factory()->create([
+        'role' => 'admin',
+        'email_verified_at' => now(),
+        'active' => true,
+    ]);
+
+    $slider = Slider::query()->create([
+        'nom' => 'Homepage',
+        'position' => 'homepage',
+        'visible' => true,
+    ]);
+
+    $media = Media::query()->create([
+        'nom_original' => 'first.jpg',
+        'nom_fichier' => 'first.jpg',
+        'chemin' => 'images/first.jpg',
+        'type' => 'image',
+        'taille_bytes' => 1024,
+        'mime_type' => 'image/jpeg',
+        'uploader_id' => $admin->id,
+    ]);
+
+    $newMedia = Media::query()->create([
+        'nom_original' => 'second.jpg',
+        'nom_fichier' => 'second.jpg',
+        'chemin' => 'images/second.jpg',
+        'type' => 'image',
+        'taille_bytes' => 2048,
+        'mime_type' => 'image/jpeg',
+        'uploader_id' => $admin->id,
+    ]);
+
+    $slide = Slide::query()->create([
+        'slider_id' => $slider->id,
+        'titre_highlight' => 'Original Title',
+        'image_id' => $media->id,
+        'ordre' => 1,
+        'visible' => true,
+        'couleur_texte_titre' => '#FFFFFF',
+        'couleur_cta' => '#FFFFFF',
+    ]);
+
+    $this->actingAs($admin)
+        ->put(route('admin.slides.update', [$slider, $slide]), [
+            'titre' => 'Updated Title',
+            'media_id' => $newMedia->id,
+            'ordre' => 1,
+            'visible' => true,
+        ])
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('slides', [
+        'id' => $slide->id,
+        'image_id' => $newMedia->id,
+    ]);
+});
+
 it('passes color data to edit page', function () {
     $admin = User::factory()->create([
         'role' => 'admin',
@@ -173,6 +270,7 @@ it('passes color data to edit page', function () {
             ->component('Admin/Slides/Edit')
             ->where('slide.couleur_texte_titre', '#123456')
             ->where('slide.couleur_cta', '#654321')
+            ->where('slide.image_id', $media->id)
         );
 });
 

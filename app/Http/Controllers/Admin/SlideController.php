@@ -75,6 +75,7 @@ class SlideController extends Controller
                 'nom' => $slider->nom,
             ],
             'actualites' => $actualites,
+            'medias' => $this->imageOptions(),
             'defaults' => [
                 'ordre' => ($slider->slides()->max('ordre') ?? 0) + 1,
                 'visible' => true,
@@ -85,7 +86,7 @@ class SlideController extends Controller
     public function store(StoreSlideRequest $request, Slider $slider): RedirectResponse
     {
         $data = $request->validated();
-        $imageId = null;
+        $imageId = $data['media_id'] ?? null;
 
         if ($request->hasFile('new_image')) {
             $file = $request->file('new_image');
@@ -141,11 +142,13 @@ class SlideController extends Controller
                 'nom' => $slider->nom,
             ],
             'actualites' => $actualites,
+            'medias' => $this->imageOptions(),
             'slide' => [
                 'id' => $slide->id,
                 'titre' => $slide->titre_highlight,
                 'description' => $slide->description,
                 'image_url' => $slide->image?->url,
+                'image_id' => $slide->image_id,
                 'actualite_id' => $slide->actualite_id,
                 'texte_cta' => $slide->texte_cta,
                 'ordre' => $slide->ordre,
@@ -160,7 +163,7 @@ class SlideController extends Controller
     {
         $this->ensureSlideBelongsToSlider($slider, $slide);
         $data = $request->validated();
-        $imageId = $slide->image_id;
+        $imageId = array_key_exists('media_id', $data) ? $data['media_id'] : $slide->image_id;
 
         if ($request->hasFile('new_image')) {
             $file = $request->file('new_image');
@@ -232,5 +235,20 @@ class SlideController extends Controller
         if ($slide->slider_id !== $slider->id) {
             abort(404);
         }
+    }
+
+    private function imageOptions(): array
+    {
+        return Media::query()
+            ->where('type', 'image')
+            ->latest()
+            ->limit(80)
+            ->get()
+            ->map(fn (Media $media) => [
+                'id' => $media->id,
+                'nom' => $media->display_name,
+                'url' => $media->url,
+            ])
+            ->toArray();
     }
 }

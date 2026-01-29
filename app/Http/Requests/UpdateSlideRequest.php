@@ -17,6 +17,7 @@ class UpdateSlideRequest extends FormRequest
             'titre' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:500'],
             'new_image' => ['nullable', 'image', 'max:5120'],
+            'media_id' => ['nullable', 'integer', 'exists:media,id'],
             'actualite_id' => ['nullable', 'integer', 'exists:actualites,id'],
             'texte_cta' => ['nullable', 'string', 'max:255'],
             'ordre' => ['required', 'integer', 'min:1'],
