@@ -5,75 +5,40 @@ namespace App\Http\Controllers\Frontend\Recherche;
 use App\Http\Controllers\Controller;
 use App\Models\EAD;
 use App\Models\Specialite;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class EadController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(): Response
     {
-        $search = trim($request->string('search')->toString());
-        $domaine = $request->string('domaine')->toString();
-        $view = $request->string('view')->toString();
-
-        if (! in_array($view, ['grid', 'list'], true)) {
-            $view = 'grid';
-        }
-
-        $baseQuery = EAD::query();
-
-        $domaines = (clone $baseQuery)
-            ->whereNotNull('domaine')
-            ->orderBy('domaine')
-            ->pluck('domaine')
-            ->unique()
-            ->values()
-            ->toArray();
-
-        $query = $baseQuery
+        $eads = EAD::query()
             ->with(['responsable'])
             ->withCount('specialites')
             ->withCount([
                 'theses as doctorats_count' => function ($q) {
                     $q->enCours();
                 },
-            ]);
-
-        if ($search !== '') {
-            $query->where(function ($q) use ($search) {
-                $q->where('nom', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('domaine', 'like', "%{$search}%");
-            });
-        }
-
-        if ($domaine !== '') {
-            $query->where('domaine', $domaine);
-        }
-
-        $eads = $query->orderBy('nom')->get()->map(function (EAD $ead) {
-            return [
-                'id' => $ead->id,
-                'slug' => $ead->slug,
-                'nom' => $ead->nom,
-                'description' => $ead->description,
-                'domaine' => $ead->domaine,
-                'specialites_count' => $ead->specialites_count,
-                'doctorats_count' => $ead->doctorats_count,
-                'responsable' => $ead->responsable ? [
-                    'name' => $ead->responsable->name,
-                ] : null,
-            ];
-        })->toArray();
+            ])
+            ->orderBy('nom')
+            ->get()
+            ->map(function (EAD $ead) {
+                return [
+                    'id' => $ead->id,
+                    'slug' => $ead->slug,
+                    'nom' => $ead->nom,
+                    'description' => $ead->description,
+                    'domaine' => $ead->domaine,
+                    'specialites_count' => $ead->specialites_count,
+                    'doctorats_count' => $ead->doctorats_count,
+                    'responsable' => $ead->responsable ? [
+                        'name' => $ead->responsable->name,
+                    ] : null,
+                ];
+            })
+            ->toArray();
 
         return Inertia::render('Frontend/Recherche/Eads/Index', [
-            'filters' => [
-                'search' => $search,
-                'domaine' => $domaine,
-                'view' => $view,
-            ],
-            'domaines' => $domaines,
             'eads' => $eads,
         ]);
     }

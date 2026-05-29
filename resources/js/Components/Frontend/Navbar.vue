@@ -42,6 +42,13 @@ const isRoute = (routeName) => {
     return currentRouteName.value?.startsWith(routeName);
 };
 
+const isRechercheActive = computed(() => {
+    const current = currentRouteName.value || '';
+    return ['doctorants', 'ead', 'programmes', 'theses'].some((prefix) => current.startsWith(prefix));
+});
+
+const isAproposActive = computed(() => isRoute('pages'));
+
 const logoUrl = computed(() => {
     return appSettings.value?.logo_url || '/images/logo-edgvm.jpg';
 });
@@ -57,7 +64,7 @@ const logoUrl = computed(() => {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16 md:h-20">
                     <!-- Logo -->
-                    <Link :href="route('home')" class="flex items-center gap-3" aria-label="Aller a l'accueil">
+                    <Link :href="route('home')" class="flex items-center gap-3 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-ed-primary/40" aria-label="Aller à l'accueil">
                         <img
                             :src="logoUrl"
                             :alt="'Logo ' + (appSettings?.site_name || 'EDGVM')"
@@ -67,7 +74,7 @@ const logoUrl = computed(() => {
                         >
                         <div class="leading-tight">
                             <span class="block text-lg font-bold text-ed-primary md:text-xl">EDGVM</span>
-                            <span class="hidden text-xs text-ed-gray sm:block">Ecole Doctorale Genie du Vivant et Modelisation</span>
+                            <span class="hidden text-xs text-ed-gray sm:block">École Doctorale Génie du Vivant et Modélisation</span>
                         </div>
                     </Link>
 
@@ -77,7 +84,7 @@ const logoUrl = computed(() => {
                             <li>
                                 <Link
                                     :href="route('home')"
-                                    class="px-4 py-2 text-ed-gray hover:text-ed-primary font-medium transition rounded-lg hover:bg-teal-50"
+                                    :class="['px-4 py-2 font-medium transition rounded-lg', isRoute('home') ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
                                     :aria-current="isRoute('home') ? 'page' : undefined"
                                 >
                                     Accueil
@@ -92,11 +99,11 @@ const logoUrl = computed(() => {
                             >
                                 <button
                                     type="button"
-                                    class="px-4 py-2 text-ed-gray hover:text-ed-primary font-medium transition rounded-lg hover:bg-teal-50 flex items-center gap-1"
+                                    :class="['px-4 py-2 font-medium transition rounded-lg flex items-center gap-1', (aproposOpen || isAproposActive) ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
                                     aria-haspopup="true"
                                     :aria-expanded="aproposOpen.toString()"
                                 >
-                                    A propos
+                                    À propos
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                     </svg>
@@ -127,7 +134,7 @@ const logoUrl = computed(() => {
                                             </Link>
                                         </template>
                                         <div v-else class="px-4 py-2 text-xs text-gray-400">
-                                            Aucune page configuree pour ce menu.
+                                            Aucune page configurée pour ce menu.
                                         </div>
                                     </div>
                                 </Transition>
@@ -141,7 +148,7 @@ const logoUrl = computed(() => {
                             >
                                 <button
                                     type="button"
-                                    class="px-4 py-2 text-ed-gray hover:text-ed-primary font-medium transition rounded-lg hover:bg-teal-50 flex items-center gap-1"
+                                    :class="['px-4 py-2 font-medium transition rounded-lg flex items-center gap-1', (recherchesOpen || isRechercheActive) ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
                                     aria-haspopup="true"
                                     :aria-expanded="recherchesOpen.toString()"
                                 >
@@ -165,9 +172,9 @@ const logoUrl = computed(() => {
                                         role="menu"
                                     >
                                         <Link :href="route('doctorants.index')" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition" role="menuitem">Nos doctorants</Link>
-                                        <Link :href="route('ead.index')" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition" role="menuitem">Equipes d'accueil</Link>
+                                        <Link :href="route('ead.index')" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition" role="menuitem">Équipes d'accueil</Link>
                                         <Link :href="route('programmes.index')" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition" role="menuitem">Programmes de recherche</Link>
-                                        <Link :href="route('theses.index')" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition" role="menuitem">Banque des theses</Link>
+                                        <Link :href="route('theses.index')" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition" role="menuitem">Banque des thèses</Link>
                                     </div>
                                 </Transition>
                             </li>
@@ -175,17 +182,17 @@ const logoUrl = computed(() => {
                             <li>
                                 <Link
                                     :href="route('actualites.index')"
-                                    class="px-4 py-2 text-ed-gray hover:text-ed-primary font-medium transition rounded-lg hover:bg-teal-50"
+                                    :class="['px-4 py-2 font-medium transition rounded-lg', isRoute('actualites') ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
                                     :aria-current="isRoute('actualites') ? 'page' : undefined"
                                 >
-                                    Actualites
+                                    Actualités
                                 </Link>
                             </li>
 
                             <li>
                                 <Link
                                     :href="route('contact')"
-                                    class="px-4 py-2 text-ed-gray hover:text-ed-primary font-medium transition rounded-lg hover:bg-teal-50"
+                                    :class="['px-4 py-2 font-medium transition rounded-lg', isRoute('contact') ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
                                     :aria-current="isRoute('contact') ? 'page' : undefined"
                                 >
                                     Contact
@@ -277,7 +284,7 @@ const logoUrl = computed(() => {
                                 aria-controls="submenu-apropos"
                                 :aria-expanded="(openSubmenu === 'apropos').toString()"
                             >
-                                <span>A propos</span>
+                                <span>À propos</span>
                                 <svg
                                     class="w-4 h-4 transition-transform"
                                     :class="openSubmenu === 'apropos' ? 'rotate-180' : ''"
@@ -316,7 +323,7 @@ const logoUrl = computed(() => {
                                         </Link>
                                     </template>
                                     <div v-else class="px-4 py-2 text-xs text-gray-400">
-                                        Aucune page configuree pour ce menu.
+                                        Aucune page configurée pour ce menu.
                                     </div>
                                 </div>
                             </Transition>
@@ -359,21 +366,21 @@ const logoUrl = computed(() => {
                                     role="list"
                                 >
                                     <Link :href="route('doctorants.index')" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition" @click="closeMobileMenu">Nos doctorants</Link>
-                                    <Link :href="route('ead.index')" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition" @click="closeMobileMenu">Equipes d'accueil</Link>
+                                    <Link :href="route('ead.index')" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition" @click="closeMobileMenu">Équipes d'accueil</Link>
                                     <Link :href="route('programmes.index')" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition" @click="closeMobileMenu">Programmes de recherche</Link>
-                                    <Link :href="route('theses.index')" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition" @click="closeMobileMenu">Banque des theses</Link>
+                                    <Link :href="route('theses.index')" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition" @click="closeMobileMenu">Banque des thèses</Link>
                                 </div>
                             </Transition>
                         </div>
 
-                        <!-- Actualites -->
+                        <!-- Actualités -->
                         <Link
                             :href="route('actualites.index')"
                             class="block px-4 py-3 text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg font-medium transition"
                             :aria-current="isRoute('actualites') ? 'page' : undefined"
                             @click="closeMobileMenu"
                         >
-                            Actualites
+                            Actualités
                         </Link>
 
                         <!-- Contact -->

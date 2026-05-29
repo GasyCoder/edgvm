@@ -45,8 +45,7 @@ class HomeController extends Controller
 
         $eads = EAD::with(['responsable', 'specialites'])
             ->withCount(['specialites', 'theses'])
-            ->active()
-            ->take(4)
+            ->orderBy('nom')
             ->get();
 
         $actualites = Actualite::with(['category', 'image', 'tags'])

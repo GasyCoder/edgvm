@@ -8,41 +8,43 @@ const currentYear = new Date().getFullYear();
 </script>
 
 <template>
-    <footer class="relative bg-ed-primary text-white/90">
-        <div class="absolute inset-x-0 -top-px h-[2px] bg-gradient-to-r from-ed-yellow via-white/70 to-ed-secondary opacity-90"></div>
+    <footer class="bg-ed-teal-dark text-white/80">
+        <!-- Accent line -->
+        <div class="h-1 w-full bg-ed-yellow"></div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-            <div class="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-10 lg:gap-12">
-                <!-- Bloc A propos -->
+        <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-10 lg:gap-12">
+                <!-- About -->
                 <div class="md:col-span-5">
-                    <div class="flex items-center space-x-3 mb-5">
-                        <div class="bg-ed-secondary rounded-xl p-2.5">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="mb-5 flex items-center gap-3">
+                        <span class="flex h-12 w-12 items-center justify-center rounded-lg border border-white/15 bg-white/10">
+                            <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
-                        </div>
+                        </span>
                         <div>
-                            <h3 class="text-lg font-bold tracking-tight">EDGVM</h3>
-                            <p class="text-xs text-white/70">Ecole Doctorale Genie du Vivant et Modelisation</p>
+                            <h3 class="text-lg font-bold tracking-tight text-white">EDGVM</h3>
+                            <p class="text-xs text-white/70">École Doctorale Génie du Vivant et Modélisation</p>
                         </div>
                     </div>
 
-                    <p class="text-sm text-white/80 leading-relaxed mb-5">
-                        {{ appSettings?.meta_description || "Ecole Doctorale de l'Universite de Mahajanga, dediee a la formation doctorale, a la recherche scientifique et a l'innovation dans les domaines du vivant et de la modelisation." }}
+                    <p class="mb-6 max-w-md text-sm leading-relaxed text-white/80">
+                        {{ appSettings?.meta_description || "École Doctorale de l'Université de Mahajanga, dédiée à la formation doctorale, à la recherche scientifique et à l'innovation dans les domaines du vivant et de la modélisation." }}
                     </p>
 
-                    <!-- Reseaux sociaux -->
+                    <!-- Social -->
                     <div class="flex flex-wrap gap-3">
                         <a
                             v-if="appSettings?.facebook_url"
                             :href="appSettings.facebook_url"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="w-10 h-10 rounded-full border border-white/25 flex items-center justify-center text-white/80 hover:text-ed-primary hover:bg-ed-yellow transition-colors duration-200 sm:w-9 sm:h-9"
+                            aria-label="Facebook"
+                            class="flex h-10 w-10 items-center justify-center rounded-lg border border-white/20 text-white/80 transition-colors duration-200 hover:border-ed-yellow hover:bg-ed-yellow hover:text-ed-teal-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-ed-yellow/70"
                         >
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M24 12.073C24 5.403 18.627 0 12 0S0 5.403 0 12.073C0 18.09 4.388 22.953 10.125 24v-8.385H7.078v-3.542h3.047V9.356c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.513c-1.491 0-1.956.925-1.956 1.874v2.24h3.328l-.532 3.542h-2.796V24C19.612 22.953 24 18.09 24 12.073z"/>
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M24 12.073C24 5.403 18.627 0 12 0S0 5.403 0 12.073C0 18.09 4.388 22.953 10.125 24v-8.385H7.078v-3.542h3.047V9.356c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.513c-1.491 0-1.956.925-1.956 1.874v2.24h3.328l-.532 3.542h-2.796V24C19.612 22.953 24 18.09 24 12.073z" />
                             </svg>
                         </a>
 
@@ -51,115 +53,90 @@ const currentYear = new Date().getFullYear();
                             :href="appSettings.linkedin_url"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="w-10 h-10 rounded-full border border-white/25 flex items-center justify-center text-white/80 hover:text-ed-primary hover:bg-ed-yellow transition-colors duration-200 sm:w-9 sm:h-9"
+                            aria-label="LinkedIn"
+                            class="flex h-10 w-10 items-center justify-center rounded-lg border border-white/20 text-white/80 transition-colors duration-200 hover:border-ed-yellow hover:bg-ed-yellow hover:text-ed-teal-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-ed-yellow/70"
                         >
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.026-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.047c.476-.9 1.636-1.851 3.369-1.851 3.602 0 4.266 2.372 4.266 5.456v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zM6.97 20.452H3.701V9H6.97v11.452z"/>
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.026-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.047c.476-.9 1.636-1.851 3.369-1.851 3.602 0 4.266 2.372 4.266 5.456v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zM6.97 20.452H3.701V9H6.97v11.452z" />
                             </svg>
                         </a>
                     </div>
                 </div>
 
-                <!-- Bloc Liens rapides -->
+                <!-- Quick links -->
                 <div class="md:col-span-3">
-                    <h4 class="text-sm font-semibold tracking-wide uppercase mb-5 text-white/80">
+                    <h4 class="mb-5 text-sm font-semibold uppercase tracking-wide text-white">
                         Liens rapides
                     </h4>
-                    <ul class="space-y-2.5 text-sm">
+                    <ul class="space-y-3 text-sm">
                         <li>
-                            <Link
-                                :href="route('pages.show', 'a-propos')"
-                                class="flex items-center gap-2 text-white/70 hover:text-ed-yellow transition-colors"
-                            >
-                                <span class="w-1 h-1 rounded-full bg-ed-yellow"></span>
-                                <span>A propos de l'EDGVM</span>
+                            <Link :href="route('pages.show', 'a-propos')" class="text-white/75 transition-colors hover:text-ed-yellow focus:outline-none focus-visible:text-ed-yellow">
+                                À propos de l'EDGVM
                             </Link>
                         </li>
                         <li>
-                            <Link
-                                :href="route('programmes.index')"
-                                class="flex items-center gap-2 text-white/70 hover:text-ed-yellow transition-colors"
-                            >
-                                <span class="w-1 h-1 rounded-full bg-ed-yellow"></span>
-                                <span>Parcours et equipes de recherche</span>
+                            <Link :href="route('programmes.index')" class="text-white/75 transition-colors hover:text-ed-yellow focus:outline-none focus-visible:text-ed-yellow">
+                                Parcours et équipes de recherche
                             </Link>
                         </li>
                         <li>
-                            <Link
-                                :href="route('actualites.index')"
-                                class="flex items-center gap-2 text-white/70 hover:text-ed-yellow transition-colors"
-                            >
-                                <span class="w-1 h-1 rounded-full bg-ed-yellow"></span>
-                                <span>Actualites &amp; evenements</span>
+                            <Link :href="route('actualites.index')" class="text-white/75 transition-colors hover:text-ed-yellow focus:outline-none focus-visible:text-ed-yellow">
+                                Actualités &amp; événements
                             </Link>
                         </li>
                         <li>
-                            <Link
-                                :href="route('contact')"
-                                class="flex items-center gap-2 text-white/70 hover:text-ed-yellow transition-colors"
-                            >
-                                <span class="w-1 h-1 rounded-full bg-ed-yellow"></span>
-                                <span>Contact &amp; informations pratiques</span>
+                            <Link :href="route('contact')" class="text-white/75 transition-colors hover:text-ed-yellow focus:outline-none focus-visible:text-ed-yellow">
+                                Contact &amp; informations pratiques
                             </Link>
                         </li>
                     </ul>
                 </div>
 
-                <!-- Bloc Contact -->
+                <!-- Contact -->
                 <div class="md:col-span-4">
-                    <h4 class="text-sm font-semibold tracking-wide uppercase mb-5 text-white/80">
+                    <h4 class="mb-5 text-sm font-semibold uppercase tracking-wide text-white">
                         Contact
                     </h4>
-                    <ul class="space-y-3.5 text-sm text-white/80">
+                    <ul class="space-y-4 text-sm text-white/80">
                         <li class="flex items-start gap-3">
-                            <span class="mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
-                                <svg class="w-5 h-5 text-ed-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                            </span>
+                            <svg class="mt-0.5 h-5 w-5 flex-none text-ed-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
                             <span>
-                                {{ appSettings?.site_address || "Universite de Mahajanga" }}<br>
-                                <span class="text-white/60">Mahajanga, Madagascar</span>
+                                {{ appSettings?.site_address || 'Université de Mahajanga' }}<br>
+                                <span class="text-white/65">Mahajanga, Madagascar</span>
                             </span>
                         </li>
 
                         <li v-if="appSettings?.site_email" class="flex items-center gap-3">
-                            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
-                                <svg class="w-5 h-5 text-ed-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                </svg>
-                            </span>
-                            <a :href="'mailto:' + appSettings.site_email" class="hover:text-ed-yellow transition-colors">
+                            <svg class="h-5 w-5 flex-none text-ed-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            <a :href="'mailto:' + appSettings.site_email" class="transition-colors hover:text-ed-yellow">
                                 {{ appSettings.site_email }}
                             </a>
                         </li>
 
                         <li v-if="appSettings?.site_phone" class="flex items-center gap-3">
-                            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
-                                <svg class="w-5 h-5 text-ed-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498A1 1 0 0121 19.25V21a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 8.999V7a2 2 0 012-2z"/>
-                                </svg>
-                            </span>
-                            <span>{{ appSettings.site_phone }}</span>
+                            <svg class="h-5 w-5 flex-none text-ed-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498A1 1 0 0121 19.25V21a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 8.999V7a2 2 0 012-2z" />
+                            </svg>
+                            <a :href="'tel:' + appSettings.site_phone" class="transition-colors hover:text-ed-yellow">{{ appSettings.site_phone }}</a>
                         </li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Bas de page -->
-            <div class="border-t border-white/10 mt-10 pt-6 text-center space-y-1.5">
-                <p class="text-xs sm:text-sm text-white/60">
-                    &copy; {{ currentYear }} {{ appSettings?.site_name || 'EDGVM - Ecole Doctorale Genie du Vivant et Modelisation' }}. Tous droits reserves.
+            <!-- Bottom bar -->
+            <div class="mt-12 flex flex-col items-center justify-between gap-2 border-t border-white/15 pt-6 sm:flex-row">
+                <p class="text-center text-xs text-white/70 sm:text-left">
+                    &copy; {{ currentYear }} {{ appSettings?.site_name || 'EDGVM - École Doctorale Génie du Vivant et Modélisation' }}. Tous droits réservés.
                 </p>
-                <p class="text-[11px] text-white/40">
-                    Plateforme developpee par
-                    <a href="#" target="_blank" class="text-ed-yellow hover:text-ed-yellow/80 font-semibold transition-colors">
-                        DTIC - Universite de Mahajanga
+                <p class="text-center text-xs text-white/60 sm:text-right">
+                    Plateforme développée par
+                    <a href="#" target="_blank" class="font-semibold text-ed-yellow transition-colors hover:text-white">
+                        DTIC - Université de Mahajanga
                     </a>
                 </p>
             </div>
