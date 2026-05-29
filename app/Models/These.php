@@ -4,12 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class These extends Model
 {
     use HasFactory;
 
     protected $table = 'theses';
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $these): void {
+            if (empty($these->uuid)) {
+                $these->uuid = (string) Str::uuid();
+            }
+        });
+    }
 
     protected $fillable = [
         'doctorant_id',
@@ -28,8 +38,8 @@ class These extends Model
     ];
 
     protected $casts = [
-        'date_debut'       => 'date',
-        'date_prevue_fin'  => 'date',
+        'date_debut' => 'date',
+        'date_prevue_fin' => 'date',
         'date_publication' => 'date',
     ];
 
@@ -107,9 +117,9 @@ class These extends Model
     {
         return match ($this->statut) {
             'preparation' => 'En préparation',
-            'en_cours'    => 'En cours',
-            'soutenue'    => 'Soutenue',
-            default       => 'Non défini',
+            'en_cours' => 'En cours',
+            'soutenue' => 'Soutenue',
+            default => 'Non défini',
         };
     }
 
@@ -117,9 +127,9 @@ class These extends Model
     {
         return match ($this->statut) {
             'preparation' => 'bg-amber-50 text-amber-700 border-amber-200',
-            'en_cours'    => 'bg-blue-50 text-blue-700 border-blue-200',
-            'soutenue'    => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-            default       => 'bg-gray-100 text-gray-600 border-gray-200',
+            'en_cours' => 'bg-blue-50 text-blue-700 border-blue-200',
+            'soutenue' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+            default => 'bg-gray-100 text-gray-600 border-gray-200',
         };
     }
 }

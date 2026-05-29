@@ -44,6 +44,7 @@ class TheseController extends Controller
 
             return [
                 'id' => $these->id,
+                'uuid' => $these->uuid,
                 'sujet_these' => $these->sujet_these,
                 'resume' => $this->limitText($these->resume_these, 220),
                 'statut' => $these->statut,

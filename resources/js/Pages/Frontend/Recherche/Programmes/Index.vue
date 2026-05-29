@@ -1,6 +1,7 @@
 <script setup>
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import FrontendLayout from '@/Layouts/FrontendLayout.vue';
+import Container from '@/Components/Frontend/UI/Container.vue';
 
 defineProps({
     specialites: Array,
@@ -14,83 +15,70 @@ defineOptions({
 <template>
     <Head title="Programmes de recherche" />
 
-    <div>
-        <!-- Hero Section -->
-        <section class="relative gradient-primary pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 md:pb-20 overflow-hidden">
-            <div class="absolute inset-0 opacity-15 pointer-events-none">
-                <div class="absolute -top-10 right-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
-                <div class="absolute bottom-0 -left-10 w-40 h-40 bg-ed-yellow rounded-full blur-3xl"></div>
-            </div>
+    <!-- Hero -->
+    <section class="mt-16 bg-ed-teal-dark py-12 text-white sm:mt-20 sm:py-16">
+        <Container>
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-ed-yellow">
+                Programme doctoral EDGVM
+            </p>
+            <h1 class="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+                Programmes de recherche
+            </h1>
+            <p class="mt-3 max-w-2xl text-sm leading-relaxed text-white/85 sm:text-base">
+                Les spécialités de recherche doctorale, chacune rattachée à une équipe d'accueil.
+            </p>
 
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center text-white">
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 mb-4">
-                    <span class="w-2 h-2 rounded-full bg-ed-yellow"></span>
-                    <span class="text-xs font-semibold tracking-[0.18em] uppercase">
-                        EDGVM
-                    </span>
-                </div>
-                <h1 class="text-3xl md:text-4xl font-black mb-3">
-                    Programmes de Recherche
-                </h1>
-                <p class="text-base md:text-lg text-white/90 max-w-2xl mx-auto">
-                    Nos specialites de recherche doctorale.
+            <nav class="mt-5 flex items-center gap-2 text-sm text-white/70" aria-label="Fil d'Ariane">
+                <Link :href="route('home')" class="transition-colors hover:text-ed-yellow">Accueil</Link>
+                <span aria-hidden="true">/</span>
+                <span class="font-semibold text-white">Programmes</span>
+            </nav>
+        </Container>
+    </section>
+
+    <!-- Liste -->
+    <section class="bg-gray-50 py-12 md:py-16">
+        <Container>
+            <div class="mb-6 flex items-baseline justify-between gap-4">
+                <h2 class="text-lg font-bold text-gray-900">Les programmes disponibles</h2>
+                <p class="text-sm text-gray-500">
+                    {{ specialites?.length || 0 }} programme<span v-if="(specialites?.length || 0) > 1">s</span>
                 </p>
             </div>
-        </section>
 
-        <!-- Liste des programmes -->
-        <section class="py-12 sm:py-16 bg-gradient-to-b from-gray-50 to-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
-                    <div class="max-w-2xl space-y-2">
-                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">
-                            Les programmes disponibles
-                        </h2>
-                        <p class="text-sm sm:text-base text-gray-600">
-                            Chaque specialite est associee a une equipe d'accueil doctorale (EAD).
-                        </p>
-                    </div>
-                    <div class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs sm:text-sm font-semibold text-gray-700 shadow-sm">
-                        <span class="flex h-6 w-6 items-center justify-center rounded-full bg-ed-primary/10 text-ed-primary">
-                            {{ specialites?.length || 0 }}
-                        </span>
-                        Programmes disponibles
-                    </div>
-                </div>
-
-                <div v-if="!specialites?.length" class="text-center py-16">
-                    <p class="text-lg text-gray-500">Aucun programme disponible.</p>
-                </div>
-
-                <div v-else class="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2 mt-8">
-                    <article
-                        v-for="specialite in specialites"
-                        :key="specialite.id"
-                        class="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-ed-primary/40 hover:shadow-md"
-                    >
-                        <div class="flex flex-col gap-4">
-                            <div class="flex items-start gap-3">
-                                <span class="mt-1.5 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-ed-primary"></span>
-                                <div class="flex min-w-0 flex-col gap-2">
-                                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 break-words">
-                                        {{ specialite.nom }}
-                                    </h3>
-                                    <div class="flex flex-col gap-1 text-sm text-gray-600">
-                                        <span class="text-xs font-semibold uppercase tracking-wide text-gray-400">EAD</span>
-                                        <span class="break-words">
-                                            {{ specialite.ead?.nom || specialite.ead || 'Non renseignee' }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2 text-xs text-gray-500">
-                                <span class="h-1.5 w-1.5 rounded-full bg-ed-yellow"></span>
-                                Programme de recherche doctorale
-                            </div>
-                        </div>
-                    </article>
-                </div>
+            <div v-if="!specialites?.length" class="rounded-xl border border-dashed border-gray-300 bg-white p-12 text-center">
+                <p class="text-sm font-medium text-gray-600">Aucun programme disponible pour le moment.</p>
             </div>
-        </section>
-    </div>
+
+            <template v-else>
+                <!-- Desktop : tableau -->
+                <div class="hidden overflow-hidden rounded-xl border border-gray-200 bg-white md:block">
+                    <table class="min-w-full divide-y divide-gray-200 text-left">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wide text-gray-600">Programme / Spécialité</th>
+                                <th scope="col" class="px-6 py-3.5 text-xs font-semibold uppercase tracking-wide text-gray-600">Équipe d'accueil</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr v-for="specialite in specialites" :key="specialite.id" class="transition-colors hover:bg-gray-50">
+                                <td class="px-6 py-4 font-semibold text-gray-900">{{ specialite.nom }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">{{ specialite.ead?.nom || specialite.ead || '—' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile : liste -->
+                <ul class="divide-y divide-gray-200 overflow-hidden rounded-xl border border-gray-200 bg-white md:hidden">
+                    <li v-for="specialite in specialites" :key="specialite.id" class="p-4">
+                        <p class="font-semibold text-gray-900">{{ specialite.nom }}</p>
+                        <p class="mt-1 text-sm text-gray-500">
+                            Équipe d'accueil : <span class="text-gray-700">{{ specialite.ead?.nom || specialite.ead || '—' }}</span>
+                        </p>
+                    </li>
+                </ul>
+            </template>
+        </Container>
+    </section>
 </template>

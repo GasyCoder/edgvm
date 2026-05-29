@@ -44,7 +44,7 @@ const isRoute = (routeName) => {
 
 const isRechercheActive = computed(() => {
     const current = currentRouteName.value || '';
-    return ['doctorants', 'ead', 'programmes', 'theses'].some((prefix) => current.startsWith(prefix));
+    return ['ead', 'programmes', 'theses'].some((prefix) => current.startsWith(prefix));
 });
 
 const isAproposActive = computed(() => isRoute('pages'));
@@ -74,7 +74,7 @@ const logoUrl = computed(() => {
                         >
                         <div class="leading-tight">
                             <span class="block text-lg font-bold text-ed-primary md:text-xl">EDGVM</span>
-                            <span class="hidden text-xs text-ed-gray sm:block">École Doctorale Génie du Vivant et Modélisation</span>
+                            <span class="hidden max-w-[12rem] text-xs leading-snug text-ed-gray xl:block">École Doctorale Génie du Vivant et Modélisation</span>
                         </div>
                     </Link>
 
@@ -84,7 +84,7 @@ const logoUrl = computed(() => {
                             <li>
                                 <Link
                                     :href="route('home')"
-                                    :class="['px-4 py-2 font-medium transition rounded-lg', isRoute('home') ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
+                                    :class="['whitespace-nowrap px-3 py-2 font-medium transition rounded-lg', isRoute('home') ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
                                     :aria-current="isRoute('home') ? 'page' : undefined"
                                 >
                                     Accueil
@@ -99,7 +99,7 @@ const logoUrl = computed(() => {
                             >
                                 <button
                                     type="button"
-                                    :class="['px-4 py-2 font-medium transition rounded-lg flex items-center gap-1', (aproposOpen || isAproposActive) ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
+                                    :class="['whitespace-nowrap px-3 py-2 font-medium transition rounded-lg flex items-center gap-1', (aproposOpen || isAproposActive) ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
                                     aria-haspopup="true"
                                     :aria-expanded="aproposOpen.toString()"
                                 >
@@ -148,7 +148,7 @@ const logoUrl = computed(() => {
                             >
                                 <button
                                     type="button"
-                                    :class="['px-4 py-2 font-medium transition rounded-lg flex items-center gap-1', (recherchesOpen || isRechercheActive) ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
+                                    :class="['whitespace-nowrap px-3 py-2 font-medium transition rounded-lg flex items-center gap-1', (recherchesOpen || isRechercheActive) ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
                                     aria-haspopup="true"
                                     :aria-expanded="recherchesOpen.toString()"
                                 >
@@ -171,9 +171,8 @@ const logoUrl = computed(() => {
                                         class="absolute left-0 mt-1 w-56 max-w-xs bg-white rounded-lg shadow-xl py-2 z-50 lg:w-64"
                                         role="menu"
                                     >
-                                        <Link :href="route('doctorants.index')" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition" role="menuitem">Nos doctorants</Link>
                                         <Link :href="route('ead.index')" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition" role="menuitem">Équipes d'accueil</Link>
-                                        <Link :href="route('programmes.index')" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition" role="menuitem">Programmes de recherche</Link>
+                                        <Link :href="route('programmes.index')" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition" role="menuitem">Programmes</Link>
                                         <Link :href="route('theses.index')" class="block px-4 py-2 text-ed-gray hover:bg-teal-50 hover:text-ed-primary transition" role="menuitem">Banque des thèses</Link>
                                     </div>
                                 </Transition>
@@ -181,8 +180,27 @@ const logoUrl = computed(() => {
 
                             <li>
                                 <Link
+                                    :href="route('doctorants.index')"
+                                    :class="['whitespace-nowrap px-3 py-2 font-medium transition rounded-lg', isRoute('doctorants') ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
+                                    :aria-current="isRoute('doctorants') ? 'page' : undefined"
+                                >
+                                    Doctorants
+                                </Link>
+                            </li>
+
+                            <li>
+                                <a
+                                    href="#"
+                                    class="whitespace-nowrap px-3 py-2 font-medium transition rounded-lg text-ed-gray hover:text-ed-primary hover:bg-teal-50"
+                                >
+                                    Laboratoires
+                                </a>
+                            </li>
+
+                            <li>
+                                <Link
                                     :href="route('actualites.index')"
-                                    :class="['px-4 py-2 font-medium transition rounded-lg', isRoute('actualites') ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
+                                    :class="['whitespace-nowrap px-3 py-2 font-medium transition rounded-lg', isRoute('actualites') ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
                                     :aria-current="isRoute('actualites') ? 'page' : undefined"
                                 >
                                     Actualités
@@ -192,7 +210,7 @@ const logoUrl = computed(() => {
                             <li>
                                 <Link
                                     :href="route('contact')"
-                                    :class="['px-4 py-2 font-medium transition rounded-lg', isRoute('contact') ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
+                                    :class="['whitespace-nowrap px-3 py-2 font-medium transition rounded-lg', isRoute('contact') ? 'text-ed-primary bg-teal-50' : 'text-ed-gray hover:text-ed-primary hover:bg-teal-50']"
                                     :aria-current="isRoute('contact') ? 'page' : undefined"
                                 >
                                     Contact
@@ -365,13 +383,31 @@ const logoUrl = computed(() => {
                                     class="ml-2 pl-2 border-l border-gray-100 space-y-1 overflow-hidden"
                                     role="list"
                                 >
-                                    <Link :href="route('doctorants.index')" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition" @click="closeMobileMenu">Nos doctorants</Link>
                                     <Link :href="route('ead.index')" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition" @click="closeMobileMenu">Équipes d'accueil</Link>
-                                    <Link :href="route('programmes.index')" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition" @click="closeMobileMenu">Programmes de recherche</Link>
+                                    <Link :href="route('programmes.index')" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition" @click="closeMobileMenu">Programmes</Link>
                                     <Link :href="route('theses.index')" class="block px-4 py-2 text-sm text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg transition" @click="closeMobileMenu">Banque des thèses</Link>
                                 </div>
                             </Transition>
                         </div>
+
+                        <!-- Doctorants -->
+                        <Link
+                            :href="route('doctorants.index')"
+                            class="block px-4 py-3 text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg font-medium transition"
+                            :aria-current="isRoute('doctorants') ? 'page' : undefined"
+                            @click="closeMobileMenu"
+                        >
+                            Doctorants
+                        </Link>
+
+                        <!-- Laboratoires -->
+                        <a
+                            href="#"
+                            class="block px-4 py-3 text-ed-gray hover:text-ed-primary hover:bg-teal-50 rounded-lg font-medium transition"
+                            @click="closeMobileMenu"
+                        >
+                            Laboratoires
+                        </a>
 
                         <!-- Actualités -->
                         <Link

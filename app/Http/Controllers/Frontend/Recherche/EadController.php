@@ -90,6 +90,7 @@ class EadController extends Controller
                     'date_prevue_fin' => $these->date_prevue_fin?->format('Y-m-d'),
                     'doctorant' => [
                         'id' => $these->doctorant?->id,
+                        'uuid' => $these->doctorant?->uuid,
                         'name' => $these->doctorant?->user?->name ?? 'Non renseigné',
                         'matricule' => $these->doctorant?->matricule,
                     ],

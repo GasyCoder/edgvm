@@ -340,25 +340,25 @@ defineOptions({
             <!-- Chiffres clés -->
             <div class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-gray-200 bg-gray-200 lg:grid-cols-4">
                 <div class="bg-white p-6 md:p-8">
-                    <p class="text-4xl font-bold tracking-tight text-ed-primary tabular-nums md:text-5xl">{{ stats.doctorants }}<span class="text-2xl align-top">+</span></p>
+                    <p class="text-3xl font-semibold tracking-tight text-ed-primary tabular-nums md:text-4xl">{{ stats.doctorants }}<span class="align-top text-lg text-ed-primary/70">+</span></p>
                     <p class="mt-2 text-sm font-semibold text-gray-900">Doctorants</p>
                     <p class="mt-1 text-sm leading-relaxed text-gray-500">Inscrits et suivis au sein de l'École Doctorale.</p>
                 </div>
 
                 <div class="bg-white p-6 md:p-8">
-                    <p class="text-4xl font-bold tracking-tight text-ed-primary tabular-nums md:text-5xl">{{ stats.encadrants }}<span class="text-2xl align-top">+</span></p>
+                    <p class="text-3xl font-semibold tracking-tight text-ed-primary tabular-nums md:text-4xl">{{ stats.encadrants }}<span class="align-top text-lg text-ed-primary/70">+</span></p>
                     <p class="mt-2 text-sm font-semibold text-gray-900">Encadrants</p>
                     <p class="mt-1 text-sm leading-relaxed text-gray-500">Encadrants et co-encadrants mobilisés sur les projets de recherche.</p>
                 </div>
 
                 <div class="bg-white p-6 md:p-8">
-                    <p class="text-4xl font-bold tracking-tight text-ed-primary tabular-nums md:text-5xl">{{ stats.theses_soutenues }}<span class="text-2xl align-top">+</span></p>
+                    <p class="text-3xl font-semibold tracking-tight text-ed-primary tabular-nums md:text-4xl">{{ stats.theses_soutenues }}<span class="align-top text-lg text-ed-primary/70">+</span></p>
                     <p class="mt-2 text-sm font-semibold text-gray-900">Thèses soutenues</p>
                     <p class="mt-1 text-sm leading-relaxed text-gray-500">Soutenues au sein de l'École ces dernières années.</p>
                 </div>
 
                 <div class="bg-white p-6 md:p-8">
-                    <p class="text-4xl font-bold tracking-tight text-ed-primary tabular-nums md:text-5xl">{{ stats.equipes }}</p>
+                    <p class="text-3xl font-semibold tracking-tight text-ed-primary tabular-nums md:text-4xl">{{ stats.equipes }}</p>
                     <p class="mt-2 text-sm font-semibold text-gray-900">Équipes d'accueil</p>
                     <p class="mt-1 text-sm leading-relaxed text-gray-500">Équipes et laboratoires partenaires des travaux de thèse.</p>
                 </div>
@@ -1009,25 +1009,22 @@ defineOptions({
     </section>
 
     <!-- CTA Section -->
-    <section class="bg-ed-primary py-16 text-white">
-        <Container class="max-w-4xl text-center">
-            <h2 class="mb-4 text-2xl font-bold sm:text-3xl">
+    <section class="border-t border-gray-200 bg-gray-50 py-16">
+        <Container class="max-w-3xl text-center">
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                 Rejoignez l'École Doctorale EDGVM
             </h2>
-            <p class="mx-auto mb-8 max-w-2xl text-white/85">
+            <p class="mx-auto mt-3 max-w-2xl text-gray-600">
                 Découvrez nos programmes de recherche, nos équipes d'accueil et les opportunités
                 de formation doctorale au sein de l'Université de Mahajanga.
             </p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <AppButton :href="route('contact')" variant="yellow" size="lg">
+            <div class="mt-8 flex flex-wrap justify-center gap-3">
+                <AppButton :href="route('contact')" variant="primary" size="lg">
                     Nous contacter
                 </AppButton>
-                <Link
-                    :href="route('doctorants.index')"
-                    class="inline-flex items-center justify-center rounded-xl border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-ed-primary"
-                >
+                <AppButton :href="route('doctorants.index')" variant="outline" size="lg">
                     Découvrir nos doctorants
-                </Link>
+                </AppButton>
             </div>
         </Container>
     </section>

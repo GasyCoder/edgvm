@@ -92,13 +92,13 @@ $frontendRoutes = function (): void {
         // Doctorants
         Route::prefix('doctorants')->name('doctorants.')->group(function () {
             Route::get('/', [FrontendDoctorantController::class, 'index'])->name('index');
-            Route::get('/voir-{doctorant}', [FrontendDoctorantController::class, 'show'])->name('show');
+            Route::get('/voir-{doctorant:uuid}', [FrontendDoctorantController::class, 'show'])->name('show');
         });
 
         // Thèses (frontend)
         Route::prefix('theses')->name('theses.')->group(function () {
             Route::get('/', [TheseController::class, 'index'])->name('index');
-            Route::get('/{these}', [TheseController::class, 'show'])->name('show');
+            Route::get('/{these:uuid}', [TheseController::class, 'show'])->name('show');
         });
 
         // Actualités

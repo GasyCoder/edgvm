@@ -56,6 +56,7 @@ class DoctorantController extends Controller
 
                 return [
                     'id' => $doctorant->id,
+                    'uuid' => $doctorant->uuid,
                     'name' => $doctorant->user?->name,
                     'matricule' => $doctorant->matricule,
                     'initials' => $this->initials($doctorant->user?->name),

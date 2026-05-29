@@ -37,7 +37,7 @@ class UserSeeder extends Seeder
 
         // --- Encadrant ---
         $encadrantUser = User::create([
-            'name' => 'Prof. Van Aldo RABEHAVANA',
+            'name' => 'Aldo',
             'email' => 'encadrant@edgvm.mg',
             'password' => Hash::make('password'),
             'role' => 'encadrant',
@@ -46,8 +46,8 @@ class UserSeeder extends Seeder
         ]);
 
         Encadrant::create([
-            'nom' => 'RABEHAVANA',
-            'prenoms' => 'Van Aldo',
+            'nom' => 'RAKOTOARIMANANA',
+            'prenoms' => 'Aldo',
             'email' => $encadrantUser->email,
             'genre' => 'homme',
             'grade' => 'Professeur Titulaire',
