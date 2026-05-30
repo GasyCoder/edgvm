@@ -78,6 +78,13 @@ const initials = (name) => {
     return name.split(' ').filter(Boolean).slice(0, 2).map((p) => p.charAt(0).toUpperCase()).join('');
 };
 
+const paiementBarClass = (percent) => {
+    if (percent >= 100) return 'bg-emerald-500';
+    if (percent <= 0) return 'bg-red-500';
+
+    return 'bg-amber-500';
+};
+
 const allSelected = computed(() =>
     props.doctorants.data.length > 0 && selected.value.length === props.doctorants.data.length,
 );
@@ -296,6 +303,7 @@ const deleteDoctorant = (doctorant) => {
                                 <th class="px-4 py-3">Niveau</th>
                                 <th class="px-4 py-3">Statut</th>
                                 <th class="px-4 py-3">Équipe</th>
+                                <th class="px-4 py-3">Paiement</th>
                                 <th class="px-4 py-3 text-center">Obs.</th>
                                 <th class="px-4 py-3 text-right">Actions</th>
                             </tr>
@@ -321,6 +329,18 @@ const deleteDoctorant = (doctorant) => {
                                     <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold" :class="statutOf(doctorant.statut).class">{{ statutOf(doctorant.statut).label }}</span>
                                 </td>
                                 <td class="px-4 py-4 text-gray-600">{{ doctorant.ead?.sigle || doctorant.ead?.nom || '—' }}</td>
+                                <td class="px-4 py-4">
+                                    <div v-if="doctorant.paiement_percent !== null" class="w-28">
+                                        <div class="flex items-center justify-between text-xs">
+                                            <span class="font-semibold text-gray-800">{{ doctorant.paiement_percent }}% payé</span>
+                                        </div>
+                                        <div class="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+                                            <div class="h-full rounded-full" :class="paiementBarClass(doctorant.paiement_percent)" :style="{ width: doctorant.paiement_percent + '%' }"></div>
+                                        </div>
+                                        <span class="mt-0.5 block text-[11px] text-gray-400">{{ 100 - doctorant.paiement_percent }}% impayé</span>
+                                    </div>
+                                    <span v-else class="text-xs text-gray-400">—</span>
+                                </td>
                                 <td class="px-4 py-4 text-center">
                                     <button type="button" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border transition" :class="doctorant.observation ? 'border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-100' : 'border-gray-200 text-gray-400 hover:bg-gray-50'" :title="doctorant.observation || 'Ajouter une observation'" @click="openObservation(doctorant)">
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -350,7 +370,7 @@ const deleteDoctorant = (doctorant) => {
                                 </td>
                             </tr>
                             <tr v-if="!doctorants.data.length">
-                                <td colspan="7" class="px-6 py-12 text-center">
+                                <td colspan="8" class="px-6 py-12 text-center">
                                     <p class="text-sm font-medium text-gray-600">{{ isArchives ? 'Aucun doctorant archivé' : 'Aucun doctorant trouvé' }}</p>
                                     <p class="mt-1 text-xs text-gray-400">Ajustez votre recherche ou vos filtres.</p>
                                 </td>

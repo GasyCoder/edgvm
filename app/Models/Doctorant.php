@@ -92,6 +92,35 @@ class Doctorant extends Model
         return $this->hasMany(Paiement::class);
     }
 
+    public function reinscriptions()
+    {
+        return $this->hasMany(Reinscription::class);
+    }
+
+    /**
+     * Niveaux du cursus doctoral (D3 standard, D4/D5 sur dérogation).
+     */
+    public const NIVEAUX = ['D1', 'D2', 'D3', 'D4', 'D5'];
+
+    public static function niveauSuivant(string $niveau): ?string
+    {
+        $index = array_search($niveau, self::NIVEAUX, true);
+
+        if ($index === false || ! isset(self::NIVEAUX[$index + 1])) {
+            return null;
+        }
+
+        return self::NIVEAUX[$index + 1];
+    }
+
+    /**
+     * La réinscription de l'année la plus récente.
+     */
+    public function reinscriptionCourante(): ?Reinscription
+    {
+        return $this->reinscriptions->sortByDesc('annee_universitaire')->first();
+    }
+
     /**
      * Thèse en cours (si tu en as au plus une en_cours)
      */

@@ -295,7 +295,7 @@ const submitSecretaire = () => {
                                 <!-- Preview -->
                                 <div v-if="logoPreviewUrl || settings.logo_url" class="p-4">
                                     <div class="flex items-center gap-4">
-                                        <div class="h-16 w-24 flex-shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                                        <div class="h-16 w-24 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
                                             <img :src="logoPreviewUrl || settings.logo_url" alt="Logo" class="h-full w-full object-contain" />
                                         </div>
                                         <div class="flex-1 min-w-0">
@@ -307,7 +307,7 @@ const submitSecretaire = () => {
                                         <button
                                             v-if="logoPreviewUrl"
                                             type="button"
-                                            class="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition"
+                                            class="shrink-0 h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition"
                                             @click="clearLogo"
                                         >
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -347,7 +347,7 @@ const submitSecretaire = () => {
                                 <!-- Preview -->
                                 <div v-if="faviconPreviewUrl || settings.favicon_url" class="p-4">
                                     <div class="flex items-center gap-4">
-                                        <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center">
+                                        <div class="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center">
                                             <img :src="faviconPreviewUrl || settings.favicon_url" alt="Favicon" class="h-8 w-8 object-contain" />
                                         </div>
                                         <div class="flex-1 min-w-0">
@@ -359,7 +359,7 @@ const submitSecretaire = () => {
                                         <button
                                             v-if="faviconPreviewUrl"
                                             type="button"
-                                            class="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition"
+                                            class="shrink-0 h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition"
                                             @click="clearFavicon"
                                         >
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

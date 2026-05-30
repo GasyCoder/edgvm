@@ -82,7 +82,7 @@ watch(flash, (newFlash) => {
                 class="rounded-lg border px-3 py-2 shadow-lg sm:p-4"
             >
                 <div class="flex items-start">
-                    <div class="flex-shrink-0">
+                    <div class="shrink-0">
                         <!-- Success Icon -->
                         <svg
                             v-if="currentType === 'success'"
@@ -127,7 +127,7 @@ watch(flash, (newFlash) => {
                     <div class="ml-3 flex-1">
                         <p class="text-sm font-medium">{{ currentMessage }}</p>
                     </div>
-                    <div class="ml-4 flex-shrink-0">
+                    <div class="ml-4 shrink-0">
                         <button
                             @click="close"
                             :class="classes.text"

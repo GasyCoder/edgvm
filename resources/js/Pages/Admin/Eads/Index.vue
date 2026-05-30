@@ -128,7 +128,6 @@ const hasFilters = computed(() => search.value);
                                         <span class="tabular-nums">{{ ead.encadrants_count }} encadrants</span>
                                         <span class="tabular-nums">{{ ead.theses_count }} thèses</span>
                                         <span v-if="ead.specialites_count === 0" class="rounded-full bg-amber-50 px-2 py-0.5 font-semibold text-amber-700">Sans spécialité</span>
-                                        <span v-if="ead.theses_count === 0" class="rounded-full bg-amber-50 px-2 py-0.5 font-semibold text-amber-700">Sans thèse</span>
                                     </div>
                                 </td>
                                 <td class="px-5 py-4">

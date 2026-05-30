@@ -48,6 +48,7 @@ class SpecialiteController extends Controller
                 'ead' => $specialite->ead ? [
                     'id' => $specialite->ead->id,
                     'nom' => $specialite->ead->nom,
+                    'sigle' => $specialite->ead->sigle,
                 ] : null,
                 'theses_count' => $specialite->theses_count ?? 0,
             ]);
@@ -64,10 +65,7 @@ class SpecialiteController extends Controller
                 'search' => $search,
                 'ead' => $filterEad,
             ],
-            'eads' => EAD::orderBy('nom')->get()->map(fn (EAD $ead) => [
-                'id' => $ead->id,
-                'nom' => $ead->nom,
-            ])->toArray(),
+            'eads' => $this->eads(),
             'specialites' => $specialites,
             'stats' => $stats,
         ]);
@@ -129,9 +127,10 @@ class SpecialiteController extends Controller
 
     private function eads(): array
     {
-        return EAD::orderBy('nom')->get()->map(fn (EAD $ead) => [
+        return EAD::orderBy('sigle')->orderBy('nom')->get()->map(fn (EAD $ead) => [
             'id' => $ead->id,
             'nom' => $ead->nom,
+            'sigle' => $ead->sigle,
         ])->toArray();
     }
 

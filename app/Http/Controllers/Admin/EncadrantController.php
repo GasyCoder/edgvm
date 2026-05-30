@@ -84,7 +84,7 @@ class EncadrantController extends Controller
 
     public function show(Encadrant $encadrant): Response
     {
-        $encadrant->load(['theses.doctorant.user']);
+        $encadrant->load(['theses.doctorant']);
 
         return Inertia::render('Admin/Encadrants/Show', [
             'encadrant' => [
@@ -104,7 +104,7 @@ class EncadrantController extends Controller
                 'statut' => $these->statut,
                 'doctorant' => $these->doctorant ? [
                     'id' => $these->doctorant->id,
-                    'name' => $these->doctorant->user?->name,
+                    'name' => $these->doctorant->name,
                     'matricule' => $these->doctorant->matricule,
                 ] : null,
             ])->toArray(),

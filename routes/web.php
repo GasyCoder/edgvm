@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\MessageDirectionController as AdminMessageDirecti
 use App\Http\Controllers\Admin\NewsletterSubscriberController as AdminNewsletterSubscriberController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\PaiementController as AdminPaiementController;
+use App\Http\Controllers\Admin\ParcoursController as AdminParcoursController;
 use App\Http\Controllers\Admin\PartenaireController as AdminPartenaireController;
 use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Admin\SlideController as AdminSlideController;
@@ -270,6 +271,7 @@ $adminRoutes = function (): void {
                 // Routes avec paramètres à la fin
                 Route::get('/{doctorant}', [AdminDoctorantController::class, 'show'])->name('show');
                 Route::put('/{doctorant}/observation', [AdminDoctorantController::class, 'updateObservation'])->name('observation.update');
+                Route::post('/{doctorant}/parcours', [AdminParcoursController::class, 'store'])->name('parcours.store');
                 Route::get('/{doctorant}/edit', [AdminDoctorantController::class, 'edit'])->name('edit');
                 Route::put('/{doctorant}', [AdminDoctorantController::class, 'update'])->name('update');
                 Route::delete('/{doctorant}', [AdminDoctorantController::class, 'destroy'])->middleware('can:records.delete')->name('destroy');

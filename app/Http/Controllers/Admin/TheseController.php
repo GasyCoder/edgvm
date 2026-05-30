@@ -38,7 +38,9 @@ class TheseController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('sujet_these', 'like', '%'.$search.'%')
                     ->orWhereHas('doctorant.user', fn ($sub) => $sub->where('name', 'like', '%'.$search.'%'))
-                    ->orWhereHas('doctorant', fn ($sub) => $sub->where('matricule', 'like', '%'.$search.'%'));
+                    ->orWhereHas('doctorant', fn ($sub) => $sub->where('matricule', 'like', '%'.$search.'%')
+                        ->orWhere('nom', 'like', '%'.$search.'%')
+                        ->orWhere('prenoms', 'like', '%'.$search.'%'));
             });
         }
 
@@ -65,12 +67,13 @@ class TheseController extends Controller
                 'date_debut' => $these->date_debut?->format('Y-m-d'),
                 'doctorant' => $these->doctorant ? [
                     'id' => $these->doctorant->id,
-                    'name' => $these->doctorant->user?->name,
+                    'name' => $these->doctorant->name,
                     'matricule' => $these->doctorant->matricule,
                 ] : null,
                 'ead' => $these->ead ? [
                     'id' => $these->ead->id,
                     'nom' => $these->ead->nom,
+                    'sigle' => $these->ead->sigle,
                 ] : null,
                 'specialite' => $these->specialite ? [
                     'id' => $these->specialite->id,
@@ -109,6 +112,8 @@ class TheseController extends Controller
             'eads' => $this->eads(),
             'specialites' => $this->specialites(),
             'encadrants' => $this->encadrants(),
+            'jurys' => $this->juryMembres(),
+            'juryRoles' => ['president', 'rapporteur', 'examinateur', 'invite'],
             'documents' => $this->pdfMedias(),
             'statuts' => $this->statuts(),
             'defaults' => [
@@ -121,9 +126,10 @@ class TheseController extends Controller
     {
         $data = $request->validated();
         $encadrants = $data['encadrants'] ?? [];
+        $jurys = $data['jurys'] ?? [];
         $uploadedFile = $request->file('these_file');
 
-        unset($data['encadrants'], $data['slug'], $data['these_file']);
+        unset($data['encadrants'], $data['jurys'], $data['slug'], $data['these_file']);
 
         if ($uploadedFile) {
             $slug = Str::slug($request->string('slug')->toString());
@@ -164,6 +170,10 @@ class TheseController extends Controller
             $these->encadrants()->sync($this->formatEncadrants($encadrants));
         }
 
+        if ($jurys) {
+            $these->jurys()->sync($this->formatJurys($jurys));
+        }
+
         return redirect()
             ->route('admin.theses.index')
             ->with('success', 'These creee.');
@@ -187,12 +197,13 @@ class TheseController extends Controller
                 'universite_soutenance' => $these->universite_soutenance,
                 'doctorant' => $these->doctorant ? [
                     'id' => $these->doctorant->id,
-                    'name' => $these->doctorant->user?->name,
+                    'name' => $these->doctorant->name,
                     'matricule' => $these->doctorant->matricule,
                 ] : null,
                 'ead' => $these->ead ? [
                     'id' => $these->ead->id,
                     'nom' => $these->ead->nom,
+                    'sigle' => $these->ead->sigle,
                 ] : null,
                 'specialite' => $these->specialite ? [
                     'id' => $these->specialite->id,
@@ -364,6 +375,30 @@ class TheseController extends Controller
         return $formatted;
     }
 
+    private function formatJurys(array $jurys): array
+    {
+        $formatted = [];
+
+        foreach ($jurys as $index => $item) {
+            $formatted[$item['id']] = [
+                'role' => $item['role'] ?? 'examinateur',
+                'ordre' => $index + 1,
+            ];
+        }
+
+        return $formatted;
+    }
+
+    private function juryMembres(): array
+    {
+        return Jury::orderBy('nom')->get()->map(fn (Jury $jury) => [
+            'id' => $jury->id,
+            'nom' => $jury->nom,
+            'grade' => $jury->grade,
+            'universite' => $jury->universite,
+        ])->toArray();
+    }
+
     private function doctorants(): array
     {
         return Doctorant::query()
@@ -379,9 +414,10 @@ class TheseController extends Controller
 
     private function eads(): array
     {
-        return EAD::orderBy('nom')->get()->map(fn (EAD $ead) => [
+        return EAD::orderBy('sigle')->orderBy('nom')->get()->map(fn (EAD $ead) => [
             'id' => $ead->id,
             'nom' => $ead->nom,
+            'sigle' => $ead->sigle,
         ])->toArray();
     }
 

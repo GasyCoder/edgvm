@@ -14,6 +14,10 @@ const props = defineProps({
         default: () => ({ total_du: 0, total_paye: 0, total_reste: 0, series: [] }),
     },
     anneeUniversitaireDefaut: { type: String, default: '' },
+    parcours: {
+        type: Object,
+        default: () => ({ niveau: 'D1', annee: null, etat: '', actions: {}, reinscriptions: [] }),
+    },
 });
 
 const DROIT_INSCRIPTION = 700000;
@@ -172,6 +176,46 @@ const ring = computed(() => {
         offset: offset.toFixed(2),
     };
 });
+
+// Parcours doctoral
+const parcoursForm = useForm({ action: '', decision: '' });
+const parcoursAction = ref(null);
+
+const parcoursMeta = computed(() => ({
+    promouvoir: { title: 'Admettre au niveau suivant', message: `Le doctorant passera en ${props.parcours.niveau_suivant || 'niveau suivant'} (nouvelle réinscription pour la prochaine année).`, confirm: 'Admettre', variant: 'primary' },
+    ajourner: { title: 'Ajourner (redoublement)', message: `Le doctorant redoublera le niveau ${props.parcours.niveau} l'année prochaine.`, confirm: 'Ajourner', variant: 'primary' },
+    valider: { title: 'Valider pour la soutenance', message: 'La thèse sera validée — le doctorant passera « en attente de soutenance ».', confirm: 'Valider', variant: 'primary' },
+    diplomer: { title: 'Enregistrer la soutenance', message: 'Le doctorant sera diplômé et déplacé dans les archives.', confirm: 'Diplômer', variant: 'primary' },
+    abandonner: { title: 'Enregistrer un abandon', message: 'Le doctorant sera marqué « abandon » et déplacé dans les archives.', confirm: 'Confirmer l\'abandon', variant: 'danger' },
+}));
+
+const currentParcoursMeta = computed(() => (parcoursAction.value ? parcoursMeta.value[parcoursAction.value] : null));
+
+const askParcours = (action) => {
+    parcoursAction.value = action;
+    parcoursForm.clearErrors();
+    parcoursForm.decision = '';
+};
+
+const runParcours = () => {
+    parcoursForm.transform((data) => ({ ...data, action: parcoursAction.value })).post(route('admin.doctorants.parcours.store', props.doctorant.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            parcoursAction.value = null;
+        },
+    });
+};
+
+const reinscriptionBadge = (statut) => {
+    switch (statut) {
+        case 'en_cours': return 'bg-ed-primary/10 text-ed-teal-dark';
+        case 'admis': return 'bg-emerald-50 text-emerald-700';
+        case 'ajourne': return 'bg-amber-50 text-amber-700';
+        case 'valide': return 'bg-blue-50 text-blue-700';
+        case 'abandon': return 'bg-red-50 text-red-700';
+        default: return 'bg-gray-100 text-gray-600';
+    }
+};
 </script>
 
 <template>
@@ -311,6 +355,60 @@ const ring = computed(() => {
                     </div>
                 </aside>
             </div>
+
+            <section v-if="can('gestion.access')" class="space-y-4">
+                <div>
+                    <h3 class="text-base font-semibold text-gray-900">Parcours doctoral</h3>
+                    <p class="mt-1 text-xs text-gray-500">Admission et avancement année par année (D1 → D2 → D3 → soutenance). D4/D5 sur dérogation.</p>
+                </div>
+
+                <div class="rounded-md border border-gray-200 bg-white p-5">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ed-primary/10 text-sm font-bold text-ed-teal-dark">{{ parcours.niveau }}</span>
+                            <div>
+                                <p class="text-sm font-semibold text-slate-700">{{ parcours.etat }}</p>
+                                <p v-if="parcours.annee" class="text-xs text-slate-400">Année universitaire {{ parcours.annee }}</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button v-if="parcours.actions?.promouvoir" type="button" class="rounded-md bg-ed-primary px-3.5 py-2 text-sm font-semibold text-white hover:bg-ed-secondary" @click="askParcours('promouvoir')">Admettre en {{ parcours.niveau_suivant }}</button>
+                            <button v-if="parcours.actions?.valider" type="button" class="rounded-md bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-blue-700" @click="askParcours('valider')">Valider pour soutenance</button>
+                            <button v-if="parcours.actions?.diplomer" type="button" class="rounded-md bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-emerald-700" @click="askParcours('diplomer')">Enregistrer la soutenance</button>
+                            <button v-if="parcours.actions?.ajourner" type="button" class="rounded-md border border-gray-200 px-3.5 py-2 text-sm font-semibold text-slate-600 hover:bg-gray-50" @click="askParcours('ajourner')">Ajourner</button>
+                            <button v-if="parcours.actions?.abandonner" type="button" class="rounded-md border border-red-200 px-3.5 py-2 text-sm font-semibold text-red-600 hover:bg-red-50" @click="askParcours('abandonner')">Abandon</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto rounded-md border border-gray-200 bg-white">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                            <tr>
+                                <th class="px-4 py-3">Année</th>
+                                <th class="px-4 py-3">Niveau</th>
+                                <th class="px-4 py-3">Statut</th>
+                                <th class="px-4 py-3">Décision</th>
+                                <th class="px-4 py-3">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr v-for="r in parcours.reinscriptions" :key="r.id" class="text-slate-600">
+                                <td class="px-4 py-3 font-semibold text-slate-700">{{ r.annee_universitaire }}</td>
+                                <td class="px-4 py-3">{{ r.niveau }}</td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold" :class="reinscriptionBadge(r.statut_annee)">{{ r.statut_label }}</span>
+                                </td>
+                                <td class="px-4 py-3 max-w-xs truncate" :title="r.decision">{{ r.decision || '—' }}</td>
+                                <td class="px-4 py-3 text-slate-400">{{ r.date_decision || '—' }}</td>
+                            </tr>
+                            <tr v-if="!parcours.reinscriptions?.length">
+                                <td colspan="5" class="px-4 py-8 text-center text-sm text-slate-400">Aucune réinscription enregistrée.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
             <section v-if="can('finances.access')" class="space-y-6">
                 <div class="flex flex-wrap items-end justify-between gap-4">
@@ -523,5 +621,22 @@ const ring = computed(() => {
             @confirm="confirmDeletePaiement"
             @cancel="paiementToDelete = null"
         />
+
+        <ConfirmDialog
+            :show="parcoursAction !== null"
+            :title="currentParcoursMeta?.title || ''"
+            :message="currentParcoursMeta?.message || ''"
+            :confirm-label="currentParcoursMeta?.confirm || 'Confirmer'"
+            :variant="currentParcoursMeta?.variant || 'primary'"
+            :processing="parcoursForm.processing"
+            @confirm="runParcours"
+            @cancel="parcoursAction = null"
+        >
+            <div class="mt-3">
+                <label class="mb-1 block text-xs font-medium text-gray-600">Décision / observation (optionnel)</label>
+                <textarea v-model="parcoursForm.decision" rows="2" class="w-full rounded-xl border-gray-200 text-sm focus:border-ed-primary focus:ring-ed-primary" placeholder="Avis du conseil, mention…"></textarea>
+                <p v-if="parcoursForm.errors.parcours" class="mt-1 text-xs text-red-600">{{ parcoursForm.errors.parcours }}</p>
+            </div>
+        </ConfirmDialog>
     </AdminLayout>
 </template>

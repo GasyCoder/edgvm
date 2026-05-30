@@ -308,7 +308,7 @@ class DoctorantController extends Controller
 
     public function show(Doctorant $doctorant): Response
     {
-        $doctorant->load(['user', 'eadDirect', 'theses.ead', 'theses.specialite', 'paiements']);
+        $doctorant->load(['user', 'eadDirect', 'theses.ead', 'theses.specialite', 'paiements', 'reinscriptions']);
 
         $paiements = $doctorant->paiements
             ->sortBy([['niveau', 'asc'], ['annee_universitaire', 'asc']])
@@ -328,6 +328,49 @@ class DoctorantController extends Controller
             })
             ->values()
             ->all();
+
+        $reinscriptions = $doctorant->reinscriptions->sortBy('annee_universitaire')->values();
+        $courante = $reinscriptions->last();
+        $statutAnnee = $courante?->statut_annee?->value;
+        $enAttenteSoutenance = $statutAnnee === 'valide';
+        $niveauSuivant = $courante ? Doctorant::niveauSuivant($courante->niveau) : null;
+        $cloture = in_array($doctorant->statut, ['diplome', 'abandonne'], true);
+
+        if ($doctorant->statut === 'diplome') {
+            $etatParcours = 'Diplômé · soutenance effectuée';
+        } elseif ($doctorant->statut === 'abandonne') {
+            $etatParcours = 'Abandon';
+        } elseif ($enAttenteSoutenance) {
+            $etatParcours = 'En attente de soutenance';
+        } elseif ($courante) {
+            $etatParcours = 'En cours · '.$courante->niveau;
+        } else {
+            $etatParcours = 'Aucune réinscription';
+        }
+
+        $parcours = [
+            'niveau' => $doctorant->niveau,
+            'annee' => $courante?->annee_universitaire,
+            'etat' => $etatParcours,
+            'en_attente_soutenance' => $enAttenteSoutenance,
+            'niveau_suivant' => $niveauSuivant,
+            'actions' => [
+                'promouvoir' => ! $cloture && ! $enAttenteSoutenance && $niveauSuivant !== null,
+                'ajourner' => ! $cloture && ! $enAttenteSoutenance,
+                'valider' => ! $cloture && ! $enAttenteSoutenance && in_array($doctorant->niveau, ['D3', 'D4', 'D5'], true),
+                'diplomer' => ! $cloture && $enAttenteSoutenance,
+                'abandonner' => ! $cloture,
+            ],
+            'reinscriptions' => $reinscriptions->map(fn ($r) => [
+                'id' => $r->id,
+                'annee_universitaire' => $r->annee_universitaire,
+                'niveau' => $r->niveau,
+                'statut_annee' => $r->statut_annee?->value,
+                'statut_label' => $r->statut_annee?->label(),
+                'decision' => $r->decision,
+                'date_decision' => $r->date_decision?->format('d/m/Y'),
+            ])->all(),
+        ];
 
         return Inertia::render('Admin/Doctorants/Show', [
             'doctorant' => [
@@ -390,6 +433,7 @@ class DoctorantController extends Controller
                 'series' => $series,
             ],
             'anneeUniversitaireDefaut' => $this->anneeUniversitaireCourante(),
+            'parcours' => $parcours,
         ]);
     }
 

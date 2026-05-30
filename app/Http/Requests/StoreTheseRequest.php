@@ -40,6 +40,9 @@ class StoreTheseRequest extends FormRequest
             'encadrants' => ['nullable', 'array'],
             'encadrants.*.id' => ['required_with:encadrants', 'exists:encadrants,id'],
             'encadrants.*.role' => ['nullable', 'in:directeur,codirecteur'],
+            'jurys' => ['nullable', 'array'],
+            'jurys.*.id' => ['required_with:jurys', 'exists:jurys,id'],
+            'jurys.*.role' => ['nullable', 'in:president,rapporteur,examinateur,invite'],
         ];
     }
 

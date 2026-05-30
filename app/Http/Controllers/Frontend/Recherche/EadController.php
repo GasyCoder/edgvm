@@ -20,12 +20,14 @@ class EadController extends Controller
                     $q->enCours();
                 },
             ])
+            ->orderBy('sigle')
             ->orderBy('nom')
             ->get()
             ->map(function (EAD $ead) {
                 return [
                     'id' => $ead->id,
                     'slug' => $ead->slug,
+                    'sigle' => $ead->sigle,
                     'nom' => $ead->nom,
                     'description' => $ead->description,
                     'domaine' => $ead->domaine,

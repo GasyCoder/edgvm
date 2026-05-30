@@ -19,6 +19,9 @@ export default {
             fontFamily: {
                 poppins: ['Poppins', ...defaultTheme.fontFamily.sans],
                 sans: ['Poppins', ...defaultTheme.fontFamily.sans],
+                // Design system DashLite
+                body: ['Roboto', ...defaultTheme.fontFamily.sans],
+                heading: ['Nunito', ...defaultTheme.fontFamily.sans],
             },
 
             // Couleurs personnalisées
@@ -31,6 +34,29 @@ export default {
                 'ed-gray2': 'rgb(var(--ed-gray2) / <alpha-value>)',
                 'ed-teal': 'rgb(var(--ed-teal) / <alpha-value>)',
                 'ed-teal-dark': 'rgb(var(--ed-teal-dark) / <alpha-value>)',
+
+                // Design system DashLite — neutres bleutés raffinés (rendu admin pro)
+                gray: {
+                    50: '#f7fafc', 100: '#ebeef2', 200: '#e5e9f2', 300: '#dbdfea',
+                    400: '#b7c2d0', 500: '#8091a7', 600: '#3c4d62', 700: '#344357',
+                    800: '#2b3748', 900: '#1f2b3a', 950: '#101924',
+                },
+                slate: {
+                    50: '#f5f7fd', 100: '#ecf2ff', 200: '#dfe9fe', 300: '#b6c6e3',
+                    400: '#8094ae', 500: '#6e82a5', 600: '#526484', 700: '#364a63',
+                    800: '#203145', 900: '#1c2b46', 950: '#131f34',
+                },
+                // Accents secondaires DashLite (graphiques, badges optionnels)
+                primary: {
+                    50: '#f7f8ff', 100: '#eff1ff', 200: '#e3e7fe', 300: '#c4cefe',
+                    400: '#9cabff', 500: '#798bff', 600: '#6576ff', 700: '#5664d9',
+                    800: '#465fff', 900: '#2c3782', 950: '#29347a',
+                },
+                cyan: {
+                    50: '#e6f9fc', 100: '#e4f8fb', 200: '#b5edf5', 300: '#9de7f2',
+                    400: '#6bdaeb', 500: '#3acee5', 600: '#09c2de', 700: '#079bb2',
+                    800: '#057485', 900: '#044e59', 950: '#02272c',
+                },
             },
 
             // Animations personnalisées

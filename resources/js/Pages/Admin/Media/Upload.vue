@@ -119,7 +119,7 @@ const filePreview = (file) => {
                             :key="index"
                             class="flex items-center gap-4 rounded-xl border border-slate-200 p-3"
                         >
-                            <div class="h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl bg-slate-100">
+                            <div class="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-slate-100">
                                 <img v-if="filePreview(file)" :src="filePreview(file)" class="h-full w-full object-cover" />
                             </div>
                             <div class="min-w-0 flex-1">

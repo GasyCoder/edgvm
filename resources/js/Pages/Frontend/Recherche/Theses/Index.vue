@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import FrontendLayout from '@/Layouts/FrontendLayout.vue';
 import Container from '@/Components/Frontend/UI/Container.vue';
@@ -12,7 +12,6 @@ const props = defineProps({
 });
 
 const search = ref(props.filters?.search || '');
-const viewMode = computed(() => props.filters?.viewMode || 'grid');
 const statut = ref(props.filters?.statut || '');
 
 const statutOptions = [
@@ -27,7 +26,6 @@ let searchTimeout = null;
 const updateFilters = (values) => {
     router.get(route('theses.index'), {
         search: search.value,
-        viewMode: viewMode.value,
         statut: statut.value,
         ...values,
     }, {
@@ -45,10 +43,6 @@ watch(search, (value) => {
         updateFilters({ search: value, page: 1 });
     }, 400);
 });
-
-const setViewMode = (mode) => {
-    updateFilters({ viewMode: mode, page: 1 });
-};
 
 const setStatut = (value) => {
     statut.value = value || '';
@@ -92,35 +86,19 @@ defineOptions({
     <section class="bg-gray-50 py-10 md:py-14">
         <Container>
             <!-- Toolbar -->
-            <div class="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4 sm:p-5 lg:flex-row lg:items-end lg:justify-between">
-                <div class="w-full lg:max-w-xl">
-                    <label for="search-these" class="mb-1.5 block text-xs font-semibold text-gray-600">Rechercher une thèse</label>
-                    <div class="relative">
-                        <svg class="pointer-events-none absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
-                        </svg>
-                        <input
-                            id="search-these"
-                            v-model="search"
-                            type="text"
-                            placeholder="Sujet, doctorant, mots-clés…"
-                            class="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-3 text-sm placeholder:text-gray-400 focus:border-transparent focus:ring-2 focus:ring-ed-primary/40"
-                        >
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <span class="text-xs font-semibold text-gray-600">Affichage</span>
-                    <div class="inline-flex rounded-lg border border-gray-300 p-0.5">
-                        <button type="button" class="inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm transition" :class="viewMode === 'grid' ? 'bg-ed-primary text-white' : 'text-gray-500 hover:text-gray-800'" @click="setViewMode('grid')">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h7V4H4v2zm9 0h7V4h-7v2zM4 13h7v-2H4v2zm9 0h7v-2h-7v2zM4 20h7v-2H4v2zm9 0h7v-2h-7v2z" /></svg>
-                            <span class="hidden sm:inline">Grille</span>
-                        </button>
-                        <button type="button" class="inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm transition" :class="viewMode === 'list' ? 'bg-ed-primary text-white' : 'text-gray-500 hover:text-gray-800'" @click="setViewMode('list')">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                            <span class="hidden sm:inline">Liste</span>
-                        </button>
-                    </div>
+            <div class="rounded-xl border border-gray-200 bg-white p-4 sm:p-5">
+                <label for="search-these" class="mb-1.5 block text-xs font-semibold text-gray-600">Rechercher une thèse</label>
+                <div class="relative">
+                    <svg class="pointer-events-none absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
+                    </svg>
+                    <input
+                        id="search-these"
+                        v-model="search"
+                        type="text"
+                        placeholder="Sujet, doctorant, mots-clés…"
+                        class="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-3 text-sm placeholder:text-gray-400 focus:border-transparent focus:ring-2 focus:ring-ed-primary/40"
+                    >
                 </div>
             </div>
 
@@ -128,50 +106,8 @@ defineOptions({
                 <!-- Résultats -->
                 <div class="order-2 lg:order-1 lg:col-span-3">
                     <div v-if="theses?.data?.length">
-                        <!-- Grille -->
-                        <div v-if="viewMode === 'grid'" class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-                            <Link
-                                v-for="these in theses.data"
-                                :key="these.id"
-                                :href="route('theses.show', these.uuid)"
-                                class="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white transition hover:border-ed-primary/40 hover:shadow-sm"
-                            >
-                                <div class="flex items-start justify-between gap-3 px-5 pt-4">
-                                    <div class="flex flex-wrap items-center gap-1.5">
-                                        <span v-if="these.specialite" class="rounded-full bg-ed-primary/10 px-2 py-0.5 text-[11px] font-medium text-ed-primary">{{ these.specialite.nom || 'Spécialité' }}</span>
-                                        <span v-if="these.ead" class="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-700">{{ (these.ead.sigle || these.ead.nom || 'EAD').slice(0, 8) }}</span>
-                                    </div>
-                                    <span class="inline-flex flex-none items-center rounded-full border px-2.5 py-1 text-[11px] font-medium" :class="these.statut_badge_classes">{{ these.statut_label }}</span>
-                                </div>
-
-                                <div class="flex flex-1 flex-col gap-3 px-5 py-3">
-                                    <h2 class="line-clamp-3 text-sm font-semibold text-gray-900 transition-colors group-hover:text-ed-primary">{{ these.sujet_these }}</h2>
-
-                                    <div v-if="these.doctorant" class="flex items-center gap-2 text-xs text-gray-600">
-                                        <span class="flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 text-[11px] font-semibold text-gray-700">{{ these.doctorant.initials }}</span>
-                                        <span class="font-medium text-gray-800">{{ these.doctorant.name }}</span>
-                                    </div>
-
-                                    <p v-if="these.resume" class="line-clamp-3 text-xs leading-relaxed text-gray-600">{{ cleanText(these.resume) }}</p>
-                                    <p v-else class="text-xs italic text-gray-400">Résumé non renseigné.</p>
-                                </div>
-
-                                <div class="mt-auto flex items-center justify-between border-t border-gray-100 bg-gray-50/60 px-5 py-3 text-[11px] text-gray-500">
-                                    <span v-if="these.date_debut" class="inline-flex items-center gap-1.5">
-                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                        Début {{ these.date_debut }}
-                                    </span>
-                                    <span v-else></span>
-                                    <span class="inline-flex items-center gap-1 font-semibold text-ed-primary">
-                                        Voir la fiche
-                                        <svg class="h-4 w-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transform-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                                    </span>
-                                </div>
-                            </Link>
-                        </div>
-
                         <!-- Liste -->
-                        <div v-else class="space-y-4">
+                        <div class="space-y-4">
                             <Link
                                 v-for="these in theses.data"
                                 :key="these.id"

@@ -594,19 +594,22 @@ defineOptions({
                                     :href="route('ead.show', ead.slug)"
                                     class="font-semibold text-gray-900 transition-colors hover:text-ed-primary focus:outline-none focus-visible:text-ed-primary"
                                 >
-                                    {{ ead.nom }}
+                                    {{ ead.sigle || ead.nom }}
                                 </Link>
+                                <p v-if="ead.sigle" class="mt-0.5 max-w-md text-sm text-gray-500 line-clamp-2">{{ ead.nom }}</p>
                             </td>
                             <td class="px-6 py-4 text-center text-sm font-semibold tabular-nums text-gray-900">{{ ead.specialites_count }}</td>
                             <td class="px-6 py-4 text-center text-sm font-semibold tabular-nums text-gray-900">{{ ead.theses_count }}</td>
                             <td class="whitespace-nowrap px-6 py-4 text-right">
                                 <Link
                                     :href="route('ead.show', ead.slug)"
-                                    class="group inline-flex items-center gap-1.5 text-sm font-semibold text-ed-primary transition-colors hover:text-ed-secondary focus:outline-none focus-visible:text-ed-secondary"
+                                    title="Voir l'équipe"
+                                    aria-label="Voir l'équipe"
+                                    class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-ed-primary transition-colors hover:bg-ed-primary/10 hover:text-ed-secondary focus:outline-none focus-visible:bg-ed-primary/10"
                                 >
-                                    <span>Voir l'équipe</span>
-                                    <svg class="h-4 w-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transform-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                     </svg>
                                 </Link>
                             </td>
@@ -622,8 +625,9 @@ defineOptions({
                         :href="route('ead.show', ead.slug)"
                         class="font-semibold text-gray-900 transition-colors hover:text-ed-primary focus:outline-none focus-visible:text-ed-primary"
                     >
-                        {{ ead.nom }}
+                        {{ ead.sigle || ead.nom }}
                     </Link>
+                    <p v-if="ead.sigle" class="mt-0.5 text-sm text-gray-500">{{ ead.nom }}</p>
                     <dl class="mt-3 flex items-center gap-6 text-sm">
                         <div class="flex items-baseline gap-1.5">
                             <dt class="text-gray-500">Spécialités</dt>
@@ -637,11 +641,13 @@ defineOptions({
 
                     <Link
                         :href="route('ead.show', ead.slug)"
-                        class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-ed-primary transition-colors hover:text-ed-secondary"
+                        title="Voir l'équipe"
+                        aria-label="Voir l'équipe"
+                        class="mt-3 inline-flex h-9 w-9 items-center justify-center rounded-lg text-ed-primary transition-colors hover:bg-ed-primary/10 hover:text-ed-secondary"
                     >
-                        <span>Voir l'équipe</span>
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
                     </Link>
                 </li>

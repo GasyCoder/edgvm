@@ -32,6 +32,7 @@ class EadController extends Controller
         }
 
         $eads = $query
+            ->orderBy('sigle')
             ->orderBy('nom')
             ->paginate(12)
             ->withQueryString()

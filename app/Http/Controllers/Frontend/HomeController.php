@@ -45,6 +45,7 @@ class HomeController extends Controller
 
         $eads = EAD::with(['responsable', 'specialites'])
             ->withCount(['specialites', 'theses'])
+            ->orderBy('sigle')
             ->orderBy('nom')
             ->get();
 
