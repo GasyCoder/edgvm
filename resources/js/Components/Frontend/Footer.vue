@@ -136,7 +136,7 @@ const currentYear = new Date().getFullYear();
                 <p class="text-center text-xs text-white/60 sm:text-right">
                     Plateforme développée par
                     <a href="#" target="_blank" class="font-semibold text-ed-yellow transition-colors hover:text-white">
-                        DTIC - Université de Mahajanga
+                    DTIC - UMG
                     </a>
                 </p>
             </div>

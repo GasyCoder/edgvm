@@ -8,7 +8,7 @@ uses(RefreshDatabase::class);
 
 it('stores actualite resume when provided', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);

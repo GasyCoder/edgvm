@@ -86,7 +86,7 @@ const statutClasses = (statutValue) => {
         case 'abandonnee':
             return 'bg-red-50 text-red-700 border-red-200';
         default:
-            return 'bg-slate-50 text-slate-600 border-slate-200';
+            return 'bg-gray-50 text-gray-600 border-gray-200';
     }
 };
 
@@ -102,7 +102,7 @@ const hasFilters = computed(() => search.value || statut.value || ead.value || s
 <template>
     <AdminLayout>
         <template #header>
-            <h1 class="text-lg font-semibold text-slate-900">Theses</h1>
+            <h1 class="text-lg font-semibold text-gray-900">Theses</h1>
         </template>
 
         <Head title="Theses" />
@@ -117,7 +117,7 @@ const hasFilters = computed(() => search.value || statut.value || ead.value || s
                 <template #actions>
                     <Link
                         :href="route('admin.theses.export')"
-                        class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 text-gray-600 transition hover:border-slate-300 hover:bg-gray-50"
                         title="Exporter"
                     >
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -136,78 +136,78 @@ const hasFilters = computed(() => search.value || statut.value || ead.value || s
                 </template>
             </PageHeader>
 
-            <div class="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 lg:grid-cols-3">
-                <div class="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
-                    <p class="text-xs text-slate-500">Total theses</p>
-                    <p class="text-lg font-semibold text-slate-900">{{ stats?.total ?? 0 }}</p>
+            <div class="grid gap-4 rounded-xl border border-gray-200 bg-white p-4 lg:grid-cols-3">
+                <div class="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
+                    <p class="text-xs text-gray-500">Total theses</p>
+                    <p class="text-lg font-semibold text-gray-900">{{ stats?.total ?? 0 }}</p>
                 </div>
-                <div class="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
-                    <p class="text-xs text-slate-500">En cours</p>
-                    <p class="text-lg font-semibold text-emerald-600">{{ stats?.en_cours ?? 0 }}</p>
+                <div class="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
+                    <p class="text-xs text-gray-500">En cours</p>
+                    <p class="text-lg font-semibold text-ed-primary">{{ stats?.en_cours ?? 0 }}</p>
                 </div>
-                <div class="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
-                    <p class="text-xs text-slate-500">Soutenues</p>
-                    <p class="text-lg font-semibold text-indigo-600">{{ stats?.soutenue ?? 0 }}</p>
+                <div class="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
+                    <p class="text-xs text-gray-500">Soutenues</p>
+                    <p class="text-lg font-semibold text-ed-primary">{{ stats?.soutenue ?? 0 }}</p>
                 </div>
             </div>
 
-            <div class="rounded-2xl border border-slate-200 bg-white p-4">
+            <div class="rounded-xl border border-gray-200 bg-white p-4">
                 <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:flex-wrap lg:items-end">
                     <div class="sm:col-span-2 lg:flex-1 lg:min-w-[200px]">
-                        <label class="text-xs font-semibold text-slate-600">Recherche</label>
-                        <input v-model="search" type="text" placeholder="Sujet, doctorant, matricule" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" />
+                        <label class="text-xs font-semibold text-gray-600">Recherche</label>
+                        <input v-model="search" type="text" placeholder="Sujet, doctorant, matricule" class="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" />
                     </div>
                     <div class="w-full sm:w-auto">
-                        <label class="text-xs font-semibold text-slate-600">Statut</label>
-                        <select v-model="statut" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                        <label class="text-xs font-semibold text-gray-600">Statut</label>
+                        <select v-model="statut" class="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm">
                             <option value="">Tous</option>
                             <option v-for="item in statuts" :key="item" :value="item">{{ item }}</option>
                         </select>
                     </div>
                     <div class="w-full sm:w-auto">
-                        <label class="text-xs font-semibold text-slate-600">EAD</label>
-                        <select v-model="ead" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                        <label class="text-xs font-semibold text-gray-600">EAD</label>
+                        <select v-model="ead" class="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm">
                             <option value="">Tous</option>
                             <option v-for="item in eads" :key="item.id" :value="item.id">{{ item.nom }}</option>
                         </select>
                     </div>
                     <div class="w-full sm:w-auto">
-                        <label class="text-xs font-semibold text-slate-600">Specialite</label>
-                        <select v-model="specialite" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                        <label class="text-xs font-semibold text-gray-600">Specialite</label>
+                        <select v-model="specialite" class="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm">
                             <option value="">Toutes</option>
                             <option v-for="item in specialites" :key="item.id" :value="item.id">{{ item.nom }}</option>
                         </select>
                     </div>
                     <div class="flex items-center gap-2 sm:col-span-2 lg:col-span-1">
-                        <button type="button" class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white" @click="updateFilters">Filtrer</button>
-                        <button v-if="hasFilters" type="button" class="rounded-xl border border-slate-200 px-3 py-2 text-sm" @click="clearFilters">Reinitialiser</button>
+                        <button type="button" class="rounded-xl bg-ed-primary px-4 py-2 text-sm font-semibold text-white" @click="updateFilters">Filtrer</button>
+                        <button v-if="hasFilters" type="button" class="rounded-xl border border-gray-200 px-3 py-2 text-sm" @click="clearFilters">Reinitialiser</button>
                     </div>
                 </div>
             </div>
 
-            <div class="rounded-2xl border border-slate-200 bg-white p-4">
+            <div class="rounded-xl border border-gray-200 bg-white p-4">
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                        <p class="text-xs font-semibold text-slate-600">Importer des theses</p>
-                        <p class="text-xs text-slate-400">CSV/XLSX · glisser-deposer ou choisir un fichier</p>
+                        <p class="text-xs font-semibold text-gray-600">Importer des theses</p>
+                        <p class="text-xs text-gray-400">CSV/XLSX · glisser-deposer ou choisir un fichier</p>
                     </div>
                     <div class="flex flex-wrap items-center gap-3">
                         <div
                             class="relative flex min-w-[220px] items-center gap-2 rounded-xl border border-dashed px-3 py-2 text-sm transition"
-                            :class="importDragging ? 'border-ed-primary bg-ed-primary/5' : 'border-slate-200 hover:border-slate-300'"
+                            :class="importDragging ? 'border-ed-primary bg-ed-primary/5' : 'border-gray-200 hover:border-slate-300'"
                             @dragover.prevent="importDragging = true"
                             @dragleave.prevent="importDragging = false"
                             @drop="onImportDrop"
                         >
-                            <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <span class="text-slate-600" v-if="!importForm.import_file">Choisir un fichier</span>
-                            <span class="max-w-[220px] truncate text-slate-700" v-else>{{ importForm.import_file.name }}</span>
+                            <span class="text-gray-600" v-if="!importForm.import_file">Choisir un fichier</span>
+                            <span class="max-w-[220px] truncate text-gray-700" v-else>{{ importForm.import_file.name }}</span>
                             <button
                                 v-if="importForm.import_file"
                                 type="button"
-                                class="ml-auto inline-flex h-6 w-6 items-center justify-center rounded text-slate-400 transition hover:bg-red-50 hover:text-red-500"
+                                class="ml-auto inline-flex h-6 w-6 items-center justify-center rounded text-gray-400 transition hover:bg-red-50 hover:text-red-500"
                                 @click="clearImportFile"
                             >
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -223,7 +223,7 @@ const hasFilters = computed(() => search.value || statut.value || ead.value || s
                         </div>
                         <button
                             type="button"
-                            class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+                            class="rounded-xl bg-ed-primary px-4 py-2 text-sm font-semibold text-white"
                             :disabled="importForm.processing || !importForm.import_file"
                             @click="submitImport"
                         >
@@ -234,11 +234,11 @@ const hasFilters = computed(() => search.value || statut.value || ead.value || s
                 </div>
             </div>
 
-            <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="rounded-xl border border-gray-200 bg-white shadow-sm">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200">
-                        <thead class="bg-slate-50">
-                            <tr class="text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr class="text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
                                 <th class="px-5 py-3">These</th>
                                 <th class="px-5 py-3">Doctorant</th>
                                 <th class="px-5 py-3">Structure</th>
@@ -246,10 +246,10 @@ const hasFilters = computed(() => search.value || statut.value || ead.value || s
                                 <th class="px-5 py-3"></th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 text-sm">
-                            <tr v-for="these in theses.data" :key="these.id" class="hover:bg-slate-50">
+                        <tbody class="divide-y divide-gray-100 text-sm">
+                            <tr v-for="these in theses.data" :key="these.id" class="hover:bg-gray-50">
                                 <td class="px-5 py-4">
-                                    <p class="font-semibold text-slate-900">{{ these.sujet_these }}</p>
+                                    <p class="font-semibold text-gray-900">{{ these.sujet_these }}</p>
                                     <div class="mt-1 flex flex-wrap items-center gap-2">
                                         <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold" :class="statutClasses(these.statut)">
                                             {{ these.statut }}
@@ -262,23 +262,23 @@ const hasFilters = computed(() => search.value || statut.value || ead.value || s
                                         </span>
                                     </div>
                                 </td>
-                                <td class="px-5 py-4 text-slate-600">
+                                <td class="px-5 py-4 text-gray-600">
                                     <p>{{ these.doctorant?.name || '-' }}</p>
-                                    <p class="text-xs text-slate-400">{{ these.doctorant?.matricule || '' }}</p>
+                                    <p class="text-xs text-gray-400">{{ these.doctorant?.matricule || '' }}</p>
                                 </td>
-                                <td class="px-5 py-4 text-slate-600">
+                                <td class="px-5 py-4 text-gray-600">
                                     <p>{{ these.ead?.nom || '-' }}</p>
-                                    <p class="text-xs text-slate-400">{{ these.specialite?.nom || '-' }}</p>
+                                    <p class="text-xs text-gray-400">{{ these.specialite?.nom || '-' }}</p>
                                 </td>
-                                <td class="px-5 py-4 text-slate-600">
+                                <td class="px-5 py-4 text-gray-600">
                                     <p>{{ these.encadrants_count }} encadrants</p>
-                                    <p class="text-xs text-slate-400">{{ these.jurys_count }} jurys</p>
+                                    <p class="text-xs text-gray-400">{{ these.jurys_count }} jurys</p>
                                 </td>
                                 <td class="px-5 py-4 text-right">
                                     <div class="flex justify-end gap-1">
                                         <Link
                                             :href="route('admin.theses.show', these.id)"
-                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-100"
+                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-gray-50"
                                             title="Voir"
                                         >
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -288,7 +288,7 @@ const hasFilters = computed(() => search.value || statut.value || ead.value || s
                                         </Link>
                                         <Link
                                             :href="route('admin.theses.edit', these.id)"
-                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-ed-primary hover:bg-ed-primary/5 hover:text-ed-primary"
+                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:border-ed-primary hover:bg-ed-primary/5 hover:text-ed-primary"
                                             title="Modifier"
                                         >
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -297,7 +297,7 @@ const hasFilters = computed(() => search.value || statut.value || ead.value || s
                                         </Link>
                                         <Link
                                             :href="route('admin.theses.jury.edit', these.id)"
-                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-100"
+                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-gray-50"
                                             title="Jury"
                                         >
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -306,7 +306,7 @@ const hasFilters = computed(() => search.value || statut.value || ead.value || s
                                         </Link>
                                         <button
                                             type="button"
-                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
                                             title="Supprimer"
                                             @click="deleteThese(these)"
                                         >
@@ -318,12 +318,12 @@ const hasFilters = computed(() => search.value || statut.value || ead.value || s
                                 </td>
                             </tr>
                             <tr v-if="!theses.data.length">
-                                <td colspan="5" class="px-6 py-8 text-center text-sm text-slate-500">Aucune these trouvee.</td>
+                                <td colspan="5" class="px-6 py-8 text-center text-sm text-gray-500">Aucune these trouvee.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div v-if="theses.links?.length" class="border-t border-slate-100 px-4 py-3">
+                <div v-if="theses.links?.length" class="border-t border-gray-100 px-4 py-3">
                     <Pagination :links="theses.links" />
                 </div>
             </div>

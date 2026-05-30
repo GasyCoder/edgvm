@@ -8,36 +8,14 @@ const props = defineProps({
     encadrants: Array,
 });
 
-const slugTouched = ref(false);
-
 const form = useForm({
     nom: '',
-    slug: '',
+    sigle: '',
     description: '',
     responsable_id: '',
     encadrants: [],
 });
 const selectedEncadrantId = ref('');
-
-const slugify = (value) => {
-    return value
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[^\w\s-]/g, '')
-        .trim()
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-');
-};
-
-const updateSlug = () => {
-    if (!slugTouched.value) {
-        form.slug = slugify(form.nom);
-    }
-};
-
-const markSlugTouched = () => {
-    slugTouched.value = true;
-};
 
 const submit = () => {
     form.post(route('admin.ead.store'));
@@ -62,115 +40,92 @@ const removeEncadrant = (id) => {
 <template>
     <AdminLayout>
         <template #header>
-            <div class="flex flex-wrap items-end justify-between gap-4">
-                <div>
-                    <h2 class="text-lg font-semibold text-slate-900 md:text-xl">Creer un EAD</h2>
-                    <p class="mt-1 text-xs text-slate-500 md:text-sm">Renseignez les informations principales de l'equipe.</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <Link :href="route('admin.ead.index')" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-                        Retour
-                    </Link>
-                    <button type="button" class="rounded-xl bg-ed-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-ed-secondary" :disabled="form.processing" @click="submit">
-                        Enregistrer
-                    </button>
-                </div>
-            </div>
+            <h2 class="text-lg font-semibold text-slate-900 md:text-xl">Nouvelle équipe d'accueil</h2>
         </template>
 
-        <Head title="Creer un EAD" />
+        <Head title="Nouvelle équipe d'accueil" />
         <FlashMessage />
 
-        <nav class="text-xs text-slate-500">
-            <ol class="flex flex-wrap items-center gap-2">
-                <li><Link :href="route('admin.dashboard')" class="hover:text-ed-primary">Dashboard</Link></li>
-                <li>/</li>
-                <li><Link :href="route('admin.ead.index')" class="hover:text-ed-primary">EAD</Link></li>
-                <li>/</li>
-                <li class="font-semibold text-slate-900">Creer</li>
-            </ol>
-        </nav>
+        <div class="mx-auto max-w-screen-2xl space-y-6">
+            <nav class="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                <Link :href="route('admin.dashboard')" class="hover:text-ed-primary">Tableau de bord</Link>
+                <span aria-hidden="true">/</span>
+                <Link :href="route('admin.ead.index')" class="hover:text-ed-primary">Équipes d'accueil</Link>
+                <span aria-hidden="true">/</span>
+                <span class="font-semibold text-gray-900">Nouvelle</span>
+            </nav>
 
-        <form class="grid gap-6 lg:grid-cols-3" @submit.prevent="submit">
-            <section class="rounded-2xl border border-slate-200 bg-white p-6 lg:col-span-2">
-                <div class="space-y-4">
+            <form class="grid gap-6 lg:grid-cols-3" @submit.prevent="submit">
+                <section class="space-y-5 rounded-xl border border-gray-200 bg-white p-6 lg:col-span-2">
                     <div>
-                        <label class="text-sm font-semibold text-slate-700">Nom *</label>
-                        <input v-model="form.nom" type="text" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2" @input="updateSlug" />
-                        <p class="mt-1 text-xs text-slate-500">Le nom officiel de l'equipe.</p>
-                        <p v-if="form.errors.nom" class="mt-2 text-xs text-red-600">{{ form.errors.nom }}</p>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700">Nom de l'équipe <span class="text-red-500">*</span></label>
+                        <input v-model="form.nom" type="text" placeholder="Ex. : Sciences du Vivant et Modélisation" class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm placeholder:text-gray-400 focus:border-transparent focus:ring-2 focus:ring-ed-primary/40">
+                        <p class="mt-1 text-xs text-gray-500">Le lien public (slug) est généré automatiquement à partir du nom.</p>
+                        <p v-if="form.errors.nom" class="mt-1 text-xs text-red-600">{{ form.errors.nom }}</p>
                     </div>
-                    <div>
-                        <label class="text-sm font-semibold text-slate-700">Slug *</label>
-                        <input v-model="form.slug" type="text" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2" @input="markSlugTouched" />
-                        <p class="mt-1 text-xs text-slate-500">Utilise pour les URLs publiques.</p>
-                        <p v-if="form.errors.slug" class="mt-2 text-xs text-red-600">{{ form.errors.slug }}</p>
-                    </div>
-                    <div>
-                        <label class="text-sm font-semibold text-slate-700">Description</label>
-                        <textarea v-model="form.description" rows="5" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2"></textarea>
-                        <p v-if="form.errors.description" class="mt-2 text-xs text-red-600">{{ form.errors.description }}</p>
-                    </div>
-                    <div>
-                        <label class="text-sm font-semibold text-slate-700">Encadrants</label>
-                        <div class="mt-2 flex flex-wrap items-end gap-3">
-                            <div class="min-w-[240px] flex-1">
-                                <select v-model="selectedEncadrantId" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
-                                    <option value="">Selectionner un encadrant</option>
-                                    <option v-for="encadrant in encadrants" :key="encadrant.id" :value="encadrant.id">
-                                        {{ encadrant.name }} {{ encadrant.grade ? `(${encadrant.grade})` : '' }}
-                                    </option>
-                                </select>
-                            </div>
-                            <button type="button" class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white" @click="addEncadrant">
-                                Ajouter
-                            </button>
-                        </div>
-                        <p v-if="form.errors.encadrants" class="mt-2 text-xs text-red-600">{{ form.errors.encadrants }}</p>
-                        <div v-if="form.encadrants.length" class="mt-3 flex flex-wrap gap-2">
-                            <span v-for="id in form.encadrants" :key="id" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700">
-                                {{ encadrants.find((item) => item.id === id)?.name || 'Encadrant' }}
-                                <button type="button" class="text-slate-400 hover:text-slate-600" @click="removeEncadrant(id)">×</button>
-                            </span>
-                        </div>
-                        <p v-else class="mt-2 text-xs text-slate-500">Aucun encadrant associe pour le moment.</p>
-                    </div>
-                </div>
-            </section>
 
-            <aside class="space-y-6">
-                <section class="rounded-2xl border border-slate-200 bg-white p-6">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-sm font-semibold text-slate-700">Responsable</label>
-                            <select v-model="form.responsable_id" class="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2">
-                                <option value="">Aucun</option>
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700">Sigle</label>
+                        <input v-model="form.sigle" type="text" placeholder="Ex. : SVM" class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm uppercase placeholder:normal-case placeholder:text-gray-400 focus:border-transparent focus:ring-2 focus:ring-ed-primary/40">
+                        <p class="mt-1 text-xs text-gray-500">Abréviation courte de l'équipe (facultatif).</p>
+                        <p v-if="form.errors.sigle" class="mt-1 text-xs text-red-600">{{ form.errors.sigle }}</p>
+                    </div>
+
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700">Description</label>
+                        <textarea v-model="form.description" rows="5" class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm placeholder:text-gray-400 focus:border-transparent focus:ring-2 focus:ring-ed-primary/40"></textarea>
+                        <p v-if="form.errors.description" class="mt-1 text-xs text-red-600">{{ form.errors.description }}</p>
+                    </div>
+
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700">Encadrants rattachés</label>
+                        <div class="flex flex-wrap items-end gap-3">
+                            <select v-model="selectedEncadrantId" class="min-w-[240px] flex-1 rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:border-transparent focus:ring-2 focus:ring-ed-primary/40">
+                                <option value="">Sélectionner un encadrant…</option>
                                 <option v-for="encadrant in encadrants" :key="encadrant.id" :value="encadrant.id">
                                     {{ encadrant.name }} {{ encadrant.grade ? `(${encadrant.grade})` : '' }}
                                 </option>
                             </select>
-                            <p v-if="form.errors.responsable_id" class="mt-2 text-xs text-red-600">{{ form.errors.responsable_id }}</p>
+                            <button type="button" class="rounded-lg bg-ed-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-ed-secondary" @click="addEncadrant">
+                                Ajouter
+                            </button>
                         </div>
+                        <p v-if="form.errors.encadrants" class="mt-1 text-xs text-red-600">{{ form.errors.encadrants }}</p>
+                        <div v-if="form.encadrants.length" class="mt-3 flex flex-wrap gap-2">
+                            <span v-for="id in form.encadrants" :key="id" class="inline-flex items-center gap-2 rounded-full bg-ed-primary/10 px-3 py-1 text-xs font-medium text-ed-primary">
+                                {{ encadrants.find((item) => item.id === id)?.name || 'Encadrant' }}
+                                <button type="button" class="text-ed-primary/60 hover:text-ed-primary" @click="removeEncadrant(id)" aria-label="Retirer">×</button>
+                            </span>
+                        </div>
+                        <p v-else class="mt-2 text-xs text-gray-500">Aucun encadrant rattaché pour le moment.</p>
                     </div>
                 </section>
-                <section class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-5 text-xs text-slate-600">
-                    Astuce: renseignez un responsable pour faciliter l'affichage sur les pages publiques.
-                </section>
-            </aside>
-        </form>
 
-        <div class="sticky bottom-4 z-20 mt-8">
-            <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 shadow-lg backdrop-blur">
-                <p class="text-xs text-slate-500">Pensez a enregistrer vos modifications.</p>
-                <div class="flex items-center gap-2">
-                    <Link :href="route('admin.ead.index')" class="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
-                        Annuler
-                    </Link>
-                    <button type="button" class="rounded-xl bg-ed-primary px-4 py-2 text-xs font-semibold text-white hover:bg-ed-secondary" :disabled="form.processing" @click="submit">
-                        Enregistrer
-                    </button>
-                </div>
-            </div>
+                <aside class="space-y-5">
+                    <section class="rounded-xl border border-gray-200 bg-white p-6">
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700">Responsable</label>
+                        <select v-model="form.responsable_id" class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm focus:border-transparent focus:ring-2 focus:ring-ed-primary/40">
+                            <option value="">Aucun</option>
+                            <option v-for="encadrant in encadrants" :key="encadrant.id" :value="encadrant.id">
+                                {{ encadrant.name }} {{ encadrant.grade ? `(${encadrant.grade})` : '' }}
+                            </option>
+                        </select>
+                        <p v-if="form.errors.responsable_id" class="mt-1 text-xs text-red-600">{{ form.errors.responsable_id }}</p>
+                        <p class="mt-3 text-xs leading-relaxed text-gray-500">Le responsable apparaît sur la fiche publique de l'équipe.</p>
+                    </section>
+
+                    <section class="rounded-xl border border-gray-200 bg-white p-6">
+                        <div class="flex items-center gap-2">
+                            <button type="button" class="flex-1 rounded-lg bg-ed-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-ed-secondary disabled:opacity-60" :disabled="form.processing" @click="submit">
+                                {{ form.processing ? 'Enregistrement…' : 'Enregistrer' }}
+                            </button>
+                            <Link :href="route('admin.ead.index')" class="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                                Annuler
+                            </Link>
+                        </div>
+                    </section>
+                </aside>
+            </form>
         </div>
     </AdminLayout>
 </template>

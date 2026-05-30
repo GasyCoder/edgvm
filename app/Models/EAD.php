@@ -13,6 +13,7 @@ class EAD extends Model
 
     protected $fillable = [
         'nom',
+        'sigle',
         'description',
         'responsable_id',
         'slug',

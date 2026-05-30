@@ -35,7 +35,7 @@ class NewsletterController extends Controller
     {
         $subscriber = NewsletterSubscriber::where('token', $token)->first();
 
-        if (!$subscriber) {
+        if (! $subscriber) {
             return view('newsletter.unsubscribe-error');
         }
 
@@ -57,7 +57,7 @@ class NewsletterController extends Controller
     {
         $subscriber = NewsletterSubscriber::where('token', $token)->first();
 
-        if (!$subscriber) {
+        if (! $subscriber) {
             return view('newsletter.unsubscribe-error');
         }
 

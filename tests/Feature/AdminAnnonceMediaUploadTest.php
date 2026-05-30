@@ -13,7 +13,7 @@ it('stores annonce with uploaded media', function (): void {
     Storage::fake('public');
 
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);

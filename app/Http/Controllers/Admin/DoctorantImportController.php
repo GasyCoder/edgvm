@@ -21,22 +21,22 @@ class DoctorantImportController extends Controller
 
         try {
             Excel::import(new DoctorantsImport, $request->file('import_file'));
-            
+
             return redirect()->route('admin.doctorants.index')
                 ->with('success', '✅ Doctorants importés avec succès !');
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
             $errors = [];
-            
+
             foreach ($failures as $failure) {
-                $errors[] = "Ligne {$failure->row()}: " . implode(', ', $failure->errors());
+                $errors[] = "Ligne {$failure->row()}: ".implode(', ', $failure->errors());
             }
-            
+
             return redirect()->route('admin.doctorants.index')
-                ->with('error', '❌ Erreurs de validation : ' . implode(' | ', array_slice($errors, 0, 3)));
+                ->with('error', '❌ Erreurs de validation : '.implode(' | ', array_slice($errors, 0, 3)));
         } catch (\Exception $e) {
             return redirect()->route('admin.doctorants.index')
-                ->with('error', '❌ Erreur lors de l\'importation : ' . $e->getMessage());
+                ->with('error', '❌ Erreur lors de l\'importation : '.$e->getMessage());
         }
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateEadRequest extends FormRequest
 {
@@ -24,12 +23,7 @@ class UpdateEadRequest extends FormRequest
     {
         return [
             'nom' => ['required', 'string', 'max:255'],
-            'slug' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('eads', 'slug')->ignore($this->route('ead')),
-            ],
+            'sigle' => ['nullable', 'string', 'max:50'],
             'description' => ['nullable', 'string'],
             'responsable_id' => ['nullable', 'exists:encadrants,id'],
             'encadrants' => ['nullable', 'array'],
@@ -41,9 +35,7 @@ class UpdateEadRequest extends FormRequest
     {
         return [
             'nom.required' => 'Le nom est obligatoire.',
-            'slug.required' => 'Le slug est obligatoire.',
-            'slug.unique' => 'Ce slug existe deja.',
-            'responsable_id.exists' => 'Le responsable selectionne est invalide.',
+            'responsable_id.exists' => 'Le responsable sélectionné est invalide.',
         ];
     }
 }

@@ -21,8 +21,8 @@ class NewsletterSubscriber extends Model
     ];
 
     protected $casts = [
-        'actif'        => 'boolean',
-        'abonne_le'    => 'datetime',
+        'actif' => 'boolean',
+        'abonne_le' => 'datetime',
         'desabonne_le' => 'datetime',
     ];
 
@@ -30,7 +30,7 @@ class NewsletterSubscriber extends Model
     {
         static::creating(function (self $subscriber) {
             // Normaliser email
-            if (!empty($subscriber->email)) {
+            if (! empty($subscriber->email)) {
                 $subscriber->email = strtolower(trim($subscriber->email));
             }
 

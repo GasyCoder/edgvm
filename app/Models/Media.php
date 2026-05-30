@@ -10,6 +10,7 @@ class Media extends Model
     use HasFactory;
 
     protected $table = 'media';
+
     protected $fillable = [
         'nom_original',
         'nom_fichier',
@@ -29,7 +30,7 @@ class Media extends Model
     // Accessors
     public function getUrlAttribute()
     {
-        return asset('storage/' . $this->chemin);
+        return asset('storage/'.$this->chemin);
     }
 
     public function getDisplayNameAttribute()

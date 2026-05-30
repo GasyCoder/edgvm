@@ -79,7 +79,7 @@ class MenuItem extends Model
             }
 
             // Sinon on préfixe par "/"
-            return '/' . ltrim($this->url, '/');
+            return '/'.ltrim($this->url, '/');
         }
 
         // Fallback

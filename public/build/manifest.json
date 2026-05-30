@@ -1,10 +1,10 @@
 {
-  "_vendor-BHiNASem.js": {
-    "file": "assets/vendor-BHiNASem.js",
+  "_vendor-BtWZ0YP0.js": {
+    "file": "assets/vendor-BtWZ0YP0.js",
     "name": "vendor"
   },
   "resources/css/app.css": {
-    "file": "assets/app-Ct4APNLn.css",
+    "file": "assets/app-Cpk6DKC6.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -13,12 +13,12 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-DLDU89c3.js",
+    "file": "assets/app-a-N_DJ1H.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-BHiNASem.js"
+      "_vendor-BtWZ0YP0.js"
     ]
   }
 }

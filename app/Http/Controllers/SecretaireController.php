@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Inscription;
 use App\Models\Doctorant;
+use App\Models\Inscription;
 use App\Models\These;
 
 class SecretaireController extends Controller

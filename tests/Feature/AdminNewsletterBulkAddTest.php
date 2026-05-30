@@ -8,7 +8,7 @@ uses(RefreshDatabase::class);
 
 it('adds subscribers in bulk', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -33,7 +33,7 @@ it('adds subscribers in bulk', function (): void {
 
 it('rejects invalid emails for bulk add', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);

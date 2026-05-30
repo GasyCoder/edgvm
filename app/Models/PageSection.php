@@ -10,6 +10,7 @@ class PageSection extends Model
     use HasFactory;
 
     protected $table = 'page_sections';
+
     protected $fillable = [
         'page_id',
         'titre',

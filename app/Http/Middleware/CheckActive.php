@@ -10,8 +10,9 @@ class CheckActive
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user() && !$request->user()->active) {
+        if ($request->user() && ! $request->user()->active) {
             auth()->logout();
+
             return redirect()->route('login')->with('error', 'Votre compte est désactivé.');
         }
 

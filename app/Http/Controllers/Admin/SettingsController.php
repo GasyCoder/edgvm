@@ -25,7 +25,7 @@ class SettingsController extends Controller
     {
         $settings = Setting::main();
 
-        $secretary = User::where('role', 'secrétaire')->first();
+        $secretary = User::where('role', 'secretariat')->first();
 
         return Inertia::render('Admin/Settings/Index', [
             'settings' => [
@@ -163,7 +163,7 @@ class SettingsController extends Controller
         $secretary = User::firstOrNew(['email' => $request->validated('email')]);
 
         $secretary->name = $request->validated('name');
-        $secretary->role = 'secrétaire';
+        $secretary->role = 'secretariat';
         $secretary->active = true;
 
         if ($request->validated('password')) {

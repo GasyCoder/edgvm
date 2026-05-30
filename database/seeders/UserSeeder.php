@@ -15,22 +15,42 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // --- Admin ---
+        // --- Super administrateur ---
         $admin = User::create([
             'name' => 'Administrateur EDGVM',
             'email' => 'admin@edgvm.mg',
             'password' => Hash::make('password'),
-            'role' => 'admin',
+            'role' => 'super_admin',
             'active' => true,
             'email_verified_at' => now(),
         ]);
 
-        // --- Secrétaire ---
+        // --- Direction ---
         User::create([
-            'name' => 'Secrétaire EDGVM',
+            'name' => 'Direction EDGVM',
+            'email' => 'direction@edgvm.mg',
+            'password' => Hash::make('password'),
+            'role' => 'direction',
+            'active' => true,
+            'email_verified_at' => now(),
+        ]);
+
+        // --- Secrétariat ---
+        User::create([
+            'name' => 'Secrétariat EDGVM',
             'email' => 'secretaire@edgvm.mg',
             'password' => Hash::make('password'),
-            'role' => 'secrétaire',
+            'role' => 'secretariat',
+            'active' => true,
+            'email_verified_at' => now(),
+        ]);
+
+        // --- Responsable communication ---
+        User::create([
+            'name' => 'Communication EDGVM',
+            'email' => 'communication@edgvm.mg',
+            'password' => Hash::make('password'),
+            'role' => 'communication',
             'active' => true,
             'email_verified_at' => now(),
         ]);

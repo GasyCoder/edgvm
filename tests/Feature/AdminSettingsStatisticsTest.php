@@ -8,7 +8,7 @@ uses(RefreshDatabase::class);
 
 it('updates message direction statistics in settings', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -34,7 +34,7 @@ it('updates message direction statistics in settings', function (): void {
 
 it('validates message direction statistics values', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);

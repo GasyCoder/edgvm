@@ -14,7 +14,7 @@ it('requires a slug when uploading a thesis file', function (): void {
     Storage::fake('public');
 
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -41,7 +41,7 @@ it('uploads a thesis file with slug and stores media', function (): void {
     Storage::fake('public');
 
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -73,7 +73,7 @@ it('updates a thesis with a new uploaded file and slug', function (): void {
     Storage::fake('public');
 
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);

@@ -35,7 +35,7 @@ class SendAnnonceEmailJob implements ShouldQueue
         $types = match ($annonce->email_cible) {
             'doctorant' => ['doctorant'],
             'encadrant' => ['encadrant'],
-            default     => ['doctorant', 'encadrant'],
+            default => ['doctorant', 'encadrant'],
         };
 
         NewsletterSubscriber::query()

@@ -32,6 +32,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'role',
         'active',
+        'email_verified_at',
     ];
 
     /**
@@ -96,23 +97,38 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     // Méthodes helpers
-    public function isAdmin()
+    public function isSuperAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === \App\Enums\UserRole::SuperAdmin->value;
     }
 
-    public function isSecretaire()
+    public function isAdmin(): bool
     {
-        return $this->role === 'secrétaire';
+        return $this->isSuperAdmin();
     }
 
-    public function isDoctorant()
+    public function isDirection(): bool
     {
-        return $this->role === 'doctorant';
+        return $this->role === \App\Enums\UserRole::Direction->value;
     }
 
-    public function isEncadrant()
+    public function isSecretaire(): bool
     {
-        return $this->role === 'encadrant';
+        return $this->role === \App\Enums\UserRole::Secretariat->value;
+    }
+
+    public function isCommunication(): bool
+    {
+        return $this->role === \App\Enums\UserRole::Communication->value;
+    }
+
+    public function isDoctorant(): bool
+    {
+        return $this->role === \App\Enums\UserRole::Doctorant->value;
+    }
+
+    public function isEncadrant(): bool
+    {
+        return $this->role === \App\Enums\UserRole::Encadrant->value;
     }
 }

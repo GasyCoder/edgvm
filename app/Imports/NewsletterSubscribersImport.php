@@ -40,29 +40,29 @@ class NewsletterSubscribersImport implements ToCollection, WithHeadingRow
             }
 
             $type = strtolower(trim((string) ($row['type'] ?? 'autre')));
-            if (!in_array($type, ['doctorant', 'encadrant', 'autre'], true)) {
+            if (! in_array($type, ['doctorant', 'encadrant', 'autre'], true)) {
                 $type = 'autre';
             }
 
             $actifRaw = $row['actif'] ?? 1;
             $actif = (string) $actifRaw;
             // accepte: 1/0, true/false, oui/non
-            $actif = in_array(strtolower($actif), ['1','true','oui','yes'], true);
+            $actif = in_array(strtolower($actif), ['1', 'true', 'oui', 'yes'], true);
 
             $abonneLe = $this->parseExcelDate($row['abonne_le'] ?? null) ?? $now;
             $desabonneLe = $this->parseExcelDate($row['desabonne_le'] ?? null);
 
             return [
-                'email'        => $email,
-                'nom'          => !empty($row['nom']) ? trim((string) $row['nom']) : null,
-                'type'         => $type,
-                'actif'        => $actif,
-                'abonne_le'    => $abonneLe,
+                'email' => $email,
+                'nom' => ! empty($row['nom']) ? trim((string) $row['nom']) : null,
+                'type' => $type,
+                'actif' => $actif,
+                'abonne_le' => $abonneLe,
                 'desabonne_le' => $desabonneLe,
                 // token: garder ancien si existe, sinon générer
-                'token'        => $existingTokens[$email] ?? Str::random(32),
-                'created_at'   => $now,
-                'updated_at'   => $now,
+                'token' => $existingTokens[$email] ?? Str::random(32),
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         })->filter()->values()->all();
 

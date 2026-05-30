@@ -10,6 +10,6 @@ class EncadrantExportController extends Controller
 {
     public function export()
     {
-        return Excel::download(new EncadrantsExport, 'encadrants_' . now()->format('Y-m-d_His') . '.xlsx');
+        return Excel::download(new EncadrantsExport, 'encadrants_'.now()->format('Y-m-d_His').'.xlsx');
     }
 }

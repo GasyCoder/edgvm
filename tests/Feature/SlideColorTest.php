@@ -17,7 +17,7 @@ beforeEach(function () {
 
 it('can store a slide with custom colors', function () {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -52,7 +52,7 @@ it('can store a slide with custom colors', function () {
 
 it('uses default colors when not provided', function () {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -84,7 +84,7 @@ it('uses default colors when not provided', function () {
 
 it('can store a slide using a media library image', function () {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -123,7 +123,7 @@ it('can store a slide using a media library image', function () {
 
 it('can update slide colors', function () {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -174,7 +174,7 @@ it('can update slide colors', function () {
 
 it('can update slide image using the media library', function () {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -232,7 +232,7 @@ it('can update slide image using the media library', function () {
 
 it('passes color data to edit page', function () {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -276,7 +276,7 @@ it('passes color data to edit page', function () {
 
 it('validates color format', function () {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);

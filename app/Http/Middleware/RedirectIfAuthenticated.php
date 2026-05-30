@@ -16,10 +16,9 @@ class RedirectIfAuthenticated
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
                 $user = Auth::user();
-                
-                return match($user->role) {
-                    'admin' => redirect()->route('admin.dashboard'),
-                    'secrétaire' => redirect()->route('secretaire.dashboard'),
+
+                return match ($user->role) {
+                    'super_admin', 'direction', 'secretariat', 'communication' => redirect()->route('admin.dashboard'),
                     'encadrant' => redirect()->route('encadrant.dashboard'),
                     'doctorant' => redirect()->route('doctorant.dashboard'),
                     default => redirect('/dashboard'),

@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MessageDirectionController as AdminMessageDirectionController;
 use App\Http\Controllers\Admin\NewsletterSubscriberController as AdminNewsletterSubscriberController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
+use App\Http\Controllers\Admin\PaiementController as AdminPaiementController;
 use App\Http\Controllers\Admin\PartenaireController as AdminPartenaireController;
 use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Admin\SlideController as AdminSlideController;
@@ -140,8 +141,7 @@ $adminRoutes = function (): void {
             $user = Auth::user();
 
             return match ($user->role) {
-                'admin' => redirect()->route('admin.dashboard'),
-                'secrétaire' => redirect()->route('secretaire.dashboard'),
+                'super_admin', 'direction', 'secretariat', 'communication' => redirect()->route('admin.dashboard'),
                 'encadrant' => redirect()->route('encadrant.dashboard'),
                 'doctorant' => redirect()->route('doctorant.dashboard'),
                 default => abort(403, 'Rôle non reconnu'),
@@ -149,101 +149,112 @@ $adminRoutes = function (): void {
         })->name('dashboard');
 
         // Admin
-        Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::middleware(['role:super_admin,direction,secretariat,communication'])->prefix('admin')->name('admin.')->group(function () {
             Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-            Route::get('/parametres', [AdminSettingsController::class, 'index'])->name('settings');
-            Route::put('/parametres/general', [AdminSettingsController::class, 'updateGeneral'])->name('settings.general');
-            Route::put('/parametres/seo', [AdminSettingsController::class, 'updateSeo'])->name('settings.seo');
-            Route::put('/parametres/maintenance', [AdminSettingsController::class, 'updateMaintenance'])->name('settings.maintenance');
-            Route::put('/parametres/statistiques', [AdminSettingsController::class, 'updateStatistics'])->name('settings.statistics');
-            Route::post('/parametres/media', [AdminSettingsController::class, 'updateMedia'])->name('settings.media');
-            Route::put('/parametres/security', [AdminSettingsController::class, 'updateSecurity'])->name('settings.security');
-            Route::put('/parametres/secretaire', [AdminSettingsController::class, 'updateSecretaire'])->name('settings.secretaire');
-            // Gestion des Sliders
-            Route::get('/sliders', [AdminSliderController::class, 'index'])->name('sliders.index');
-            Route::get('/sliders/create', [AdminSliderController::class, 'create'])->name('sliders.create');
-            Route::post('/sliders', [AdminSliderController::class, 'store'])->name('sliders.store');
-            Route::get('/sliders/{slider}/edit', [AdminSliderController::class, 'edit'])->name('sliders.edit');
-            Route::put('/sliders/{slider}', [AdminSliderController::class, 'update'])->name('sliders.update');
-            Route::delete('/sliders/{slider}', [AdminSliderController::class, 'destroy'])->name('sliders.destroy');
-            Route::patch('/sliders/{slider}/toggle', [AdminSliderController::class, 'toggleVisibility'])->name('sliders.toggle');
 
-            // Gestion des Slides
-            Route::get('/sliders/{slider}/slides', [AdminSlideController::class, 'index'])->name('slides.index');
-            Route::get('/sliders/{slider}/slides/create', [AdminSlideController::class, 'create'])->name('slides.create');
-            Route::post('/sliders/{slider}/slides', [AdminSlideController::class, 'store'])->name('slides.store');
-            Route::get('/sliders/{slider}/slides/{slide}/edit', [AdminSlideController::class, 'edit'])->name('slides.edit');
-            Route::put('/sliders/{slider}/slides/{slide}', [AdminSlideController::class, 'update'])->name('slides.update');
-            Route::delete('/sliders/{slider}/slides/{slide}', [AdminSlideController::class, 'destroy'])->name('slides.destroy');
-            Route::patch('/sliders/{slider}/slides/{slide}/toggle', [AdminSlideController::class, 'toggleVisibility'])->name('slides.toggle');
-            Route::patch('/sliders/{slider}/slides/order', [AdminSlideController::class, 'updateOrder'])->name('slides.order');
+            // Système — réservé au super administrateur
+            Route::middleware('can:systeme.access')->group(function () {
+                Route::get('/parametres', [AdminSettingsController::class, 'index'])->name('settings');
+                Route::put('/parametres/general', [AdminSettingsController::class, 'updateGeneral'])->name('settings.general');
+                Route::put('/parametres/seo', [AdminSettingsController::class, 'updateSeo'])->name('settings.seo');
+                Route::put('/parametres/maintenance', [AdminSettingsController::class, 'updateMaintenance'])->name('settings.maintenance');
+                Route::put('/parametres/statistiques', [AdminSettingsController::class, 'updateStatistics'])->name('settings.statistics');
+                Route::post('/parametres/media', [AdminSettingsController::class, 'updateMedia'])->name('settings.media');
+                Route::put('/parametres/security', [AdminSettingsController::class, 'updateSecurity'])->name('settings.security');
+                Route::put('/parametres/secretaire', [AdminSettingsController::class, 'updateSecretaire'])->name('settings.secretaire');
+            });
 
-            // Gestion de la Médiathèque
-            Route::get('/media', [MediaController::class, 'index'])->name('media.index');
-            Route::get('/media/upload', [MediaController::class, 'create'])->name('media.upload');
-            Route::post('/media', [MediaController::class, 'store'])->name('media.store');
-            Route::delete('/media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
+            // Contenus & site web — communication / direction
+            Route::middleware('can:contenu.access')->group(function () {
+                // Gestion des Sliders
+                Route::get('/sliders', [AdminSliderController::class, 'index'])->name('sliders.index');
+                Route::get('/sliders/create', [AdminSliderController::class, 'create'])->name('sliders.create');
+                Route::post('/sliders', [AdminSliderController::class, 'store'])->name('sliders.store');
+                Route::get('/sliders/{slider}/edit', [AdminSliderController::class, 'edit'])->name('sliders.edit');
+                Route::put('/sliders/{slider}', [AdminSliderController::class, 'update'])->name('sliders.update');
+                Route::delete('/sliders/{slider}', [AdminSliderController::class, 'destroy'])->name('sliders.destroy');
+                Route::patch('/sliders/{slider}/toggle', [AdminSliderController::class, 'toggleVisibility'])->name('sliders.toggle');
 
-            // Catégories & Tags
-            Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
-            Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
-            Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
-            Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
+                // Gestion des Slides
+                Route::get('/sliders/{slider}/slides', [AdminSlideController::class, 'index'])->name('slides.index');
+                Route::get('/sliders/{slider}/slides/create', [AdminSlideController::class, 'create'])->name('slides.create');
+                Route::post('/sliders/{slider}/slides', [AdminSlideController::class, 'store'])->name('slides.store');
+                Route::get('/sliders/{slider}/slides/{slide}/edit', [AdminSlideController::class, 'edit'])->name('slides.edit');
+                Route::put('/sliders/{slider}/slides/{slide}', [AdminSlideController::class, 'update'])->name('slides.update');
+                Route::delete('/sliders/{slider}/slides/{slide}', [AdminSlideController::class, 'destroy'])->name('slides.destroy');
+                Route::patch('/sliders/{slider}/slides/{slide}/toggle', [AdminSlideController::class, 'toggleVisibility'])->name('slides.toggle');
+                Route::patch('/sliders/{slider}/slides/order', [AdminSlideController::class, 'updateOrder'])->name('slides.order');
 
-            Route::get('/tags', [AdminTagController::class, 'index'])->name('tags.index');
-            Route::post('/tags', [AdminTagController::class, 'store'])->name('tags.store');
-            Route::put('/tags/{tag}', [AdminTagController::class, 'update'])->name('tags.update');
-            Route::delete('/tags/{tag}', [AdminTagController::class, 'destroy'])->name('tags.destroy');
+                // Gestion de la Médiathèque
+                Route::get('/media', [MediaController::class, 'index'])->name('media.index');
+                Route::get('/media/upload', [MediaController::class, 'create'])->name('media.upload');
+                Route::post('/media', [MediaController::class, 'store'])->name('media.store');
+                Route::delete('/media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
-            // Gestion des Actualités
-            Route::get('/actualites', [AdminActualiteController::class, 'index'])->name('actualites.index');
-            Route::get('/actualites/create', [AdminActualiteController::class, 'create'])->name('actualites.create');
-            Route::post('/actualites', [AdminActualiteController::class, 'store'])->name('actualites.store');
-            Route::get('/actualites/{actualite}/edit', [AdminActualiteController::class, 'edit'])->name('actualites.edit');
-            Route::put('/actualites/{actualite}', [AdminActualiteController::class, 'update'])->name('actualites.update');
-            Route::delete('/actualites/{actualite}', [AdminActualiteController::class, 'destroy'])->name('actualites.destroy');
-            Route::patch('/actualites/{actualite}/toggle', [AdminActualiteController::class, 'toggleVisibility'])
-                ->name('actualites.toggle');
+                // Catégories & Tags
+                Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+                Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
+                Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
+                Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
 
-            Route::get('/newsletter/subscribers', [AdminNewsletterSubscriberController::class, 'index'])
-                ->name('newsletter.subscribers');
-            Route::post('/newsletter/subscribers', [AdminNewsletterSubscriberController::class, 'store'])
-                ->name('newsletter.subscribers.store');
-            Route::post('/newsletter/subscribers/bulk', [AdminNewsletterSubscriberController::class, 'bulkStore'])
-                ->name('newsletter.subscribers.bulk');
-            Route::put('/newsletter/subscribers/{subscriber}', [AdminNewsletterSubscriberController::class, 'update'])
-                ->name('newsletter.subscribers.update');
-            Route::delete('/newsletter/subscribers/{subscriber}', [AdminNewsletterSubscriberController::class, 'destroy'])
-                ->name('newsletter.subscribers.destroy');
-            Route::patch('/newsletter/subscribers/{subscriber}/toggle', [AdminNewsletterSubscriberController::class, 'toggle'])
-                ->name('newsletter.subscribers.toggle');
-            Route::get('/newsletter/subscribers/export', [AdminNewsletterSubscriberController::class, 'export'])
-                ->name('newsletter.subscribers.export');
-            Route::post('/newsletter/subscribers/import', [AdminNewsletterSubscriberController::class, 'import'])
-                ->name('newsletter.subscribers.import');
+                Route::get('/tags', [AdminTagController::class, 'index'])->name('tags.index');
+                Route::post('/tags', [AdminTagController::class, 'store'])->name('tags.store');
+                Route::put('/tags/{tag}', [AdminTagController::class, 'update'])->name('tags.update');
+                Route::delete('/tags/{tag}', [AdminTagController::class, 'destroy'])->name('tags.destroy');
+
+                // Gestion des Actualités
+                Route::get('/actualites', [AdminActualiteController::class, 'index'])->name('actualites.index');
+                Route::get('/actualites/create', [AdminActualiteController::class, 'create'])->name('actualites.create');
+                Route::post('/actualites', [AdminActualiteController::class, 'store'])->name('actualites.store');
+                Route::get('/actualites/{actualite}/edit', [AdminActualiteController::class, 'edit'])->name('actualites.edit');
+                Route::put('/actualites/{actualite}', [AdminActualiteController::class, 'update'])->name('actualites.update');
+                Route::delete('/actualites/{actualite}', [AdminActualiteController::class, 'destroy'])->name('actualites.destroy');
+                Route::patch('/actualites/{actualite}/toggle', [AdminActualiteController::class, 'toggleVisibility'])
+                    ->name('actualites.toggle');
+            });
+
+            // Communications (e-mails / newsletter) — secrétariat / direction / communication
+            Route::middleware('can:communications.access')->group(function () {
+                Route::get('/newsletter/subscribers', [AdminNewsletterSubscriberController::class, 'index'])
+                    ->name('newsletter.subscribers');
+                Route::post('/newsletter/subscribers', [AdminNewsletterSubscriberController::class, 'store'])
+                    ->name('newsletter.subscribers.store');
+                Route::post('/newsletter/subscribers/bulk', [AdminNewsletterSubscriberController::class, 'bulkStore'])
+                    ->name('newsletter.subscribers.bulk');
+                Route::put('/newsletter/subscribers/{subscriber}', [AdminNewsletterSubscriberController::class, 'update'])
+                    ->name('newsletter.subscribers.update');
+                Route::delete('/newsletter/subscribers/{subscriber}', [AdminNewsletterSubscriberController::class, 'destroy'])
+                    ->name('newsletter.subscribers.destroy');
+                Route::patch('/newsletter/subscribers/{subscriber}/toggle', [AdminNewsletterSubscriberController::class, 'toggle'])
+                    ->name('newsletter.subscribers.toggle');
+                Route::get('/newsletter/subscribers/export', [AdminNewsletterSubscriberController::class, 'export'])
+                    ->name('newsletter.subscribers.export');
+                Route::post('/newsletter/subscribers/import', [AdminNewsletterSubscriberController::class, 'import'])
+                    ->name('newsletter.subscribers.import');
+            });
 
             // Spécialités
-            Route::prefix('specialites')->name('specialites.')->group(function () {
+            Route::middleware('can:gestion.access')->prefix('specialites')->name('specialites.')->group(function () {
                 Route::get('/', [AdminSpecialiteController::class, 'index'])->name('index');
                 Route::get('/create', [AdminSpecialiteController::class, 'create'])->name('create');
                 Route::post('/', [AdminSpecialiteController::class, 'store'])->name('store');
                 Route::get('/{specialite}/edit', [AdminSpecialiteController::class, 'edit'])->name('edit');
                 Route::put('/{specialite}', [AdminSpecialiteController::class, 'update'])->name('update');
-                Route::delete('/{specialite}', [AdminSpecialiteController::class, 'destroy'])->name('destroy');
+                Route::delete('/{specialite}', [AdminSpecialiteController::class, 'destroy'])->middleware('can:records.delete')->name('destroy');
             });
 
             // EAD
-            Route::prefix('ead')->name('ead.')->group(function () {
+            Route::middleware('can:gestion.access')->prefix('ead')->name('ead.')->group(function () {
                 Route::get('/', [AdminEadController::class, 'index'])->name('index');
                 Route::get('/create', [AdminEadController::class, 'create'])->name('create');
                 Route::post('/', [AdminEadController::class, 'store'])->name('store');
                 Route::get('/{ead}/edit', [AdminEadController::class, 'edit'])->name('edit');
                 Route::put('/{ead}', [AdminEadController::class, 'update'])->name('update');
-                Route::delete('/{ead}', [AdminEadController::class, 'destroy'])->name('destroy');
+                Route::delete('/{ead}', [AdminEadController::class, 'destroy'])->middleware('can:records.delete')->name('destroy');
             });
 
             // Doctorants
-            Route::prefix('doctorants')->name('doctorants.')->group(function () {
+            Route::middleware('can:gestion.access')->prefix('doctorants')->name('doctorants.')->group(function () {
                 Route::get('/', [AdminDoctorantController::class, 'index'])->name('index');
                 Route::get('/create', [AdminDoctorantController::class, 'create'])->name('create');
                 Route::post('/', [AdminDoctorantController::class, 'store'])->name('store');
@@ -252,15 +263,30 @@ $adminRoutes = function (): void {
                 Route::get('/export', [DoctorantExportController::class, 'export'])->name('export');
                 Route::post('/import', [DoctorantImportController::class, 'import'])->name('import');
 
+                // Actions groupées et documents
+                Route::post('/bulk', [AdminDoctorantController::class, 'bulk'])->name('bulk');
+                Route::get('/documents', [AdminDoctorantController::class, 'documents'])->name('documents');
+
                 // Routes avec paramètres à la fin
                 Route::get('/{doctorant}', [AdminDoctorantController::class, 'show'])->name('show');
+                Route::put('/{doctorant}/observation', [AdminDoctorantController::class, 'updateObservation'])->name('observation.update');
                 Route::get('/{doctorant}/edit', [AdminDoctorantController::class, 'edit'])->name('edit');
                 Route::put('/{doctorant}', [AdminDoctorantController::class, 'update'])->name('update');
-                Route::delete('/{doctorant}', [AdminDoctorantController::class, 'destroy'])->name('destroy');
+                Route::delete('/{doctorant}', [AdminDoctorantController::class, 'destroy'])->middleware('can:records.delete')->name('destroy');
+            });
+
+            // Finances — paiements des doctorants (secrétariat / direction)
+            Route::middleware('can:finances.access')->group(function () {
+                Route::post('/doctorants/{doctorant}/paiements', [AdminPaiementController::class, 'store'])->name('doctorants.paiements.store');
+                Route::delete('/doctorants/{doctorant}/paiements/{paiement}', [AdminPaiementController::class, 'destroy'])
+                    ->middleware('can:records.delete')
+                    ->name('doctorants.paiements.destroy');
+                Route::post('/doctorants/{doctorant}/finances/notifier', [AdminPaiementController::class, 'notify'])
+                    ->name('doctorants.finances.notify');
             });
 
             // Encadrants
-            Route::prefix('encadrants')->name('encadrants.')->group(function () {
+            Route::middleware('can:gestion.access')->prefix('encadrants')->name('encadrants.')->group(function () {
                 Route::get('/', [AdminEncadrantController::class, 'index'])->name('index');
                 Route::get('/create', [AdminEncadrantController::class, 'create'])->name('create');
                 Route::post('/', [AdminEncadrantController::class, 'store'])->name('store');
@@ -273,11 +299,11 @@ $adminRoutes = function (): void {
                 Route::get('/{encadrant}', [AdminEncadrantController::class, 'show'])->name('show');
                 Route::get('/{encadrant}/edit', [AdminEncadrantController::class, 'edit'])->name('edit');
                 Route::put('/{encadrant}', [AdminEncadrantController::class, 'update'])->name('update');
-                Route::delete('/{encadrant}', [AdminEncadrantController::class, 'destroy'])->name('destroy');
+                Route::delete('/{encadrant}', [AdminEncadrantController::class, 'destroy'])->middleware('can:records.delete')->name('destroy');
             });
 
             // Thèses
-            Route::prefix('theses')->name('theses.')->group(function () {
+            Route::middleware('can:gestion.access')->prefix('theses')->name('theses.')->group(function () {
                 Route::get('/', [AdminTheseController::class, 'index'])->name('index');
                 Route::get('/create', [AdminTheseController::class, 'create'])->name('create');
                 Route::post('/', [AdminTheseController::class, 'store'])->name('store');
@@ -294,21 +320,21 @@ $adminRoutes = function (): void {
                 Route::get('/{these}', [AdminTheseController::class, 'show'])->name('show');
                 Route::get('/{these}/edit', [AdminTheseController::class, 'edit'])->name('edit');
                 Route::put('/{these}', [AdminTheseController::class, 'update'])->name('update');
-                Route::delete('/{these}', [AdminTheseController::class, 'destroy'])->name('destroy');
+                Route::delete('/{these}', [AdminTheseController::class, 'destroy'])->middleware('can:records.delete')->name('destroy');
             });
 
             // Jurys
-            Route::prefix('jurys')->name('jurys.')->group(function () {
+            Route::middleware('can:gestion.access')->prefix('jurys')->name('jurys.')->group(function () {
                 Route::get('/', [AdminJuryController::class, 'index'])->name('index');
                 Route::get('/create', [AdminJuryController::class, 'create'])->name('create');
                 Route::post('/', [AdminJuryController::class, 'store'])->name('store');
                 Route::get('/{jury}/edit', [AdminJuryController::class, 'edit'])->name('edit');
                 Route::put('/{jury}', [AdminJuryController::class, 'update'])->name('update');
-                Route::delete('/{jury}', [AdminJuryController::class, 'destroy'])->name('destroy');
+                Route::delete('/{jury}', [AdminJuryController::class, 'destroy'])->middleware('can:records.delete')->name('destroy');
             });
 
             // Pages
-            Route::prefix('pages')->name('pages.')->group(function () {
+            Route::middleware('can:contenu.access')->prefix('pages')->name('pages.')->group(function () {
                 Route::get('/', [AdminPageController::class, 'index'])->name('index');
                 Route::get('/create', [AdminPageController::class, 'create'])->name('create');
                 Route::post('/', [AdminPageController::class, 'store'])->name('store');
@@ -322,19 +348,21 @@ $adminRoutes = function (): void {
             });
 
             // Messages aux directions de programme
-            Route::get('/message-directions', [AdminMessageDirectionController::class, 'index'])
-                ->name('message-directions.index');
-            Route::get('/message-directions/{messageDirection}', [AdminMessageDirectionController::class, 'edit'])
-                ->name('message-directions.edit');
-            Route::put('/message-directions/{messageDirection}', [AdminMessageDirectionController::class, 'update'])
-                ->name('message-directions.update');
-            Route::delete('/message-directions/{messageDirection}', [AdminMessageDirectionController::class, 'destroy'])
-                ->name('message-directions.destroy');
-            Route::patch('/message-directions/{messageDirection}/toggle', [AdminMessageDirectionController::class, 'toggleVisibility'])
-                ->name('message-directions.toggle');
+            Route::middleware('can:contenu.access')->group(function () {
+                Route::get('/message-directions', [AdminMessageDirectionController::class, 'index'])
+                    ->name('message-directions.index');
+                Route::get('/message-directions/{messageDirection}', [AdminMessageDirectionController::class, 'edit'])
+                    ->name('message-directions.edit');
+                Route::put('/message-directions/{messageDirection}', [AdminMessageDirectionController::class, 'update'])
+                    ->name('message-directions.update');
+                Route::delete('/message-directions/{messageDirection}', [AdminMessageDirectionController::class, 'destroy'])
+                    ->name('message-directions.destroy');
+                Route::patch('/message-directions/{messageDirection}/toggle', [AdminMessageDirectionController::class, 'toggleVisibility'])
+                    ->name('message-directions.toggle');
+            });
 
             // PARTENAIRES
-            Route::prefix('partenaires')->name('partenaires.')->group(function () {
+            Route::middleware('can:contenu.access')->prefix('partenaires')->name('partenaires.')->group(function () {
                 Route::get('/', [AdminPartenaireController::class, 'index'])->name('index');
                 Route::get('/create', [AdminPartenaireController::class, 'create'])->name('create');
                 Route::post('/', [AdminPartenaireController::class, 'store'])->name('store');
@@ -345,7 +373,7 @@ $adminRoutes = function (): void {
             });
 
             // Gestion des Événements
-            Route::prefix('evenements')->name('evenements.')->group(function () {
+            Route::middleware('can:communications.access')->prefix('evenements')->name('evenements.')->group(function () {
                 Route::get('/', [AdminEvenementController::class, 'index'])->name('index');
                 Route::get('/create', [AdminEvenementController::class, 'create'])->name('create');
                 Route::post('/', [AdminEvenementController::class, 'store'])->name('store');
@@ -357,7 +385,7 @@ $adminRoutes = function (): void {
                 Route::patch('/{evenement}/restore', [AdminEvenementController::class, 'restaurer'])->name('restore');
             });
 
-            Route::prefix('annonces')->name('annonces.')->group(function () {
+            Route::middleware('can:communications.access')->prefix('annonces')->name('annonces.')->group(function () {
                 Route::get('/', [AdminAnnonceController::class, 'index'])->name('index');
                 Route::get('/create', [AdminAnnonceController::class, 'create'])->name('create');
                 Route::post('/', [AdminAnnonceController::class, 'store'])->name('store');
@@ -370,7 +398,7 @@ $adminRoutes = function (): void {
         });
 
         // Secrétaire
-        Route::middleware(['role:admin,secrétaire'])->prefix('secretariat')->name('secretaire.')->group(function () {
+        Route::middleware(['role:super_admin,direction,secretariat'])->prefix('secretariat')->name('secretaire.')->group(function () {
             Route::get('/dashboard', [SecretaireController::class, 'dashboard'])->name('dashboard');
         });
 

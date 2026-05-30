@@ -21,23 +21,23 @@ class TheseImportController extends Controller
             return redirect()
                 ->route('admin.theses.index')
                 ->with('success', 'Thèses importées avec succès !');
-                
+
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
-            
+
             $errorMessages = [];
             foreach ($failures as $failure) {
-                $errorMessages[] = "Ligne {$failure->row()}: " . implode(', ', $failure->errors());
+                $errorMessages[] = "Ligne {$failure->row()}: ".implode(', ', $failure->errors());
             }
-            
+
             return redirect()
                 ->route('admin.theses.index')
-                ->with('error', 'Erreur d\'importation : ' . implode(' | ', $errorMessages));
-                
+                ->with('error', 'Erreur d\'importation : '.implode(' | ', $errorMessages));
+
         } catch (\Exception $e) {
             return redirect()
                 ->route('admin.theses.index')
-                ->with('error', 'Erreur lors de l\'importation : ' . $e->getMessage());
+                ->with('error', 'Erreur lors de l\'importation : '.$e->getMessage());
         }
     }
 }

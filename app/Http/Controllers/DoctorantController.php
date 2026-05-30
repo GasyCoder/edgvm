@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\These;
-use App\Models\Inscription;
-use App\Models\Publication;
 use Illuminate\Support\Facades\Auth;
 
 class DoctorantController extends Controller

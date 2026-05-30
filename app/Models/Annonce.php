@@ -23,9 +23,9 @@ class Annonce extends Model
     ];
 
     protected $casts = [
-        'est_publie'      => 'boolean',
-        'envoyer_email'   => 'boolean',
-        'publie_at'       => 'datetime',
+        'est_publie' => 'boolean',
+        'envoyer_email' => 'boolean',
+        'publie_at' => 'datetime',
         'email_envoye_at' => 'datetime',
     ];
 

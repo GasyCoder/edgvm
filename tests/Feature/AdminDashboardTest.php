@@ -22,7 +22,7 @@ uses(RefreshDatabase::class);
 
 it('renders the admin dashboard for admin users', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -34,7 +34,7 @@ it('renders the admin dashboard for admin users', function (): void {
 
 it('renders a migrated admin placeholder page', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -46,7 +46,7 @@ it('renders a migrated admin placeholder page', function (): void {
 
 it('renders admin media and taxonomy pages', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -73,7 +73,7 @@ it('renders admin media and taxonomy pages', function (): void {
 
 it('renders actualite create and edit pages', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -108,7 +108,7 @@ it('renders actualite create and edit pages', function (): void {
 
 it('renders evenements pages', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -136,7 +136,7 @@ it('renders evenements pages', function (): void {
 
 it('renders pages admin screens', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -166,7 +166,7 @@ it('renders pages admin screens', function (): void {
 
 it('renders sliders and slides screens', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -224,7 +224,7 @@ it('renders sliders and slides screens', function (): void {
 
 it('renders annonces, newsletter, partenaires, settings, and message directions', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -304,7 +304,7 @@ it('renders annonces, newsletter, partenaires, settings, and message directions'
 
 it('renders research admin pages', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);

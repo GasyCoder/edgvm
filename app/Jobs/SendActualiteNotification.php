@@ -2,16 +2,16 @@
 
 namespace App\Jobs;
 
+use App\Mail\ActualiteNotificationMailable;
 use App\Models\Actualite;
 use App\Models\NewsletterSubscriber;
-use App\Mail\ActualiteNotificationMailable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class SendActualiteNotification implements ShouldQueue
 {
@@ -30,7 +30,7 @@ class SendActualiteNotification implements ShouldQueue
 
         NewsletterSubscriber::actif()
             ->whereNotNull('email')
-            ->select(['id','email','nom','type'])
+            ->select(['id', 'email', 'nom', 'type'])
             ->orderBy('id')
             ->chunkById(500, function ($subscribers) {
                 foreach ($subscribers as $subscriber) {

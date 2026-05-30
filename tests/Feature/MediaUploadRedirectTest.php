@@ -13,7 +13,7 @@ it('redirects back to the provided target after upload and stores media', functi
     Storage::fake('public');
 
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);

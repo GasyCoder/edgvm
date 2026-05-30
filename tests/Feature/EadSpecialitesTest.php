@@ -9,7 +9,7 @@ uses(RefreshDatabase::class);
 
 it('creates an EAD with multiple encadrants', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -43,7 +43,7 @@ it('creates an EAD with multiple encadrants', function (): void {
 
 it('syncs encadrants when updating an EAD', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);

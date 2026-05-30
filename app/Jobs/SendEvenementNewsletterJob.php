@@ -24,6 +24,7 @@ class SendEvenementNewsletterJob implements ShouldQueue
     public int $chunkSize = 300;
 
     public $tries = 3;
+
     public $backoff = [10, 60, 180]; // secondes
 
     /**

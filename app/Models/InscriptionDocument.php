@@ -10,6 +10,7 @@ class InscriptionDocument extends Model
     use HasFactory;
 
     protected $table = 'inscription_documents';
+
     protected $fillable = [
         'inscription_id',
         'type_document',

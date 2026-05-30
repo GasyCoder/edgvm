@@ -4,7 +4,9 @@ namespace App\Http\Middleware;
 
 use App\Models\Menu;
 use App\Models\Setting;
+use App\Support\RolePermissions;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Inertia\Middleware;
 
@@ -80,6 +82,9 @@ class HandleInertiaRequests extends Middleware
                     'email' => $request->user()->email,
                     'role' => $request->user()->role ?? null,
                 ] : null,
+                'can' => $request->user()
+                    ? collect(RolePermissions::ABILITIES)->mapWithKeys(fn (string $ability) => [$ability => Gate::allows($ability)])->all()
+                    : [],
             ],
             'appSettings' => $appSettings ? [
                 'site_name' => $appSettings->site_name,

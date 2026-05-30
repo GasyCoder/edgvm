@@ -11,13 +11,13 @@ class MenuComposerServiceProvider extends ServiceProvider
     protected function getMenuItems(string $slug)
     {
         $menu = Menu::with([
-                'items' => function ($q) {
-                    $q->visible()
-                      ->whereNull('parent_id')
-                      ->orderBy('ordre');
-                },
-                'items.page', // pour éviter le N+1
-            ])
+            'items' => function ($q) {
+                $q->visible()
+                    ->whereNull('parent_id')
+                    ->orderBy('ordre');
+            },
+            'items.page', // pour éviter le N+1
+        ])
             ->where('slug', $slug)
             ->first();
 

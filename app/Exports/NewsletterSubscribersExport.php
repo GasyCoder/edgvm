@@ -24,7 +24,7 @@ class NewsletterSubscribersExport implements FromQuery, WithHeadings, WithMappin
             $s = trim($this->search);
             $query->where(function (Builder $q) use ($s) {
                 $q->where('email', 'like', "%{$s}%")
-                  ->orWhere('nom', 'like', "%{$s}%");
+                    ->orWhere('nom', 'like', "%{$s}%");
             });
         }
 

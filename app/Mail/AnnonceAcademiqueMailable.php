@@ -14,6 +14,7 @@ class AnnonceAcademiqueMailable extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public Annonce $annonce;
+
     public ?NewsletterSubscriber $subscriber;
 
     public function __construct(Annonce $annonce, ?NewsletterSubscriber $subscriber = null)
@@ -30,7 +31,7 @@ class AnnonceAcademiqueMailable extends Mailable implements ShouldQueue
             ? route('newsletter.unsubscribe', $this->subscriber->token)
             : null;
 
-        return $this->subject('Annonce académique EDGVM : ' . $this->annonce->titre)
+        return $this->subject('Annonce académique EDGVM : '.$this->annonce->titre)
             ->view('emails.annonce.annonce-template')
             ->with([
                 'annonce' => $this->annonce,

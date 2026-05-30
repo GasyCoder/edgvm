@@ -9,7 +9,7 @@ uses(RefreshDatabase::class);
 
 it('stores actualite with multiple categories', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);
@@ -58,7 +58,7 @@ it('stores actualite with multiple categories', function (): void {
 
 it('updates actualite categories and primary category', function (): void {
     $admin = User::factory()->create([
-        'role' => 'admin',
+        'role' => 'super_admin',
         'email_verified_at' => now(),
         'active' => true,
     ]);

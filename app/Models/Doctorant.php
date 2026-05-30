@@ -34,12 +34,45 @@ class Doctorant extends Model
         'date_naissance',
         'lieu_naissance',
         'statut',
+        'observation',
+        'archived_at',
     ];
+
+    /**
+     * Statuts considérés comme terminés (soutenu / abandon) → relèvent des archives.
+     */
+    public const STATUTS_TERMINES = ['diplome', 'abandonne'];
 
     protected $casts = [
         'date_inscription' => 'date',
         'date_naissance' => 'date',
+        'archived_at' => 'datetime',
     ];
+
+    public function isArchived(): bool
+    {
+        return $this->archived_at !== null || in_array($this->statut, self::STATUTS_TERMINES, true);
+    }
+
+    /**
+     * Doctorants actifs / en cours de suivi (liste principale).
+     */
+    public function scopeActifs($query)
+    {
+        return $query->whereNull('archived_at')
+            ->whereNotIn('statut', self::STATUTS_TERMINES);
+    }
+
+    /**
+     * Doctorants terminés ou archivés manuellement.
+     */
+    public function scopeArchives($query)
+    {
+        return $query->where(function ($q) {
+            $q->whereNotNull('archived_at')
+                ->orWhereIn('statut', self::STATUTS_TERMINES);
+        });
+    }
 
     /**
      * Relations
@@ -52,6 +85,11 @@ class Doctorant extends Model
     public function theses()
     {
         return $this->hasMany(These::class, 'doctorant_id');
+    }
+
+    public function paiements()
+    {
+        return $this->hasMany(Paiement::class);
     }
 
     /**

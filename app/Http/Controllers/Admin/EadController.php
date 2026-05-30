@@ -9,6 +9,7 @@ use App\Models\EAD;
 use App\Models\Encadrant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -37,6 +38,7 @@ class EadController extends Controller
             ->through(fn (EAD $ead) => [
                 'id' => $ead->id,
                 'nom' => $ead->nom,
+                'sigle' => $ead->sigle,
                 'slug' => $ead->slug,
                 'description' => $ead->description,
                 'specialites_count' => $ead->specialites_count ?? 0,
@@ -83,12 +85,14 @@ class EadController extends Controller
             ->all();
         unset($data['encadrants']);
 
+        $data['slug'] = $this->uniqueSlug($data['nom']);
+
         $ead = EAD::create($data);
         $ead->encadrants()->sync($encadrants);
 
         return redirect()
             ->route('admin.ead.index')
-            ->with('success', 'EAD cree.');
+            ->with('success', "L'équipe d'accueil a été créée.");
     }
 
     public function edit(EAD $ead): Response
@@ -96,8 +100,9 @@ class EadController extends Controller
         return Inertia::render('Admin/Eads/Edit', [
             'ead' => [
                 'id' => $ead->id,
-                'nom' => $ead->nom,
                 'slug' => $ead->slug,
+                'nom' => $ead->nom,
+                'sigle' => $ead->sigle,
                 'description' => $ead->description,
                 'responsable_id' => $ead->responsable_id,
                 'encadrants' => $ead->encadrants()->pluck('encadrants.id')->toArray(),
@@ -116,12 +121,27 @@ class EadController extends Controller
             ->all();
         unset($data['encadrants']);
 
+        $data['slug'] = $this->uniqueSlug($data['nom'], $ead->id);
+
         $ead->update($data);
         $ead->encadrants()->sync($encadrants);
 
         return redirect()
             ->route('admin.ead.index')
-            ->with('success', 'EAD mis a jour.');
+            ->with('success', "L'équipe d'accueil a été mise à jour.");
+    }
+
+    private function uniqueSlug(string $nom, ?int $ignoreId = null): string
+    {
+        $base = Str::slug($nom) ?: 'ead';
+        $slug = $base;
+        $i = 1;
+
+        while (EAD::where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
+            $slug = $base.'-'.(++$i);
+        }
+
+        return $slug;
     }
 
     public function destroy(EAD $ead): RedirectResponse
